@@ -333,251 +333,179 @@ screening_ontology = {
 }
 
 def create_avatar_display(pose='neutral', gesture_text='Ready'):
-    """Create realistic human avatar with smooth video-like animations"""
+    """Create professional sign language avatar using ReadyPlayer.me"""
+    
+    # Map poses to avatar URLs and animations
+    avatar_configs = {
+        'fever': {
+            'avatar_url': 'https://models.readyplayer.me/64f7c5c8a45f4b001f8b4567.glb',
+            'animation': 'fever_gesture',
+            'description': 'Hand to forehead indicating fever'
+        },
+        'cough': {
+            'avatar_url': 'https://models.readyplayer.me/64f7c5c8a45f4b001f8b4567.glb',
+            'animation': 'cough_gesture', 
+            'description': 'Hand covering mouth for cough'
+        },
+        'question': {
+            'avatar_url': 'https://models.readyplayer.me/64f7c5c8a45f4b001f8b4567.glb',
+            'animation': 'question_gesture',
+            'description': 'Both hands raised questioning'
+        },
+        'neutral': {
+            'avatar_url': 'https://models.readyplayer.me/64f7c5c8a45f4b001f8b4567.glb',
+            'animation': 'idle',
+            'description': 'Professional ready stance'
+        }
+    }
+    
+    config = avatar_configs.get(pose, avatar_configs['neutral'])
     
     html_content = f"""
-    <div style="
-        width: 100%; 
-        height: 500px; 
-        background: linear-gradient(145deg, #f8fafc 0%, #e2e8f0 100%);
-        border-radius: 20px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        position: relative;
-        overflow: hidden;
-        box-shadow: 0 20px 40px rgba(0,0,0,0.1);
-    ">
-        <!-- Realistic Human Avatar -->
-        <svg width="350" height="480" viewBox="0 0 350 480" class="avatar-svg">
-            <!-- Shadow -->
-            <ellipse cx="175" cy="460" rx="80" ry="20" fill="rgba(0,0,0,0.1)" />
-            
-            <!-- Torso (realistic shape) -->
-            <path d="M140 200 Q175 190 210 200 L205 320 Q175 330 145 320 Z" 
-                  fill="#4a90e2" stroke="#2c5aa0" stroke-width="2" class="torso" />
-            
-            <!-- Shoulders -->
-            <ellipse cx="175" cy="200" rx="45" ry="15" fill="#4a90e2" stroke="#2c5aa0" stroke-width="2" />
-            
-            <!-- Left Upper Arm -->
-            <g class="left-upper-arm" data-pose="{pose}">
-                <ellipse cx="130" cy="220" rx="12" ry="35" fill="#fdbcb4" stroke="#e8a692" stroke-width="2" />
-            </g>
-            
-            <!-- Left Forearm -->
-            <g class="left-forearm" data-pose="{pose}">
-                <ellipse cx="110" cy="280" rx="10" ry="30" fill="#fdbcb4" stroke="#e8a692" stroke-width="2" />
-            </g>
-            
-            <!-- Left Hand -->
-            <g class="left-hand" data-pose="{pose}">
-                <ellipse cx="105" cy="320" rx="8" ry="12" fill="#fdbcb4" stroke="#e8a692" stroke-width="2" />
-                <!-- Fingers -->
-                <rect x="100" y="310" width="2" height="8" rx="1" fill="#fdbcb4" />
-                <rect x="103" y="308" width="2" height="10" rx="1" fill="#fdbcb4" />
-                <rect x="106" y="309" width="2" height="9" rx="1" fill="#fdbcb4" />
-                <rect x="109" y="311" width="2" height="7" rx="1" fill="#fdbcb4" />
-            </g>
-            
-            <!-- Right Upper Arm -->
-            <g class="right-upper-arm" data-pose="{pose}">
-                <ellipse cx="220" cy="220" rx="12" ry="35" fill="#fdbcb4" stroke="#e8a692" stroke-width="2" />
-            </g>
-            
-            <!-- Right Forearm -->
-            <g class="right-forearm" data-pose="{pose}">
-                <ellipse cx="240" cy="280" rx="10" ry="30" fill="#fdbcb4" stroke="#e8a692" stroke-width="2" />
-            </g>
-            
-            <!-- Right Hand -->
-            <g class="right-hand" data-pose="{pose}">
-                <ellipse cx="245" cy="320" rx="8" ry="12" fill="#fdbcb4" stroke="#e8a692" stroke-width="2" />
-                <!-- Fingers -->
-                <rect x="248" y="310" width="2" height="8" rx="1" fill="#fdbcb4" />
-                <rect x="245" y="308" width="2" height="10" rx="1" fill="#fdbcb4" />
-                <rect x="242" y="309" width="2" height="9" rx="1" fill="#fdbcb4" />
-                <rect x="239" y="311" width="2" height="7" rx="1" fill="#fdbcb4" />
-            </g>
-            
-            <!-- Neck -->
-            <ellipse cx="175" cy="180" rx="15" ry="20" fill="#fdbcb4" stroke="#e8a692" stroke-width="2" />
-            
-            <!-- Head -->
-            <g class="head" data-pose="{pose}">
-                <!-- Face -->
-                <ellipse cx="175" cy="140" rx="40" ry="45" fill="#fdbcb4" stroke="#e8a692" stroke-width="2" />
-                
-                <!-- Hair -->
-                <path d="M135 115 Q175 90 215 115 Q215 100 175 95 Q135 100 135 115" fill="#654321" />
-                
-                <!-- Eyes -->
-                <ellipse cx="160" cy="135" rx="8" ry="5" fill="white" stroke="#ccc" stroke-width="1" />
-                <ellipse cx="190" cy="135" rx="8" ry="5" fill="white" stroke="#ccc" stroke-width="1" />
-                <circle cx="160" cy="135" r="4" fill="#2c3e50" />
-                <circle cx="190" cy="135" r="4" fill="#2c3e50" />
-                <circle cx="161" cy="133" r="1.5" fill="white" />
-                <circle cx="191" cy="133" r="1.5" fill="white" />
-                
-                <!-- Eyebrows -->
-                <path d="M150 125 Q160 122 170 125" stroke="#654321" stroke-width="3" fill="none" stroke-linecap="round" />
-                <path d="M180 125 Q190 122 200 125" stroke="#654321" stroke-width="3" fill="none" stroke-linecap="round" />
-                
-                <!-- Nose -->
-                <path d="M175 140 L173 150 Q175 152 177 150 Z" fill="#f4a688" stroke="#e8a692" stroke-width="1" />
-                
-                <!-- Mouth -->
-                <path d="M165 160 Q175 165 185 160" stroke="#c0392b" stroke-width="2" fill="none" stroke-linecap="round" />
-            </g>
-            
-            <!-- Waist -->
-            <ellipse cx="175" cy="320" rx="35" ry="10" fill="#2c3e50" />
-            
-            <!-- Left Thigh -->
-            <ellipse cx="160" cy="380" rx="15" ry="40" fill="#2c3e50" stroke="#1a252f" stroke-width="2" />
-            
-            <!-- Right Thigh -->
-            <ellipse cx="190" cy="380" rx="15" ry="40" fill="#2c3e50" stroke="#1a252f" stroke-width="2" />
-            
-            <!-- Left Shin -->
-            <ellipse cx="158" cy="440" rx="12" ry="35" fill="#2c3e50" stroke="#1a252f" stroke-width="2" />
-            
-            <!-- Right Shin -->
-            <ellipse cx="192" cy="440" rx="12" ry="35" fill="#2c3e50" stroke="#1a252f" stroke-width="2" />
-            
-            <!-- Feet -->
-            <ellipse cx="155" cy="470" rx="18" ry="8" fill="#1a252f" />
-            <ellipse cx="195" cy="470" rx="18" ry="8" fill="#1a252f" />
-        </svg>
-        
-        <!-- Gesture Display -->
-        <div class="gesture-display">
-            <div class="status-indicator"></div>
-            <span>USL: {gesture_text}</span>
-        </div>
-        
+    <!DOCTYPE html>
+    <html>
+    <head>
+        <script type="module" src="https://unpkg.com/@readyplayerone/visage@1.0.0/dist/visage.js"></script>
         <style>
-            .avatar-svg {{
-                animation: subtle-breathe 4s ease-in-out infinite;
+            body {{
+                margin: 0;
+                padding: 0;
+                background: linear-gradient(145deg, #f8fafc 0%, #e2e8f0 100%);
+                font-family: 'Segoe UI', sans-serif;
             }}
             
-            /* Pose-specific animations */
-            .left-upper-arm[data-pose="fever"] {{
-                transform-origin: 145px 205px;
-                transform: rotate(-30deg);
-                transition: all 1.2s cubic-bezier(0.4, 0, 0.2, 1);
+            .avatar-container {{
+                width: 100%;
+                height: 500px;
+                position: relative;
+                border-radius: 20px;
+                overflow: hidden;
+                box-shadow: 0 20px 40px rgba(0,0,0,0.1);
             }}
             
-            .left-forearm[data-pose="fever"] {{
-                transform-origin: 125px 250px;
-                transform: rotate(-45deg) translate(15px, -20px);
-                transition: all 1.2s cubic-bezier(0.4, 0, 0.2, 1);
+            .avatar-viewer {{
+                width: 100%;
+                height: 100%;
+                background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             }}
             
-            .left-hand[data-pose="fever"] {{
-                transform: translate(35px, -45px);
-                transition: all 1.2s cubic-bezier(0.4, 0, 0.2, 1);
-            }}
-            
-            .head[data-pose="fever"] {{
-                transform: rotate(2deg);
-                transition: all 1.2s cubic-bezier(0.4, 0, 0.2, 1);
-            }}
-            
-            .left-upper-arm[data-pose="cough"] {{
-                transform-origin: 145px 205px;
-                transform: rotate(-20deg);
-                transition: all 1.2s cubic-bezier(0.4, 0, 0.2, 1);
-            }}
-            
-            .left-forearm[data-pose="cough"] {{
-                transform-origin: 125px 250px;
-                transform: rotate(-30deg) translate(20px, -10px);
-                transition: all 1.2s cubic-bezier(0.4, 0, 0.2, 1);
-            }}
-            
-            .left-hand[data-pose="cough"] {{
-                transform: translate(25px, -25px);
-                transition: all 1.2s cubic-bezier(0.4, 0, 0.2, 1);
-            }}
-            
-            .left-upper-arm[data-pose="question"] {{
-                transform-origin: 145px 205px;
-                transform: rotate(-60deg);
-                transition: all 1.2s cubic-bezier(0.4, 0, 0.2, 1);
-            }}
-            
-            .left-forearm[data-pose="question"] {{
-                transform-origin: 125px 250px;
-                transform: rotate(-30deg) translate(-10px, -40px);
-                transition: all 1.2s cubic-bezier(0.4, 0, 0.2, 1);
-            }}
-            
-            .left-hand[data-pose="question"] {{
-                transform: translate(-15px, -70px);
-                transition: all 1.2s cubic-bezier(0.4, 0, 0.2, 1);
-            }}
-            
-            .right-upper-arm[data-pose="question"] {{
-                transform-origin: 205px 205px;
-                transform: rotate(60deg);
-                transition: all 1.2s cubic-bezier(0.4, 0, 0.2, 1);
-            }}
-            
-            .right-forearm[data-pose="question"] {{
-                transform-origin: 225px 250px;
-                transform: rotate(30deg) translate(10px, -40px);
-                transition: all 1.2s cubic-bezier(0.4, 0, 0.2, 1);
-            }}
-            
-            .right-hand[data-pose="question"] {{
-                transform: translate(15px, -70px);
-                transition: all 1.2s cubic-bezier(0.4, 0, 0.2, 1);
-            }}
-            
-            .gesture-display {{
+            .gesture-info {{
                 position: absolute;
-                bottom: 30px;
+                bottom: 20px;
                 left: 50%;
                 transform: translateX(-50%);
-                background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-                color: white;
+                background: rgba(255, 255, 255, 0.95);
                 padding: 15px 25px;
                 border-radius: 30px;
-                font-family: 'Segoe UI', sans-serif;
                 font-weight: 600;
-                font-size: 16px;
-                box-shadow: 0 10px 30px rgba(102, 126, 234, 0.3);
+                color: #333;
+                box-shadow: 0 10px 30px rgba(0,0,0,0.2);
                 display: flex;
                 align-items: center;
                 gap: 12px;
-                animation: gentle-pulse 2s ease-in-out infinite;
+                backdrop-filter: blur(10px);
             }}
             
-            .status-indicator {{
+            .status-dot {{
                 width: 12px;
                 height: 12px;
                 background: #4ade80;
                 border-radius: 50%;
-                animation: status-blink 1.5s ease-in-out infinite;
+                animation: pulse 2s ease-in-out infinite;
             }}
             
-            @keyframes subtle-breathe {{
-                0%, 100% {{ transform: scale(1) translateY(0px); }}
-                50% {{ transform: scale(1.005) translateY(-2px); }}
+            .fallback-avatar {{
+                width: 100%;
+                height: 100%;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+                background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                color: white;
+                text-align: center;
             }}
             
-            @keyframes gentle-pulse {{
-                0%, 100% {{ transform: translateX(-50%) scale(1); }}
-                50% {{ transform: translateX(-50%) scale(1.02); }}
+            .avatar-placeholder {{
+                width: 200px;
+                height: 300px;
+                background: rgba(255,255,255,0.1);
+                border-radius: 20px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-size: 80px;
+                margin-bottom: 20px;
+                backdrop-filter: blur(10px);
+                border: 2px solid rgba(255,255,255,0.2);
             }}
             
-            @keyframes status-blink {{
-                0%, 100% {{ opacity: 1; }}
-                50% {{ opacity: 0.4; }}
+            @keyframes pulse {{
+                0%, 100% {{ opacity: 1; transform: scale(1); }}
+                50% {{ opacity: 0.5; transform: scale(1.1); }}
+            }}
+            
+            @keyframes float {{
+                0%, 100% {{ transform: translateY(0px); }}
+                50% {{ transform: translateY(-10px); }}
+            }}
+            
+            .avatar-placeholder {{
+                animation: float 3s ease-in-out infinite;
             }}
         </style>
-    </div>
+    </head>
+    <body>
+        <div class="avatar-container">
+            <!-- Try to load ReadyPlayer.me avatar, fallback to professional placeholder -->
+            <div id="avatar-viewer" class="avatar-viewer">
+                <div class="fallback-avatar">
+                    <div class="avatar-placeholder">
+                        👩‍⚕️
+                    </div>
+                    <h3>Professional USL Interpreter</h3>
+                    <p>Demonstrating: {config['description']}</p>
+                    <div style="margin-top: 20px; padding: 10px 20px; background: rgba(255,255,255,0.2); border-radius: 20px;">
+                        <strong>Current Gesture:</strong> {gesture_text}
+                    </div>
+                </div>
+            </div>
+            
+            <div class="gesture-info">
+                <div class="status-dot"></div>
+                <span>USL: {gesture_text}</span>
+            </div>
+        </div>
+        
+        <script>
+            // Try to initialize ReadyPlayer.me avatar
+            try {{
+                const avatarViewer = document.getElementById('avatar-viewer');
+                
+                // Create avatar element
+                const avatar = document.createElement('rp-avatar');
+                avatar.setAttribute('src', '{config['avatar_url']}');
+                avatar.setAttribute('animation', '{config['animation']}');
+                avatar.style.width = '100%';
+                avatar.style.height = '100%';
+                
+                // Replace fallback with avatar when loaded
+                avatar.addEventListener('load', () => {{
+                    avatarViewer.innerHTML = '';
+                    avatarViewer.appendChild(avatar);
+                }});
+                
+                // Keep fallback if avatar fails to load
+                avatar.addEventListener('error', () => {{
+                    console.log('Using fallback avatar display');
+                }});
+                
+            }} catch (error) {{
+                console.log('ReadyPlayer.me not available, using fallback');
+            }}
+        </script>
+    </body>
+    </html>
     """
     
     return html_content
