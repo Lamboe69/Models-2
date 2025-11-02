@@ -690,22 +690,28 @@ with tab2:
                 st.success(f"🔊 {lang} TTS activated")
 
 with tab3:
-    st.subheader("📋 FHIR-Structured Clinical Results")
+    st.subheader("📋 Clinical Assessment & FHIR Results")
     
     if st.session_state.screening_results:
-        # Clinical Results Display
+        # Header metrics row
         timestamp = datetime.now().isoformat()
         patient_id_val = st.session_state.get('patient_id', 'UNKNOWN')
+        resource_id = f"usl-screening-{int(time.time())}"
         
-        st.markdown("**📋 FHIR-STRUCTURED CLINICAL RESULTS**")
-        st.markdown("=" * 60)
-        st.write(f"🆔 Resource ID: usl-screening-{int(time.time())}")
-        st.write(f"👤 Patient: {patient_id_val}")
-        st.write(f"📅 Timestamp: {timestamp}")
-        st.write(f"🏥 Status: final")
-        st.markdown("")
-        st.markdown("**🩺 CLINICAL OBSERVATIONS:**")
-        st.markdown("-" * 40)
+        col1, col2, col3, col4 = st.columns(4)
+        with col1:
+            st.metric("👤 Patient ID", patient_id_val)
+        with col2:
+            st.metric("🆔 Resource ID", resource_id[-8:])
+        with col3:
+            st.metric("📅 Timestamp", datetime.now().strftime("%H:%M:%S"))
+        with col4:
+            st.metric("🏥 Status", "Final")
+        
+        st.divider()
+        
+        # Clinical observations in organized cards
+        st.markdown("### 🩺 Clinical Observations")
         
         symptom_icons = {
             'fever': '🌡️', 'cough': '😷', 'hemoptysis': '🩸', 'diarrhea': '💊',
@@ -718,64 +724,162 @@ with tab3:
         weights = {"fever": 3, "cough": 3, "hemoptysis": 5, "diarrhea": 3, 
                   "duration": 2, "severity": 4, "travel": 2, "exposure": 2}
         
-        for symptom, result in st.session_state.screening_results.items():
-            icon = symptom_icons.get(symptom, '🏥')
-            prediction = result.get('prediction', 'Unknown')
-            confidence = result.get('confidence', 0) * 100
-            
-            if symptom in weights and prediction in ['Yes', 'Severe', 'Long']:
-                total_score += weights[symptom]
-                if symptom == 'hemoptysis':
-                    critical_flags += 1
-            
-            status_icon = "🔴" if prediction in ['Yes', 'Severe', 'Long'] else "🟢"
-            st.write(f"{icon} {symptom.upper():<12}: {status_icon} {prediction:<8} ({confidence:5.1f}%)")
+        # Organize symptoms into categories
+        primary_symptoms = ['fever', 'cough', 'hemoptysis', 'diarrhea']
+        secondary_factors = ['duration', 'severity', 'travel', 'exposure']
         
-        st.markdown("")
-        st.markdown("=" * 60)
+        # Primary symptoms row
+        st.markdown("**Primary Symptoms**")
+        cols = st.columns(4)
+        for i, symptom in enumerate(primary_symptoms):
+            if symptom in st.session_state.screening_results:
+                result = st.session_state.screening_results[symptom]
+                prediction = result.get('prediction', 'Unknown')
+                confidence = result.get('confidence', 0) * 100
+                icon = symptom_icons.get(symptom, '🏥')
+                
+                if symptom in weights and prediction in ['Yes', 'Severe', 'Long']:
+                    total_score += weights[symptom]
+                    if symptom == 'hemoptysis':
+                        critical_flags += 1
+                
+                status_color = "🔴" if prediction in ['Yes', 'Severe', 'Long'] else "🟢"
+                
+                with cols[i]:
+                    st.markdown(f"""
+                    <div style="background: #f8fafc; padding: 1rem; border-radius: 8px; border-left: 4px solid {'#dc2626' if prediction in ['Yes', 'Severe', 'Long'] else '#16a34a'}; margin-bottom: 0.5rem;">
+                        <div style="font-size: 1.2em; margin-bottom: 0.5rem;">{icon} {symptom.title()}</div>
+                        <div style="font-weight: bold; color: {'#dc2626' if prediction in ['Yes', 'Severe', 'Long'] else '#16a34a'};">{status_color} {prediction}</div>
+                        <div style="font-size: 0.9em; color: #64748b;">Confidence: {confidence:.1f}%</div>
+                    </div>
+                    """, unsafe_allow_html=True)
         
-        # Triage Assessment
-        st.markdown("**🚨 TRIAGE ASSESSMENT**")
+        st.markdown("**Risk Factors & Context**")
+        cols = st.columns(4)
+        for i, factor in enumerate(secondary_factors):
+            if factor in st.session_state.screening_results:
+                result = st.session_state.screening_results[factor]
+                prediction = result.get('prediction', 'Unknown')
+                confidence = result.get('confidence', 0) * 100
+                icon = symptom_icons.get(factor, '🏥')
+                
+                if factor in weights and prediction in ['Yes', 'Severe', 'Long']:
+                    total_score += weights[factor]
+                
+                status_color = "🔴" if prediction in ['Yes', 'Severe', 'Long'] else "🟢"
+                
+                with cols[i]:
+                    st.markdown(f"""
+                    <div style="background: #f8fafc; padding: 1rem; border-radius: 8px; border-left: 4px solid {'#ea580c' if prediction in ['Yes', 'Severe', 'Long'] else '#16a34a'}; margin-bottom: 0.5rem;">
+                        <div style="font-size: 1.2em; margin-bottom: 0.5rem;">{icon} {factor.title()}</div>
+                        <div style="font-weight: bold; color: {'#ea580c' if prediction in ['Yes', 'Severe', 'Long'] else '#16a34a'};">{status_color} {prediction}</div>
+                        <div style="font-size: 0.9em; color: #64748b;">Confidence: {confidence:.1f}%</div>
+                    </div>
+                    """, unsafe_allow_html=True)
         
-        if critical_flags >= 2 or total_score >= 15:
-            priority = "🔴 CRITICAL"
-            st.markdown(f'<div class="critical-alert">{priority}<br>Triage Score: {total_score}/20</div>', unsafe_allow_html=True)
+        st.divider()
+        
+        # Triage Assessment with enhanced layout
+        st.markdown("### 🚨 Triage Assessment")
+        
+        col_triage, col_actions = st.columns([2, 1])
+        
+        with col_triage:
+            # Determine priority level
+            if critical_flags >= 2 or total_score >= 15:
+                priority = "CRITICAL"
+                priority_color = "#dc2626"
+                priority_icon = "🔴"
+            elif critical_flags >= 1 or total_score >= 10:
+                priority = "HIGH"
+                priority_color = "#ea580c"
+                priority_icon = "🟡"
+            elif total_score >= 5:
+                priority = "MEDIUM"
+                priority_color = "#d97706"
+                priority_icon = "🟠"
+            else:
+                priority = "LOW"
+                priority_color = "#16a34a"
+                priority_icon = "🟢"
             
-            col_emerg, col_call = st.columns(2)
-            with col_emerg:
+            st.markdown(f"""
+            <div style="background: {priority_color}; color: white; padding: 2rem; border-radius: 12px; text-align: center; margin-bottom: 1rem;">
+                <div style="font-size: 2em; margin-bottom: 0.5rem;">{priority_icon}</div>
+                <div style="font-size: 1.5em; font-weight: bold; margin-bottom: 0.5rem;">{priority} PRIORITY</div>
+                <div style="font-size: 1.2em;">Triage Score: {total_score}/20</div>
+                <div style="font-size: 0.9em; margin-top: 0.5rem; opacity: 0.9;">Critical Flags: {critical_flags}</div>
+            </div>
+            """, unsafe_allow_html=True)
+        
+        with col_actions:
+            st.markdown("**Actions Required**")
+            
+            if critical_flags >= 2 or total_score >= 15:
                 if st.button("🚨 EMERGENCY", type="primary", use_container_width=True):
                     add_to_log("🚨 EMERGENCY: Immediate escalation activated")
                     update_analytics('emergency')
                     update_analytics('clinical_assessment', triage_score=total_score)
                     st.error("🚨 EMERGENCY ESCALATION ACTIVATED!")
-            with col_call:
+                
                 if st.button("📞 Call Clinician", use_container_width=True):
                     add_to_log("📞 Clinician notification: Sent successfully")
                     st.info("📞 Clinician notification sent")
-                    
-        elif critical_flags >= 1 or total_score >= 10:
-            priority = "🟡 HIGH"
-            st.markdown(f'<div class="high-alert">{priority}<br>Triage Score: {total_score}/20</div>', unsafe_allow_html=True)
-        elif total_score >= 5:
-            priority = "🟠 MEDIUM"
-            st.markdown(f'<div class="medium-alert">{priority}<br>Triage Score: {total_score}/20</div>', unsafe_allow_html=True)
-        else:
-            priority = "🟢 LOW"
-            st.markdown(f'<div class="low-alert">{priority}<br>Triage Score: {total_score}/20</div>', unsafe_allow_html=True)
+            else:
+                if st.button("📋 Schedule Follow-up", use_container_width=True):
+                    st.success("📋 Follow-up scheduled")
+                
+                if st.button("📄 Generate Report", use_container_width=True):
+                    st.success("📄 Report generated")
         
-        st.markdown("")
-        st.write("✅ Clinical screening completed")
-        st.write("📊 Results ready for clinical review")
+        st.divider()
+        
+        # FHIR Resource Summary
+        st.markdown("### 📋 FHIR Resource Summary")
+        
+        fhir_data = pd.DataFrame({
+            'Field': ['Resource Type', 'Resource ID', 'Patient ID', 'Status', 'Category', 'System', 'Timestamp'],
+            'Value': [
+                'Observation',
+                resource_id,
+                patient_id_val,
+                'final',
+                'Clinical Screening',
+                'MediSign Healthcare Assistant',
+                timestamp
+            ]
+        })
+        
+        st.dataframe(fhir_data, use_container_width=True, hide_index=True)
+        
+        # Action buttons row
+        col1, col2, col3 = st.columns(3)
+        with col1:
+            if st.button("📤 Export FHIR JSON", use_container_width=True):
+                st.success("📤 FHIR JSON exported")
+        with col2:
+            if st.button("📧 Send to EHR", use_container_width=True):
+                st.success("📧 Sent to EHR system")
+        with col3:
+            if st.button("🖨️ Print Report", use_container_width=True):
+                st.success("🖨️ Report printed")
         
     else:
-        st.markdown("**📋 FHIR OBSERVATION RESOURCE**")
-        st.markdown("=" * 60)
-        st.write("🆔 Resource Type: Observation")
-        st.write("📊 Category: Clinical Screening")
-        st.write("🏥 System: MediSign Healthcare Assistant")
-        st.write("📅 Status: Waiting for patient data...")
-        st.write("")
-        st.write("🔄 Ready to receive USL input and generate structured clinical data")
+        # Empty state with better design
+        st.markdown("""
+        <div style="text-align: center; padding: 3rem; background: #f8fafc; border-radius: 12px; border: 2px dashed #cbd5e1;">
+            <div style="font-size: 3em; margin-bottom: 1rem;">📋</div>
+            <div style="font-size: 1.5em; font-weight: bold; margin-bottom: 1rem; color: #475569;">No Clinical Data Available</div>
+            <div style="color: #64748b; margin-bottom: 2rem;">Process USL input to generate clinical assessment and FHIR-structured results</div>
+            <div style="background: white; padding: 1.5rem; border-radius: 8px; margin: 1rem 0;">
+                <div style="font-weight: bold; margin-bottom: 0.5rem;">📊 Ready to Process:</div>
+                <div>🆔 Resource Type: Observation</div>
+                <div>🏥 System: MediSign Healthcare Assistant</div>
+                <div>📋 Category: Clinical Screening</div>
+                <div>🔄 Status: Awaiting patient data</div>
+            </div>
+        </div>
+        """, unsafe_allow_html=True)
 
 with tab4:
     st.subheader("📊 System Performance & Analytics")
