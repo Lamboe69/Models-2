@@ -46,6 +46,33 @@ st.markdown("""
         font-weight: 500;
     }
     
+    /* Dropdown and input styling */
+    .stSidebar .stSelectbox > div > div,
+    .stSidebar .stSelectbox select,
+    .stSidebar .stTextInput input,
+    .stSidebar .stNumberInput input {
+        background-color: #374151 !important;
+        color: #ffffff !important;
+        border: 1px solid #4b5563 !important;
+    }
+    
+    .stSidebar .stSelectbox > div > div > div {
+        color: #ffffff !important;
+    }
+    
+    /* File uploader styling */
+    .stSidebar .stFileUploader > div {
+        background-color: #374151 !important;
+        border: 2px dashed #6b7280 !important;
+        border-radius: 8px !important;
+    }
+    
+    .stSidebar .stFileUploader label,
+    .stSidebar .stFileUploader div,
+    .stSidebar .stFileUploader span {
+        color: #ffffff !important;
+    }
+    
     .stSidebar .stRadio > div,
     .stSidebar .stCheckbox > div,
     .stSidebar .stSelectbox > div,
@@ -190,6 +217,25 @@ st.markdown("""
     .stError {
         border-radius: 8px;
         border-left: 4px solid #dc2626;
+    }
+    
+    /* Additional sidebar element visibility */
+    .stSidebar [data-testid="stSelectbox"] > div > div {
+        background-color: #374151 !important;
+        color: #ffffff !important;
+    }
+    
+    .stSidebar [data-testid="stSelectbox"] svg {
+        fill: #ffffff !important;
+    }
+    
+    .stSidebar .stFileUploader [data-testid="stFileUploaderDropzone"] {
+        background-color: #374151 !important;
+        border-color: #6b7280 !important;
+    }
+    
+    .stSidebar .stFileUploader [data-testid="stFileUploaderDropzoneInstructions"] {
+        color: #ffffff !important;
     }
 </style>
 """, unsafe_allow_html=True)
