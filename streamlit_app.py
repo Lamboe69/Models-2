@@ -6,6 +6,11 @@ import pandas as pd
 from datetime import datetime
 import time
 import threading
+import matplotlib.pyplot as plt
+import matplotlib.patches as patches
+from PIL import Image, ImageDraw
+import io
+import base64
 
 # Page config
 st.set_page_config(
@@ -289,6 +294,10 @@ if 'uploaded_video' not in st.session_state:
     st.session_state.uploaded_video = None
 if 'uploaded_image' not in st.session_state:
     st.session_state.uploaded_image = None
+if 'avatar_pose' not in st.session_state:
+    st.session_state.avatar_pose = 'neutral'
+if 'current_gesture' not in st.session_state:
+    st.session_state.current_gesture = 'Ready'
 
 # Analytics tracking
 if 'analytics' not in st.session_state:
@@ -326,6 +335,91 @@ screening_ontology = {
     "usl_variants": ["Canonical", "Kampala Regional", "Gulu Regional", "Mbale Regional"],
     "nms_signals": ["brow_raise", "head_tilt", "mouth_gestures", "eye_gaze"]
 }
+
+def create_2d_avatar(pose='neutral', gesture_text='Ready'):
+    """Create a 2D avatar showing USL gestures"""
+    fig, ax = plt.subplots(figsize=(6, 8))
+    ax.set_xlim(0, 10)
+    ax.set_ylim(0, 12)
+    ax.set_aspect('equal')
+    ax.axis('off')
+    
+    # Head
+    head = patches.Circle((5, 10), 1, facecolor='#fdbcb4', edgecolor='black', linewidth=2)
+    ax.add_patch(head)
+    
+    # Eyes
+    ax.plot([4.3, 4.7], [10.2, 10.2], 'ko', markersize=8)
+    ax.plot([5.3, 5.7], [10.2, 10.2], 'ko', markersize=8)
+    
+    # Mouth based on gesture
+    if 'fever' in gesture_text.lower() or 'pain' in gesture_text.lower():
+        # Concerned expression
+        mouth = patches.Arc((5, 9.5), 0.6, 0.3, angle=0, theta1=0, theta2=180, color='black', linewidth=3)
+    else:
+        # Neutral expression
+        ax.plot([4.7, 5.3], [9.6, 9.6], 'k-', linewidth=3)
+    ax.add_patch(mouth) if 'mouth' in locals() else None
+    
+    # Body
+    body = patches.Rectangle((4.2, 6), 1.6, 3, facecolor='#87ceeb', edgecolor='black', linewidth=2)
+    ax.add_patch(body)
+    
+    # Arms and hands based on pose
+    if pose == 'fever':
+        # Hand to forehead
+        ax.plot([4.2, 3.5, 4.5], [8.5, 9.5, 10.2], 'k-', linewidth=4)  # Left arm
+        ax.plot([5.8, 6.5, 5.5], [8.5, 8.5, 7.5], 'k-', linewidth=4)   # Right arm
+        # Hand on forehead
+        hand = patches.Circle((4.2, 10), 0.3, facecolor='#fdbcb4', edgecolor='black')
+        ax.add_patch(hand)
+    elif pose == 'cough':
+        # Hand to mouth
+        ax.plot([4.2, 3.5, 4.8], [8.5, 9, 9.8], 'k-', linewidth=4)    # Left arm
+        ax.plot([5.8, 6.5, 5.5], [8.5, 8.5, 7.5], 'k-', linewidth=4)   # Right arm
+        # Hand near mouth
+        hand = patches.Circle((4.5, 9.5), 0.3, facecolor='#fdbcb4', edgecolor='black')
+        ax.add_patch(hand)
+    elif pose == 'question':
+        # Both hands up questioning
+        ax.plot([4.2, 3.2, 3.2], [8.5, 9.5, 10.5], 'k-', linewidth=4)  # Left arm up
+        ax.plot([5.8, 6.8, 6.8], [8.5, 9.5, 10.5], 'k-', linewidth=4)  # Right arm up
+        # Hands
+        hand1 = patches.Circle((3.2, 10.5), 0.3, facecolor='#fdbcb4', edgecolor='black')
+        hand2 = patches.Circle((6.8, 10.5), 0.3, facecolor='#fdbcb4', edgecolor='black')
+        ax.add_patch(hand1)
+        ax.add_patch(hand2)
+    else:
+        # Neutral pose
+        ax.plot([4.2, 3.5, 3.5], [8.5, 8, 7], 'k-', linewidth=4)       # Left arm
+        ax.plot([5.8, 6.5, 6.5], [8.5, 8, 7], 'k-', linewidth=4)       # Right arm
+        # Hands
+        hand1 = patches.Circle((3.5, 7), 0.3, facecolor='#fdbcb4', edgecolor='black')
+        hand2 = patches.Circle((6.5, 7), 0.3, facecolor='#fdbcb4', edgecolor='black')
+        ax.add_patch(hand1)
+        ax.add_patch(hand2)
+    
+    # Legs
+    ax.plot([4.5, 4.5, 4], [6, 3, 2], 'k-', linewidth=4)              # Left leg
+    ax.plot([5.5, 5.5, 6], [6, 3, 2], 'k-', linewidth=4)              # Right leg
+    
+    # Feet
+    foot1 = patches.Ellipse((4, 2), 0.8, 0.3, facecolor='black')
+    foot2 = patches.Ellipse((6, 2), 0.8, 0.3, facecolor='black')
+    ax.add_patch(foot1)
+    ax.add_patch(foot2)
+    
+    # Gesture text
+    ax.text(5, 1, gesture_text, ha='center', va='center', fontsize=14, 
+            bbox=dict(boxstyle='round,pad=0.5', facecolor='lightblue', alpha=0.8))
+    
+    # Convert to image
+    buf = io.BytesIO()
+    plt.savefig(buf, format='png', bbox_inches='tight', dpi=100, facecolor='white')
+    buf.seek(0)
+    plt.close()
+    
+    return Image.open(buf)
 
 def add_to_log(message):
     timestamp = datetime.now().strftime("%H:%M:%S")
@@ -803,11 +897,31 @@ with tab2:
                 st.warning("Please enter clinical text first")
         
         if st.button("🤖 Synthesize Avatar", use_container_width=True):
-            add_to_log("🤖 Parametric avatar synthesized with MANO+Face rig")
-            st.success("🤖 Avatar synthesized!")
+            if clinical_text:
+                # Determine pose based on text content
+                text_lower = clinical_text.lower()
+                if 'fever' in text_lower or 'hot' in text_lower:
+                    st.session_state.avatar_pose = 'fever'
+                    st.session_state.current_gesture = 'FEVER - Hand to forehead'
+                elif 'cough' in text_lower:
+                    st.session_state.avatar_pose = 'cough'
+                    st.session_state.current_gesture = 'COUGH - Hand to mouth'
+                elif '?' in clinical_text or 'do you' in text_lower:
+                    st.session_state.avatar_pose = 'question'
+                    st.session_state.current_gesture = 'QUESTION - Hands up'
+                else:
+                    st.session_state.avatar_pose = 'neutral'
+                    st.session_state.current_gesture = 'NEUTRAL - Ready position'
+                
+                add_to_log(f"🤖 Avatar synthesized: {st.session_state.current_gesture}")
+                st.success("🤖 Avatar synthesized!")
+                st.rerun()
+            else:
+                st.warning("Please enter clinical text first")
         
         # Avatar display
-        st.info("🤖 **Parametric Avatar**\n(MANO + Face Rig)\n\nReady for synthesis...")
+        avatar_img = create_2d_avatar(st.session_state.avatar_pose, st.session_state.current_gesture)
+        st.image(avatar_img, caption="USL Avatar - Real-time Synthesis", use_column_width=True)
     
     with col2:
         st.subheader("🤟 USL → Structured Text")
