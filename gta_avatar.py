@@ -1,21 +1,3 @@
-import streamlit as st
-import requests
-import json
-import numpy as np
-import pandas as pd
-from datetime import datetime
-import time
-import threading
-from streamlit.components.v1 import html
-
-# Page config
-st.set_page_config(
-    page_title="🏥 MediSign - USL Healthcare Assistant",
-    page_icon="🏥",
-    layout="wide",
-    initial_sidebar_state="expanded"
-)
-
 def create_avatar_display(pose='neutral', gesture_text='Ready'):
     """Create GTA Vice City-style realistic avatar for sign language"""
     
@@ -137,166 +119,95 @@ def create_avatar_display(pose='neutral', gesture_text='Ready'):
                 height: 300px;
             }}
             
-            /* Head Styling - Vice City Realistic */
+            /* Head Styling */
             .head {{
-                width: 65px;
-                height: 75px;
-                background: radial-gradient(ellipse at 30% 30%, #f4d1ae 0%, #e8c4a0 40%, #d4a574 100%);
+                width: 50px;
+                height: 60px;
+                background: linear-gradient(145deg, #d4a574 0%, #c49660 100%);
                 border-radius: 50% 50% 45% 45%;
                 position: relative;
                 margin: 0 auto;
-                box-shadow: 
-                    inset -8px -8px 15px rgba(0,0,0,0.15),
-                    inset 8px 8px 15px rgba(255,255,255,0.3),
-                    0 5px 15px rgba(0,0,0,0.2);
+                box-shadow: inset 0 2px 4px rgba(0,0,0,0.2);
                 transition: all 1s cubic-bezier(0.4, 0, 0.2, 1);
             }}
             
             .hair {{
                 position: absolute;
-                top: -8px;
-                left: 3px;
-                width: 59px;
-                height: 35px;
-                background: linear-gradient(145deg, #4a3728 0%, #3d2914 50%, #2a1a0a 100%);
-                border-radius: 60% 60% 30% 30%;
-                box-shadow: inset 0 3px 8px rgba(0,0,0,0.3);
-            }}
-            
-            .hair::before {{
-                content: '';
-                position: absolute;
-                top: 5px;
-                left: 8px;
-                width: 43px;
-                height: 20px;
-                background: linear-gradient(125deg, #5c4a3a 0%, #4a3728 100%);
-                border-radius: 50% 50% 25% 25%;
-                opacity: 0.6;
+                top: -5px;
+                left: 5px;
+                width: 40px;
+                height: 25px;
+                background: linear-gradient(145deg, #3d2914 0%, #2a1a0a 100%);
+                border-radius: 50% 50% 20% 20%;
             }}
             
             .eyes {{
                 position: absolute;
-                top: 25px;
+                top: 20px;
                 left: 50%;
                 transform: translateX(-50%);
                 display: flex;
-                gap: 12px;
+                gap: 8px;
             }}
             
             .eye {{
-                width: 12px;
-                height: 8px;
-                background: radial-gradient(circle at 30% 30%, #ffffff 0%, #f8f8f8 70%, #e0e0e0 100%);
+                width: 8px;
+                height: 6px;
+                background: white;
                 border-radius: 50%;
                 position: relative;
-                box-shadow: inset 0 1px 3px rgba(0,0,0,0.2);
             }}
             
             .eye::after {{
                 content: '';
                 position: absolute;
                 top: 1px;
-                left: 3px;
-                width: 6px;
-                height: 6px;
-                background: radial-gradient(circle at 30% 30%, #2c3e50 0%, #1a252f 100%);
+                left: 2px;
+                width: 4px;
+                height: 4px;
+                background: #2c3e50;
                 border-radius: 50%;
-            }}
-            
-            .eye::before {{
-                content: '';
-                position: absolute;
-                top: 2px;
-                left: 5px;
-                width: 2px;
-                height: 2px;
-                background: rgba(255,255,255,0.8);
-                border-radius: 50%;
-                z-index: 1;
             }}
             
             .nose {{
                 position: absolute;
-                top: 35px;
+                top: 30px;
                 left: 50%;
                 transform: translateX(-50%);
-                width: 6px;
-                height: 12px;
-                background: linear-gradient(145deg, #e8c4a0 0%, #d4a574 50%, #c49660 100%);
-                border-radius: 3px;
-                box-shadow: 
-                    inset -1px -1px 2px rgba(0,0,0,0.1),
-                    inset 1px 1px 2px rgba(255,255,255,0.2);
-            }}
-            
-            .nose::after {{
-                content: '';
-                position: absolute;
-                bottom: 2px;
-                left: 1px;
-                width: 2px;
-                height: 1px;
-                background: rgba(0,0,0,0.2);
-                border-radius: 50%;
-            }}
-            
-            .nose::before {{
-                content: '';
-                position: absolute;
-                bottom: 2px;
-                right: 1px;
-                width: 2px;
-                height: 1px;
-                background: rgba(0,0,0,0.2);
-                border-radius: 50%;
+                width: 4px;
+                height: 8px;
+                background: linear-gradient(145deg, #c49660 0%, #b8855a 100%);
+                border-radius: 2px;
             }}
             
             .mouth {{
                 position: absolute;
-                top: 52px;
+                top: 42px;
                 left: 50%;
                 transform: translateX(-50%);
-                width: 16px;
-                height: 4px;
-                background: linear-gradient(90deg, #c67b5c 0%, #b8855a 50%, #a0522d 100%);
-                border-radius: 8px;
-                box-shadow: inset 0 1px 2px rgba(0,0,0,0.3);
-            }}
-            
-            .mouth::after {{
-                content: '';
-                position: absolute;
-                top: 1px;
-                left: 2px;
                 width: 12px;
-                height: 1px;
-                background: rgba(255,255,255,0.2);
+                height: 3px;
+                background: #8b4513;
                 border-radius: 2px;
             }}
             
-            /* Body Styling - Enhanced Realism */
+            /* Body Styling */
             .neck {{
-                width: 28px;
-                height: 18px;
-                background: radial-gradient(ellipse at 40% 30%, #f4d1ae 0%, #e8c4a0 50%, #d4a574 100%);
+                width: 20px;
+                height: 15px;
+                background: linear-gradient(145deg, #d4a574 0%, #c49660 100%);
                 margin: 0 auto;
-                border-radius: 14px;
-                box-shadow: 
-                    inset -3px -3px 6px rgba(0,0,0,0.1),
-                    inset 3px 3px 6px rgba(255,255,255,0.2);
+                border-radius: 10px;
             }}
             
             .torso {{
-                width: 75px;
-                height: 95px;
-                background: linear-gradient(145deg, #ffffff 0%, #f8f8f8 50%, #f0f0f0 100%);
-                margin: 8px auto;
-                border-radius: 20px 20px 12px 12px;
+                width: 60px;
+                height: 80px;
+                background: linear-gradient(145deg, #ffffff 0%, #f0f0f0 100%);
+                margin: 5px auto;
+                border-radius: 15px 15px 10px 10px;
                 position: relative;
-                box-shadow: 
-                    0 8px 20px rgba(0,0,0,0.15),
-                    inset 0 2px 4px rgba(255,255,255,0.3);
+                box-shadow: 0 4px 8px rgba(0,0,0,0.2);
             }}
             
             .medical-coat {{
@@ -305,112 +216,82 @@ def create_avatar_display(pose='neutral', gesture_text='Ready'):
                 left: 0;
                 right: 0;
                 bottom: 0;
-                background: linear-gradient(145deg, #ffffff 0%, #f8f8f8 30%, #f0f0f0 70%, #e8e8e8 100%);
-                border-radius: 20px 20px 12px 12px;
-                border: 2px solid #e0e0e0;
-                box-shadow: 
-                    inset 0 3px 8px rgba(255,255,255,0.4),
-                    inset 0 -2px 4px rgba(0,0,0,0.05);
+                background: linear-gradient(145deg, #ffffff 0%, #e8e8e8 100%);
+                border-radius: 15px 15px 10px 10px;
+                border: 2px solid #ddd;
             }}
             
             .coat-button {{
                 position: absolute;
                 left: 50%;
                 transform: translateX(-50%);
-                width: 6px;
-                height: 6px;
-                background: radial-gradient(circle at 30% 30%, #888 0%, #666 50%, #444 100%);
+                width: 4px;
+                height: 4px;
+                background: #666;
                 border-radius: 50%;
-                box-shadow: 
-                    0 2px 4px rgba(0,0,0,0.2),
-                    inset 0 1px 2px rgba(255,255,255,0.3);
             }}
             
-            .coat-button:nth-child(1) {{ top: 18px; }}
-            .coat-button:nth-child(2) {{ top: 35px; }}
-            .coat-button:nth-child(3) {{ top: 52px; }}
+            .coat-button:nth-child(1) {{ top: 15px; }}
+            .coat-button:nth-child(2) {{ top: 30px; }}
+            .coat-button:nth-child(3) {{ top: 45px; }}
             
-            /* Arms - Realistic Proportions */
+            /* Arms */
             .arm {{
                 position: absolute;
-                top: 110px;
+                top: 95px;
                 transition: all 1.2s cubic-bezier(0.4, 0, 0.2, 1);
             }}
             
-            .left-arm {{ left: -30px; }}
-            .right-arm {{ right: -30px; }}
+            .left-arm {{ left: -25px; }}
+            .right-arm {{ right: -25px; }}
             
             .upper-arm {{
-                width: 20px;
-                height: 48px;
-                background: radial-gradient(ellipse at 30% 30%, #f4d1ae 0%, #e8c4a0 40%, #d4a574 100%);
-                border-radius: 10px;
-                margin-bottom: 6px;
-                position: relative;
-                box-shadow: 
-                    inset -3px -3px 8px rgba(0,0,0,0.1),
-                    inset 3px 3px 8px rgba(255,255,255,0.2);
-            }}
-            
-            .upper-arm::before {{
-                content: '';
-                position: absolute;
-                top: 0;
-                left: 0;
-                right: 0;
-                height: 25px;
-                background: linear-gradient(145deg, #ffffff 0%, #f0f0f0 100%);
-                border-radius: 10px 10px 5px 5px;
-                border: 1px solid #e0e0e0;
+                width: 15px;
+                height: 40px;
+                background: linear-gradient(145deg, #d4a574 0%, #c49660 100%);
+                border-radius: 8px;
+                margin-bottom: 5px;
             }}
             
             .forearm {{
-                width: 16px;
-                height: 42px;
-                background: radial-gradient(ellipse at 30% 30%, #f4d1ae 0%, #e8c4a0 40%, #d4a574 100%);
-                border-radius: 8px;
-                margin: 0 auto 6px;
-                box-shadow: 
-                    inset -2px -2px 6px rgba(0,0,0,0.1),
-                    inset 2px 2px 6px rgba(255,255,255,0.2);
+                width: 12px;
+                height: 35px;
+                background: linear-gradient(145deg, #d4a574 0%, #c49660 100%);
+                border-radius: 6px;
+                margin: 0 auto 5px;
             }}
             
             .hand {{
-                width: 20px;
-                height: 24px;
-                background: radial-gradient(ellipse at 30% 30%, #f4d1ae 0%, #e8c4a0 40%, #d4a574 100%);
-                border-radius: 10px 10px 8px 8px;
+                width: 16px;
+                height: 20px;
+                background: linear-gradient(145deg, #d4a574 0%, #c49660 100%);
+                border-radius: 8px 8px 6px 6px;
                 position: relative;
                 margin: 0 auto;
-                box-shadow: 
-                    inset -2px -2px 6px rgba(0,0,0,0.1),
-                    inset 2px 2px 6px rgba(255,255,255,0.2);
             }}
             
             .finger {{
                 position: absolute;
-                width: 3px;
-                height: 8px;
-                background: linear-gradient(180deg, #e8c4a0 0%, #d4a574 100%);
-                border-radius: 2px;
-                top: -4px;
-                box-shadow: inset 0 1px 2px rgba(255,255,255,0.2);
+                width: 2px;
+                height: 6px;
+                background: #c49660;
+                border-radius: 1px;
+                top: -3px;
             }}
             
-            .finger:nth-child(2) {{ left: 3px; height: 9px; }}
-            .finger:nth-child(3) {{ left: 7px; height: 10px; }}
-            .finger:nth-child(4) {{ left: 11px; height: 9px; }}
-            .finger:nth-child(5) {{ left: 15px; height: 7px; }}
+            .finger:nth-child(2) {{ left: 3px; }}
+            .finger:nth-child(3) {{ left: 6px; }}
+            .finger:nth-child(4) {{ left: 9px; }}
+            .finger:nth-child(5) {{ left: 12px; }}
             
             .thumb {{
                 position: absolute;
-                width: 3px;
-                height: 6px;
-                background: linear-gradient(180deg, #e8c4a0 0%, #d4a574 100%);
-                border-radius: 2px;
-                top: 3px;
+                width: 2px;
+                height: 5px;
+                background: #c49660;
+                border-radius: 1px;
+                top: 2px;
                 left: -2px;
-                box-shadow: inset 0 1px 2px rgba(255,255,255,0.2);
             }}
             
             /* Legs */
