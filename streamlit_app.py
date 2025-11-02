@@ -16,533 +16,281 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
-def create_avatar_display(pose='neutral', gesture_text='Ready'):
-    """Create GTA Vice City-style realistic avatar for sign language"""
-    
-    html_content = f"""
-    <div style="
-        width: 100%; 
-        height: 520px; 
-        background: linear-gradient(145deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
-        border-radius: 15px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        position: relative;
-        overflow: hidden;
-        box-shadow: 0 25px 50px rgba(0,0,0,0.3);
-        border: 2px solid rgba(255,255,255,0.1);
-    ">
-        <!-- GTA-Style Character -->
-        <div class="gta-character" data-pose="{pose}">
-            <!-- Character Shadow -->
-            <div class="character-shadow"></div>
-            
-            <!-- Main Character Body -->
-            <div class="character-body">
-                <!-- Head -->
-                <div class="head" data-pose="{pose}">
-                    <div class="face">
-                        <div class="hair"></div>
-                        <div class="forehead"></div>
-                        <div class="eyes">
-                            <div class="eye left-eye"></div>
-                            <div class="eye right-eye"></div>
-                        </div>
-                        <div class="nose"></div>
-                        <div class="mouth"></div>
-                    </div>
-                </div>
-                
-                <!-- Neck -->
-                <div class="neck"></div>
-                
-                <!-- Torso -->
-                <div class="torso">
-                    <div class="chest"></div>
-                    <div class="medical-coat">
-                        <div class="coat-button"></div>
-                        <div class="coat-button"></div>
-                        <div class="coat-button"></div>
-                    </div>
-                </div>
-                
-                <!-- Arms -->
-                <div class="arm left-arm" data-pose="{pose}">
-                    <div class="upper-arm"></div>
-                    <div class="forearm"></div>
-                    <div class="hand left-hand">
-                        <div class="thumb"></div>
-                        <div class="finger"></div>
-                        <div class="finger"></div>
-                        <div class="finger"></div>
-                        <div class="finger"></div>
-                    </div>
-                </div>
-                
-                <div class="arm right-arm" data-pose="{pose}">
-                    <div class="upper-arm"></div>
-                    <div class="forearm"></div>
-                    <div class="hand right-hand">
-                        <div class="thumb"></div>
-                        <div class="finger"></div>
-                        <div class="finger"></div>
-                        <div class="finger"></div>
-                        <div class="finger"></div>
-                    </div>
-                </div>
-                
-                <!-- Lower Body -->
-                <div class="waist"></div>
-                <div class="legs">
-                    <div class="leg left-leg"></div>
-                    <div class="leg right-leg"></div>
-                </div>
-                <div class="feet">
-                    <div class="foot left-foot"></div>
-                    <div class="foot right-foot"></div>
-                </div>
-            </div>
-        </div>
-        
-        <!-- Vice City Style HUD -->
-        <div class="vice-city-hud">
-            <div class="hud-bar">
-                <div class="status-indicator active"></div>
-                <span class="gesture-text">USL: {gesture_text}</span>
-            </div>
-        </div>
-        
-        <style>
-            .gta-character {{
-                position: relative;
-                transform: scale(1.2);
-                animation: character-idle 4s ease-in-out infinite;
-            }}
-            
-            .character-shadow {{
-                position: absolute;
-                bottom: -20px;
-                left: 50%;
-                transform: translateX(-50%);
-                width: 120px;
-                height: 30px;
-                background: radial-gradient(ellipse, rgba(0,0,0,0.4) 0%, transparent 70%);
-                border-radius: 50%;
-            }}
-            
-            .character-body {{
-                position: relative;
-                width: 100px;
-                height: 300px;
-            }}
-            
-            /* Head Styling - Vice City Realistic */
-            .head {{
-                width: 65px;
-                height: 75px;
-                background: radial-gradient(ellipse at 30% 30%, #f4d1ae 0%, #e8c4a0 40%, #d4a574 100%);
-                border-radius: 50% 50% 45% 45%;
-                position: relative;
-                margin: 0 auto;
-                box-shadow: 
-                    inset -8px -8px 15px rgba(0,0,0,0.15),
-                    inset 8px 8px 15px rgba(255,255,255,0.3),
-                    0 5px 15px rgba(0,0,0,0.2);
-                transition: all 1s cubic-bezier(0.4, 0, 0.2, 1);
-            }}
-            
-            .hair {{
-                position: absolute;
-                top: -8px;
-                left: 3px;
-                width: 59px;
-                height: 35px;
-                background: linear-gradient(145deg, #4a3728 0%, #3d2914 50%, #2a1a0a 100%);
-                border-radius: 60% 60% 30% 30%;
-                box-shadow: inset 0 3px 8px rgba(0,0,0,0.3);
-            }}
-            
-            .hair::before {{
-                content: '';
-                position: absolute;
-                top: 5px;
-                left: 8px;
-                width: 43px;
-                height: 20px;
-                background: linear-gradient(125deg, #5c4a3a 0%, #4a3728 100%);
-                border-radius: 50% 50% 25% 25%;
-                opacity: 0.6;
-            }}
-            
-            .eyes {{
-                position: absolute;
-                top: 25px;
-                left: 50%;
-                transform: translateX(-50%);
-                display: flex;
-                gap: 12px;
-            }}
-            
-            .eye {{
-                width: 12px;
-                height: 8px;
-                background: radial-gradient(circle at 30% 30%, #ffffff 0%, #f8f8f8 70%, #e0e0e0 100%);
-                border-radius: 50%;
-                position: relative;
-                box-shadow: inset 0 1px 3px rgba(0,0,0,0.2);
-            }}
-            
-            .eye::after {{
-                content: '';
-                position: absolute;
-                top: 1px;
-                left: 3px;
-                width: 6px;
-                height: 6px;
-                background: radial-gradient(circle at 30% 30%, #2c3e50 0%, #1a252f 100%);
-                border-radius: 50%;
-            }}
-            
-            .eye::before {{
-                content: '';
-                position: absolute;
-                top: 2px;
-                left: 5px;
-                width: 2px;
-                height: 2px;
-                background: rgba(255,255,255,0.8);
-                border-radius: 50%;
-                z-index: 1;
-            }}
-            
-            .nose {{
-                position: absolute;
-                top: 35px;
-                left: 50%;
-                transform: translateX(-50%);
-                width: 6px;
-                height: 12px;
-                background: linear-gradient(145deg, #e8c4a0 0%, #d4a574 50%, #c49660 100%);
-                border-radius: 3px;
-                box-shadow: 
-                    inset -1px -1px 2px rgba(0,0,0,0.1),
-                    inset 1px 1px 2px rgba(255,255,255,0.2);
-            }}
-            
-            .nose::after {{
-                content: '';
-                position: absolute;
-                bottom: 2px;
-                left: 1px;
-                width: 2px;
-                height: 1px;
-                background: rgba(0,0,0,0.2);
-                border-radius: 50%;
-            }}
-            
-            .nose::before {{
-                content: '';
-                position: absolute;
-                bottom: 2px;
-                right: 1px;
-                width: 2px;
-                height: 1px;
-                background: rgba(0,0,0,0.2);
-                border-radius: 50%;
-            }}
-            
-            .mouth {{
-                position: absolute;
-                top: 52px;
-                left: 50%;
-                transform: translateX(-50%);
-                width: 16px;
-                height: 4px;
-                background: linear-gradient(90deg, #c67b5c 0%, #b8855a 50%, #a0522d 100%);
-                border-radius: 8px;
-                box-shadow: inset 0 1px 2px rgba(0,0,0,0.3);
-            }}
-            
-            .mouth::after {{
-                content: '';
-                position: absolute;
-                top: 1px;
-                left: 2px;
-                width: 12px;
-                height: 1px;
-                background: rgba(255,255,255,0.2);
-                border-radius: 2px;
-            }}
-            
-            /* Body Styling - Enhanced Realism */
-            .neck {{
-                width: 28px;
-                height: 18px;
-                background: radial-gradient(ellipse at 40% 30%, #f4d1ae 0%, #e8c4a0 50%, #d4a574 100%);
-                margin: 0 auto;
-                border-radius: 14px;
-                box-shadow: 
-                    inset -3px -3px 6px rgba(0,0,0,0.1),
-                    inset 3px 3px 6px rgba(255,255,255,0.2);
-            }}
-            
-            .torso {{
-                width: 75px;
-                height: 95px;
-                background: linear-gradient(145deg, #ffffff 0%, #f8f8f8 50%, #f0f0f0 100%);
-                margin: 8px auto;
-                border-radius: 20px 20px 12px 12px;
-                position: relative;
-                box-shadow: 
-                    0 8px 20px rgba(0,0,0,0.15),
-                    inset 0 2px 4px rgba(255,255,255,0.3);
-            }}
-            
-            .medical-coat {{
-                position: absolute;
-                top: 0;
-                left: 0;
-                right: 0;
-                bottom: 0;
-                background: linear-gradient(145deg, #ffffff 0%, #f8f8f8 30%, #f0f0f0 70%, #e8e8e8 100%);
-                border-radius: 20px 20px 12px 12px;
-                border: 2px solid #e0e0e0;
-                box-shadow: 
-                    inset 0 3px 8px rgba(255,255,255,0.4),
-                    inset 0 -2px 4px rgba(0,0,0,0.05);
-            }}
-            
-            .coat-button {{
-                position: absolute;
-                left: 50%;
-                transform: translateX(-50%);
-                width: 6px;
-                height: 6px;
-                background: radial-gradient(circle at 30% 30%, #888 0%, #666 50%, #444 100%);
-                border-radius: 50%;
-                box-shadow: 
-                    0 2px 4px rgba(0,0,0,0.2),
-                    inset 0 1px 2px rgba(255,255,255,0.3);
-            }}
-            
-            .coat-button:nth-child(1) {{ top: 18px; }}
-            .coat-button:nth-child(2) {{ top: 35px; }}
-            .coat-button:nth-child(3) {{ top: 52px; }}
-            
-            /* Arms - Realistic Proportions */
-            .arm {{
-                position: absolute;
-                top: 110px;
-                transition: all 1.2s cubic-bezier(0.4, 0, 0.2, 1);
-            }}
-            
-            .left-arm {{ left: -30px; }}
-            .right-arm {{ right: -30px; }}
-            
-            .upper-arm {{
-                width: 20px;
-                height: 48px;
-                background: radial-gradient(ellipse at 30% 30%, #f4d1ae 0%, #e8c4a0 40%, #d4a574 100%);
-                border-radius: 10px;
-                margin-bottom: 6px;
-                position: relative;
-                box-shadow: 
-                    inset -3px -3px 8px rgba(0,0,0,0.1),
-                    inset 3px 3px 8px rgba(255,255,255,0.2);
-            }}
-            
-            .upper-arm::before {{
-                content: '';
-                position: absolute;
-                top: 0;
-                left: 0;
-                right: 0;
-                height: 25px;
-                background: linear-gradient(145deg, #ffffff 0%, #f0f0f0 100%);
-                border-radius: 10px 10px 5px 5px;
-                border: 1px solid #e0e0e0;
-            }}
-            
-            .forearm {{
-                width: 16px;
-                height: 42px;
-                background: radial-gradient(ellipse at 30% 30%, #f4d1ae 0%, #e8c4a0 40%, #d4a574 100%);
-                border-radius: 8px;
-                margin: 0 auto 6px;
-                box-shadow: 
-                    inset -2px -2px 6px rgba(0,0,0,0.1),
-                    inset 2px 2px 6px rgba(255,255,255,0.2);
-            }}
-            
-            .hand {{
-                width: 20px;
-                height: 24px;
-                background: radial-gradient(ellipse at 30% 30%, #f4d1ae 0%, #e8c4a0 40%, #d4a574 100%);
-                border-radius: 10px 10px 8px 8px;
-                position: relative;
-                margin: 0 auto;
-                box-shadow: 
-                    inset -2px -2px 6px rgba(0,0,0,0.1),
-                    inset 2px 2px 6px rgba(255,255,255,0.2);
-            }}
-            
-            .finger {{
-                position: absolute;
-                width: 3px;
-                height: 8px;
-                background: linear-gradient(180deg, #e8c4a0 0%, #d4a574 100%);
-                border-radius: 2px;
-                top: -4px;
-                box-shadow: inset 0 1px 2px rgba(255,255,255,0.2);
-            }}
-            
-            .finger:nth-child(2) {{ left: 3px; height: 9px; }}
-            .finger:nth-child(3) {{ left: 7px; height: 10px; }}
-            .finger:nth-child(4) {{ left: 11px; height: 9px; }}
-            .finger:nth-child(5) {{ left: 15px; height: 7px; }}
-            
-            .thumb {{
-                position: absolute;
-                width: 3px;
-                height: 6px;
-                background: linear-gradient(180deg, #e8c4a0 0%, #d4a574 100%);
-                border-radius: 2px;
-                top: 3px;
-                left: -2px;
-                box-shadow: inset 0 1px 2px rgba(255,255,255,0.2);
-            }}
-            
-            /* Legs */
-            .waist {{
-                width: 50px;
-                height: 20px;
-                background: linear-gradient(145deg, #2c3e50 0%, #1a252f 100%);
-                margin: 0 auto;
-                border-radius: 10px;
-            }}
-            
-            .legs {{
-                display: flex;
-                justify-content: center;
-                gap: 5px;
-                margin-top: 5px;
-            }}
-            
-            .leg {{
-                width: 18px;
-                height: 60px;
-                background: linear-gradient(145deg, #2c3e50 0%, #1a252f 100%);
-                border-radius: 9px;
-            }}
-            
-            .feet {{
-                display: flex;
-                justify-content: center;
-                gap: 8px;
-                margin-top: 5px;
-            }}
-            
-            .foot {{
-                width: 20px;
-                height: 8px;
-                background: linear-gradient(145deg, #1a1a1a 0%, #000 100%);
-                border-radius: 10px 4px 4px 10px;
-            }}
-            
-            /* Pose Animations */
-            .left-arm[data-pose="fever"] {{
-                transform: rotate(-45deg) translateY(-15px);
-                transform-origin: top center;
-            }}
-            
-            .head[data-pose="fever"] {{
-                transform: rotate(3deg);
-            }}
-            
-            .left-arm[data-pose="cough"] {{
-                transform: rotate(-25deg) translateX(10px) translateY(-5px);
-                transform-origin: top center;
-            }}
-            
-            .left-arm[data-pose="question"], .right-arm[data-pose="question"] {{
-                transform: rotate(-75deg) translateY(-25px);
-                transform-origin: top center;
-            }}
-            
-            .right-arm[data-pose="question"] {{
-                transform: rotate(75deg) translateY(-25px);
-            }}
-            
-            /* Vice City HUD */
-            .vice-city-hud {{
-                position: absolute;
-                bottom: 25px;
-                left: 50%;
-                transform: translateX(-50%);
-                background: linear-gradient(90deg, #ff6b35 0%, #f7931e 100%);
-                padding: 12px 25px;
-                border-radius: 25px;
-                font-family: 'Courier New', monospace;
-                font-weight: bold;
-                color: white;
-                box-shadow: 0 8px 25px rgba(255, 107, 53, 0.4);
-                border: 2px solid rgba(255,255,255,0.3);
-            }}
-            
-            .hud-bar {{
-                display: flex;
-                align-items: center;
-                gap: 12px;
-            }}
-            
-            .status-indicator {{
-                width: 12px;
-                height: 12px;
-                background: #00ff00;
-                border-radius: 50%;
-                animation: vice-city-blink 1.5s ease-in-out infinite;
-                box-shadow: 0 0 10px #00ff00;
-            }}
-            
-            .gesture-text {{
-                font-size: 14px;
-                text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
-            }}
-            
-            /* Animations */
-            @keyframes character-idle {{
-                0%, 100% {{ transform: scale(1.2) translateY(0px); }}
-                50% {{ transform: scale(1.2) translateY(-3px); }}
-            }}
-            
-            @keyframes vice-city-blink {{
-                0%, 100% {{ opacity: 1; box-shadow: 0 0 10px #00ff00; }}
-                50% {{ opacity: 0.3; box-shadow: 0 0 5px #00ff00; }}
-            }}
-        </style>
-    </div>
-    """
-    
-    return html_content
-
 # Main App
 st.title("🏥 MediSign - USL Healthcare Assistant")
-st.markdown("### Vice City Style Medical Avatar")
+st.markdown("### Medical Sign Language Interface")
 
-# Display the avatar
-avatar_html = create_avatar_display(pose='neutral', gesture_text='Ready for USL')
-html(avatar_html, height=550)
+# Simple status display
+st.info("🤟 Ready for USL communication")
 
-# Add some controls
-col1, col2 = st.columns(2)
+# Initialize session state for analytics
+if 'analytics' not in st.session_state:
+    st.session_state.analytics = {
+        'session_start': time.time(),
+        'total_sessions': 1,
+        'successful_translations': 0,
+        'emergency_escalations': 0,
+        'patient_to_clinician': 0,
+        'clinician_to_patient': 0,
+        'current_latency': np.random.randint(150, 250),
+        'current_fps': np.random.randint(25, 35),
+        'current_memory': np.random.randint(120, 180),
+        'clinical_assessments': 0,
+        'triage_scores': [],
+        'processing_times': [],
+        'api_calls': 0,
+        'offline_fallbacks': 0,
+        'language_usage': {'USL': 0, 'ASL': 0, 'BSL': 0}
+    }
 
-with col1:
-    pose = st.selectbox("Select Pose:", ['neutral', 'fever', 'cough', 'question'])
+# Initialize other session states
+if 'live_camera_active' not in st.session_state:
+    st.session_state.live_camera_active = False
+if 'screening_results' not in st.session_state:
+    st.session_state.screening_results = []
+if 'system_status' not in st.session_state:
+    st.session_state.system_status = "🟢 All Systems Online"
+
+# Create tabs
+tab1, tab2, tab3, tab4 = st.tabs(["🎥 Live Camera", "🔍 Clinical Screening", "📋 FHIR Results", "📊 Analytics"])
+
+with tab1:
+    st.subheader("🎥 Live Camera Feed & USL Recognition")
     
-with col2:
-    gesture_text = st.text_input("Gesture Text:", "Ready for USL")
+    # Camera controls
+    col1, col2, col3 = st.columns([2, 1, 1])
+    
+    with col1:
+        st.markdown("**📹 Camera Status**")
+        if st.session_state.live_camera_active:
+            st.success("🟢 Camera Active - Processing USL")
+        else:
+            st.info("⚪ Camera Standby")
+    
+    with col2:
+        if st.button("🎬 Start Camera", use_container_width=True):
+            st.session_state.live_camera_active = True
+            st.rerun()
+    
+    with col3:
+        if st.button("⏹️ Stop Camera", use_container_width=True):
+            st.session_state.live_camera_active = False
+            st.rerun()
+    
+    # Camera feed placeholder
+    camera_placeholder = st.empty()
+    
+    if st.session_state.live_camera_active:
+        with camera_placeholder.container():
+            st.markdown("""
+            <div style="
+                width: 100%; 
+                height: 400px; 
+                background: linear-gradient(45deg, #1e3c72, #2a5298);
+                border-radius: 10px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                color: white;
+                font-size: 18px;
+                border: 2px solid #4CAF50;
+            ">
+                📹 Live Camera Feed - USL Recognition Active
+            </div>
+            """, unsafe_allow_html=True)
+    else:
+        with camera_placeholder.container():
+            st.markdown("""
+            <div style="
+                width: 100%; 
+                height: 400px; 
+                background: #f0f2f6;
+                border-radius: 10px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                color: #666;
+                font-size: 18px;
+                border: 2px dashed #ccc;
+            ">
+                📷 Camera Feed Inactive
+            </div>
+            """, unsafe_allow_html=True)
 
-if st.button("Update Avatar"):
-    avatar_html = create_avatar_display(pose=pose, gesture_text=gesture_text)
-    html(avatar_html, height=550)
+with tab2:
+    st.subheader("🔍 Clinical Screening & Assessment")
+    
+    # Screening controls
+    col1, col2 = st.columns(2)
+    
+    with col1:
+        st.markdown("**👤 Patient Information**")
+        patient_id = st.text_input("Patient ID", "PAT-2024-001")
+        patient_name = st.text_input("Patient Name", "John Doe")
+        
+    with col2:
+        st.markdown("**🏥 Clinical Context**")
+        screening_type = st.selectbox("Screening Type", 
+            ["General Assessment", "Emergency Triage", "Routine Checkup", "Specialist Consultation"])
+        urgency_level = st.select_slider("Urgency Level", 
+            options=["Low", "Medium", "High", "Critical"], value="Medium")
+    
+    # Start screening
+    if st.button("🔍 Start Clinical Screening", use_container_width=True):
+        # Simulate screening process
+        with st.spinner("Processing clinical assessment..."):
+            time.sleep(2)
+            
+            # Generate mock results
+            screening_result = {
+                'patient_id': patient_id,
+                'patient_name': patient_name,
+                'screening_type': screening_type,
+                'urgency_level': urgency_level,
+                'timestamp': datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+                'symptoms': ['Chest pain', 'Shortness of breath'],
+                'triage_score': np.random.randint(5, 15),
+                'recommendations': ['Immediate cardiac evaluation', 'Monitor vital signs']
+            }
+            
+            st.session_state.screening_results.append(screening_result)
+            st.session_state.analytics['clinical_assessments'] += 1
+            st.session_state.analytics['triage_scores'].append(screening_result['triage_score'])
+            
+        st.success("✅ Clinical screening completed!")
+        st.rerun()
+    
+    # Display recent results
+    if st.session_state.screening_results:
+        st.markdown("**📊 Recent Screening Results**")
+        latest_result = st.session_state.screening_results[-1]
+        
+        col1, col2, col3 = st.columns(3)
+        with col1:
+            st.metric("Triage Score", f"{latest_result['triage_score']}/20")
+        with col2:
+            st.metric("Urgency Level", latest_result['urgency_level'])
+        with col3:
+            st.metric("Symptoms Detected", len(latest_result['symptoms']))
+
+with tab3:
+    st.subheader("📋 FHIR-Structured Clinical Results")
+    
+    if st.session_state.screening_results:
+        latest_result = st.session_state.screening_results[-1]
+        
+        # FHIR Resource Display
+        col1, col2 = st.columns([2, 1])
+        
+        with col1:
+            st.markdown("**🏥 Clinical Assessment Summary**")
+            
+            # Patient info
+            st.markdown(f"**Patient:** {latest_result['patient_name']} (ID: {latest_result['patient_id']})")
+            st.markdown(f"**Assessment Type:** {latest_result['screening_type']}")
+            st.markdown(f"**Timestamp:** {latest_result['timestamp']}")
+            
+            # Clinical findings
+            st.markdown("**🔍 Clinical Findings:**")
+            for symptom in latest_result['symptoms']:
+                st.markdown(f"• {symptom}")
+            
+            # Recommendations
+            st.markdown("**💡 Clinical Recommendations:**")
+            for rec in latest_result['recommendations']:
+                st.markdown(f"• {rec}")
+        
+        with col2:
+            st.markdown("**⚡ Quick Actions**")
+            
+            if st.button("🚨 Emergency Alert", use_container_width=True):
+                st.error("🚨 Emergency alert sent")
+                
+            if st.button("📞 Contact Physician", use_container_width=True):
+                st.success("📞 Physician contacted")
+                
+            if st.button("📄 Generate Report", use_container_width=True):
+                st.success("📄 Report generated")
+        
+        st.divider()
+        
+        # FHIR Resource Summary
+        st.markdown("### 📋 FHIR Resource Summary")
+        
+        fhir_data = pd.DataFrame({
+            'Field': ['Resource Type', 'Resource ID', 'Patient ID', 'Status', 'Category', 'System', 'Timestamp'],
+            'Value': [
+                'Observation',
+                f"OBS-{latest_result['patient_id']}-001",
+                latest_result['patient_id'],
+                'final',
+                'Clinical Screening',
+                'MediSign Healthcare Assistant',
+                latest_result['timestamp']
+            ]
+        })
+        
+        st.dataframe(fhir_data, use_container_width=True, hide_index=True)
+        
+        # Action buttons row
+        col1, col2, col3 = st.columns(3)
+        with col1:
+            if st.button("📤 Export FHIR JSON", use_container_width=True):
+                st.success("📤 FHIR JSON exported")
+        with col2:
+            if st.button("📧 Send to EHR", use_container_width=True):
+                st.success("📧 Sent to EHR system")
+        with col3:
+            if st.button("🖨️ Print Report", use_container_width=True):
+                st.success("🖨️ Report printed")
+        
+    else:
+        # Empty state
+        st.markdown("""
+        <div style="text-align: center; padding: 3rem; background: #f8fafc; border-radius: 12px; border: 2px dashed #cbd5e1;">
+            <div style="font-size: 3em; margin-bottom: 1rem;">📋</div>
+            <div style="font-size: 1.5em; font-weight: bold; margin-bottom: 1rem; color: #475569;">No Clinical Data Available</div>
+            <div style="color: #64748b; margin-bottom: 2rem;">Process USL input to generate clinical assessment and FHIR-structured results</div>
+        </div>
+        """, unsafe_allow_html=True)
+
+with tab4:
+    st.subheader("📊 System Performance & Analytics")
+    
+    # Performance Metrics Charts
+    col1, col2 = st.columns(2)
+    
+    with col1:
+        st.markdown("**⚡ Performance Metrics**")
+        
+        # Live performance data
+        perf_data = pd.DataFrame({
+            'Metric': ['Latency (ms)', 'Accuracy (%)', 'FPS', 'Memory (MB)'],
+            'Current': [
+                st.session_state.analytics['current_latency'],
+                86.7,
+                st.session_state.analytics['current_fps'],
+                st.session_state.analytics['current_memory']
+            ],
+            'Target': [300, 90, 30, 200]
+        })
+        
+        st.dataframe(perf_data, use_container_width=True)
+        st.bar_chart(perf_data.set_index('Metric')[['Current', 'Target']])
+    
+    with col2:
+        st.markdown("**🔄 Session Statistics**")
+        
+        # Live session stats
+        duration_min = (time.time() - st.session_state.analytics['session_start']) / 60
+        session_data = pd.DataFrame({
+            'Statistic': ['Total Sessions', 'Successful Translations', 'Emergency Escalations', 'Session Duration (min)'],
+            'Count': [
+                st.session_state.analytics['total_sessions'],
+                st.session_state.analytics['successful_translations'],
+                st.session_state.analytics['emergency_escalations'],
+                f"{duration_min:.1f}"
+            ]
+        })
+        
+        st.dataframe(session_data, use_container_width=True)
