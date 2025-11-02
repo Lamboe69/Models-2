@@ -37,8 +37,11 @@ st.markdown("""
     .stSidebar .stFileUploader label,
     .stSidebar h1, .stSidebar h2, .stSidebar h3,
     .stSidebar .stWrite,
-    .stSidebar .stMetric {
-        color: #f1f5f9 !important;
+    .stSidebar .stMetric,
+    .stSidebar div,
+    .stSidebar span,
+    .stSidebar p {
+        color: #ffffff !important;
         font-weight: 500;
     }
     
@@ -47,12 +50,19 @@ st.markdown("""
     .stSidebar .stSelectbox > div,
     .stSidebar .stTextInput > div,
     .stSidebar .stNumberInput > div {
-        color: #f1f5f9 !important;
+        color: #ffffff !important;
     }
     
     .stSidebar .stRadio > div > label,
-    .stSidebar .stCheckbox > div > label {
-        color: #f1f5f9 !important;
+    .stSidebar .stCheckbox > div > label,
+    .stSidebar .stRadio div[role="radiogroup"] label,
+    .stSidebar .stCheckbox div label {
+        color: #ffffff !important;
+    }
+    
+    .stSidebar .stMetric label,
+    .stSidebar .stMetric div {
+        color: #ffffff !important;
     }
     
     /* Main content area */
@@ -332,7 +342,7 @@ with st.sidebar:
     clinic_lang = st.selectbox("Clinic Language", screening_ontology["languages"])
     usl_variant = st.selectbox("USL Variant", screening_ontology["usl_variants"])
     
-    st.write("**Non-Manual Signals:**")
+    st.markdown('<div style="color: #ffffff; font-weight: bold;">Non-Manual Signals:</div>', unsafe_allow_html=True)
     nms_cols = st.columns(2)
     for i, nms in enumerate(screening_ontology["nms_signals"]):
         with nms_cols[i % 2]:
@@ -354,7 +364,7 @@ with st.sidebar:
     for key, label in questions:
         col_q, col_y, col_n = st.columns([2, 1, 1])
         with col_q:
-            st.write(label)
+            st.markdown(f'<div style="color: #ffffff;">{label}</div>', unsafe_allow_html=True)
         with col_y:
             st.radio("Y", ["Yes"], key=f"q_{key}_yes", label_visibility="collapsed")
         with col_n:
@@ -363,16 +373,19 @@ with st.sidebar:
     # Disease Checklist Section
     st.markdown('<div style="background: #374151; color: white; padding: 0.5rem; border-radius: 8px; margin-bottom: 1rem; font-weight: bold;">🦠 Priority Diseases (WHO/MoH)</div>', unsafe_allow_html=True)
     for disease, info in screening_ontology["infectious_diseases"].items():
-        if info["priority"] == "critical":
-            color = "🔴"
-            st.markdown(f'<div style="color: #dc2626; font-weight: bold;">{color} {disease} (CRITICAL)</div>', unsafe_allow_html=True)
-        elif info["priority"] == "high":
-            color = "🟡"
-            st.markdown(f'<div style="color: #ea580c; font-weight: bold;">{color} {disease} (HIGH)</div>', unsafe_allow_html=True)
-        else:
-            color = "🔵"
-            st.markdown(f'<div style="color: #3b82f6; font-weight: bold;">{color} {disease} (MEDIUM)</div>', unsafe_allow_html=True)
-        st.checkbox("", key=f"disease_{disease}", label_visibility="collapsed")
+        col_disease, col_check = st.columns([3, 1])
+        with col_disease:
+            if info["priority"] == "critical":
+                color = "🔴"
+                st.markdown(f'<div style="color: #ffffff; font-weight: bold;">{color} {disease} (CRITICAL)</div>', unsafe_allow_html=True)
+            elif info["priority"] == "high":
+                color = "🟡"
+                st.markdown(f'<div style="color: #ffffff; font-weight: bold;">{color} {disease} (HIGH)</div>', unsafe_allow_html=True)
+            else:
+                color = "🔵"
+                st.markdown(f'<div style="color: #ffffff; font-weight: bold;">{color} {disease} (MEDIUM)</div>', unsafe_allow_html=True)
+        with col_check:
+            st.checkbox("", key=f"disease_{disease}", label_visibility="collapsed")
     
     # Triage Section
     st.markdown('<div style="background: #374151; color: white; padding: 0.5rem; border-radius: 8px; margin-bottom: 1rem; font-weight: bold;">🚨 Triage Assessment</div>', unsafe_allow_html=True)
@@ -403,8 +416,8 @@ with st.sidebar:
     else:
         st.markdown('<div style="background: #dc2626; color: white; padding: 1rem; border-radius: 8px; text-align: center; font-weight: bold;">⚪ NOT ASSESSED</div>', unsafe_allow_html=True)
     
-    st.write(f"Triage Score: 0/20")
-    st.write(f"Risk Level: Low")
+    st.markdown('<div style="color: #ffffff;">Triage Score: 0/20</div>', unsafe_allow_html=True)
+    st.markdown('<div style="color: #ffffff;">Risk Level: Low</div>', unsafe_allow_html=True)
     
     # Action buttons
     if st.button("🚨 EMERGENCY", use_container_width=True):
