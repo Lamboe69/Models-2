@@ -332,163 +332,191 @@ screening_ontology = {
     "nms_signals": ["brow_raise", "head_tilt", "mouth_gestures", "eye_gaze"]
 }
 
-def create_3d_avatar_html(pose='neutral', gesture_text='Ready'):
-    """Create 3D avatar using Three.js"""
+def create_avatar_display(pose='neutral', gesture_text='Ready'):
+    """Create avatar display with CSS animations"""
     
-    # Define pose parameters
-    pose_configs = {
+    # Define pose styles
+    pose_styles = {
         'fever': {
-            'leftArmRotation': '[-0.5, 0, -1.2]',
-            'rightArmRotation': '[0.3, 0, 0.5]',
-            'leftHandPosition': '[0.8, 1.2, 0.3]',
-            'rightHandPosition': '[-0.5, 0.5, 0]',
-            'headRotation': '[0.2, 0, 0]'
+            'left_arm': 'transform: rotate(-45deg) translateY(-20px);',
+            'right_arm': 'transform: rotate(15deg);',
+            'head': 'transform: rotate(5deg);',
+            'emoji': '🤒'
         },
         'cough': {
-            'leftArmRotation': '[-0.8, 0, -0.8]',
-            'rightArmRotation': '[0.2, 0, 0.3]',
-            'leftHandPosition': '[0.3, 0.8, 0.4]',
-            'rightHandPosition': '[-0.3, 0.3, 0]',
-            'headRotation': '[0.1, 0, 0]'
+            'left_arm': 'transform: rotate(-30deg) translateX(10px);',
+            'right_arm': 'transform: rotate(10deg);',
+            'head': 'transform: rotate(2deg);',
+            'emoji': '😷'
         },
         'question': {
-            'leftArmRotation': '[-1.5, 0, -0.5]',
-            'rightArmRotation': '[-1.5, 0, 0.5]',
-            'leftHandPosition': '[0.8, 1.5, 0]',
-            'rightHandPosition': '[-0.8, 1.5, 0]',
-            'headRotation': '[0.3, 0, 0]'
+            'left_arm': 'transform: rotate(-90deg) translateY(-30px);',
+            'right_arm': 'transform: rotate(90deg) translateY(-30px);',
+            'head': 'transform: rotate(0deg);',
+            'emoji': '❓'
         },
         'neutral': {
-            'leftArmRotation': '[0, 0, -0.3]',
-            'rightArmRotation': '[0, 0, 0.3]',
-            'leftHandPosition': '[0.5, 0, 0]',
-            'rightHandPosition': '[-0.5, 0, 0]',
-            'headRotation': '[0, 0, 0]'
+            'left_arm': 'transform: rotate(-10deg);',
+            'right_arm': 'transform: rotate(10deg);',
+            'head': 'transform: rotate(0deg);',
+            'emoji': '👤'
         }
     }
     
-    config = pose_configs.get(pose, pose_configs['neutral'])
+    style = pose_styles.get(pose, pose_styles['neutral'])
     
     html_content = f"""
-    <!DOCTYPE html>
-    <html>
-    <head>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <div style="
+        width: 100%; 
+        height: 400px; 
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        border-radius: 15px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        position: relative;
+        overflow: hidden;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+    ">
+        <!-- Avatar Figure -->
+        <div style="
+            position: relative;
+            transform: scale(1.2);
+            animation: float 3s ease-in-out infinite;
+        ">
+            <!-- Head -->
+            <div style="
+                width: 80px;
+                height: 80px;
+                background: #fdbcb4;
+                border-radius: 50%;
+                margin: 0 auto 10px;
+                position: relative;
+                border: 3px solid #fff;
+                {style['head']}
+                transition: all 0.5s ease;
+            ">
+                <!-- Eyes -->
+                <div style="
+                    position: absolute;
+                    top: 25px;
+                    left: 20px;
+                    width: 8px;
+                    height: 8px;
+                    background: #000;
+                    border-radius: 50%;
+                "></div>
+                <div style="
+                    position: absolute;
+                    top: 25px;
+                    right: 20px;
+                    width: 8px;
+                    height: 8px;
+                    background: #000;
+                    border-radius: 50%;
+                "></div>
+                <!-- Mouth -->
+                <div style="
+                    position: absolute;
+                    bottom: 20px;
+                    left: 50%;
+                    transform: translateX(-50%);
+                    width: 20px;
+                    height: 10px;
+                    border: 2px solid #000;
+                    border-top: none;
+                    border-radius: 0 0 20px 20px;
+                "></div>
+            </div>
+            
+            <!-- Body -->
+            <div style="
+                width: 60px;
+                height: 100px;
+                background: #87ceeb;
+                margin: 0 auto;
+                border-radius: 30px;
+                border: 3px solid #fff;
+                position: relative;
+            ">
+                <!-- Left Arm -->
+                <div style="
+                    position: absolute;
+                    top: 20px;
+                    left: -25px;
+                    width: 40px;
+                    height: 12px;
+                    background: #fdbcb4;
+                    border-radius: 6px;
+                    border: 2px solid #fff;
+                    {style['left_arm']}
+                    transition: all 0.5s ease;
+                    transform-origin: right center;
+                "></div>
+                
+                <!-- Right Arm -->
+                <div style="
+                    position: absolute;
+                    top: 20px;
+                    right: -25px;
+                    width: 40px;
+                    height: 12px;
+                    background: #fdbcb4;
+                    border-radius: 6px;
+                    border: 2px solid #fff;
+                    {style['right_arm']}
+                    transition: all 0.5s ease;
+                    transform-origin: left center;
+                "></div>
+            </div>
+            
+            <!-- Legs -->
+            <div style="display: flex; justify-content: center; gap: 10px; margin-top: 5px;">
+                <div style="
+                    width: 15px;
+                    height: 60px;
+                    background: #87ceeb;
+                    border-radius: 8px;
+                    border: 2px solid #fff;
+                "></div>
+                <div style="
+                    width: 15px;
+                    height: 60px;
+                    background: #87ceeb;
+                    border-radius: 8px;
+                    border: 2px solid #fff;
+                "></div>
+            </div>
+        </div>
+        
+        <!-- Gesture Display -->
+        <div style="
+            position: absolute;
+            bottom: 20px;
+            background: rgba(255, 255, 255, 0.95);
+            padding: 12px 20px;
+            border-radius: 25px;
+            font-family: 'Arial', sans-serif;
+            font-weight: bold;
+            color: #333;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        ">
+            <span style="font-size: 24px;">{style['emoji']}</span>
+            <span>{gesture_text}</span>
+        </div>
+        
+        <!-- Floating Animation -->
         <style>
-            body {{ margin: 0; background: #f0f0f0; }}
-            #avatar-container {{ width: 100%; height: 400px; }}
-            #gesture-text {{ 
-                position: absolute; 
-                bottom: 10px; 
-                left: 50%; 
-                transform: translateX(-50%); 
-                background: rgba(59, 130, 246, 0.9); 
-                color: white; 
-                padding: 8px 16px; 
-                border-radius: 20px; 
-                font-family: Arial, sans-serif;
-                font-weight: bold;
+            @keyframes float {{
+                0%, 100% {{ transform: scale(1.2) translateY(0px); }}
+                50% {{ transform: scale(1.2) translateY(-10px); }}
             }}
         </style>
-    </head>
-    <body>
-        <div id="avatar-container"></div>
-        <div id="gesture-text">{gesture_text}</div>
-        
-        <script>
-            // Scene setup
-            const scene = new THREE.Scene();
-            const camera = new THREE.PerspectiveCamera(75, 400/400, 0.1, 1000);
-            const renderer = new THREE.WebGLRenderer({{ antialias: true }});
-            renderer.setSize(400, 400);
-            renderer.setClearColor(0xf0f0f0);
-            document.getElementById('avatar-container').appendChild(renderer.domElement);
-            
-            // Lighting
-            const ambientLight = new THREE.AmbientLight(0x404040, 0.6);
-            scene.add(ambientLight);
-            const directionalLight = new THREE.DirectionalLight(0xffffff, 0.8);
-            directionalLight.position.set(1, 1, 1);
-            scene.add(directionalLight);
-            
-            // Materials
-            const skinMaterial = new THREE.MeshLambertMaterial({{ color: 0xfdbcb4 }});
-            const clothMaterial = new THREE.MeshLambertMaterial({{ color: 0x87ceeb }});
-            const eyeMaterial = new THREE.MeshLambertMaterial({{ color: 0x000000 }});
-            
-            // Create avatar group
-            const avatar = new THREE.Group();
-            
-            // Head
-            const headGeometry = new THREE.SphereGeometry(0.3, 16, 16);
-            const head = new THREE.Mesh(headGeometry, skinMaterial);
-            head.position.set(0, 1.5, 0);
-            head.rotation.set({config['headRotation'][0]}, {config['headRotation'][1]}, {config['headRotation'][2]});
-            avatar.add(head);
-            
-            // Eyes
-            const eyeGeometry = new THREE.SphereGeometry(0.05, 8, 8);
-            const leftEye = new THREE.Mesh(eyeGeometry, eyeMaterial);
-            leftEye.position.set(0.1, 1.6, 0.25);
-            const rightEye = new THREE.Mesh(eyeGeometry, eyeMaterial);
-            rightEye.position.set(-0.1, 1.6, 0.25);
-            avatar.add(leftEye);
-            avatar.add(rightEye);
-            
-            // Body
-            const bodyGeometry = new THREE.CylinderGeometry(0.25, 0.3, 0.8, 8);
-            const body = new THREE.Mesh(bodyGeometry, clothMaterial);
-            body.position.set(0, 0.8, 0);
-            avatar.add(body);
-            
-            // Arms
-            const armGeometry = new THREE.CylinderGeometry(0.08, 0.08, 0.6, 8);
-            const leftArm = new THREE.Mesh(armGeometry, skinMaterial);
-            leftArm.position.set(0.4, 1.0, 0);
-            leftArm.rotation.set({config['leftArmRotation'][0]}, {config['leftArmRotation'][1]}, {config['leftArmRotation'][2]});
-            avatar.add(leftArm);
-            
-            const rightArm = new THREE.Mesh(armGeometry, skinMaterial);
-            rightArm.position.set(-0.4, 1.0, 0);
-            rightArm.rotation.set({config['rightArmRotation'][0]}, {config['rightArmRotation'][1]}, {config['rightArmRotation'][2]});
-            avatar.add(rightArm);
-            
-            // Hands
-            const handGeometry = new THREE.SphereGeometry(0.1, 8, 8);
-            const leftHand = new THREE.Mesh(handGeometry, skinMaterial);
-            leftHand.position.set({config['leftHandPosition'][0]}, {config['leftHandPosition'][1]}, {config['leftHandPosition'][2]});
-            avatar.add(leftHand);
-            
-            const rightHand = new THREE.Mesh(handGeometry, skinMaterial);
-            rightHand.position.set({config['rightHandPosition'][0]}, {config['rightHandPosition'][1]}, {config['rightHandPosition'][2]});
-            avatar.add(rightHand);
-            
-            // Legs
-            const legGeometry = new THREE.CylinderGeometry(0.1, 0.1, 0.8, 8);
-            const leftLeg = new THREE.Mesh(legGeometry, clothMaterial);
-            leftLeg.position.set(0.15, 0, 0);
-            avatar.add(leftLeg);
-            
-            const rightLeg = new THREE.Mesh(legGeometry, clothMaterial);
-            rightLeg.position.set(-0.15, 0, 0);
-            avatar.add(rightLeg);
-            
-            scene.add(avatar);
-            
-            // Camera position
-            camera.position.set(0, 1.5, 3);
-            camera.lookAt(0, 1, 0);
-            
-            // Animation loop
-            function animate() {{
-                requestAnimationFrame(animate);
-                avatar.rotation.y += 0.005; // Slow rotation
-                renderer.render(scene, camera);
-            }}
-            animate();
-        </script>
-    </body>
-    </html>
+    </div>
     """
     
     return html_content
@@ -991,9 +1019,9 @@ with tab2:
             else:
                 st.warning("Please enter clinical text first")
         
-        # 3D Avatar display
-        st.markdown("**🤖 3D USL Avatar - MANO + FLAME Rigged**")
-        avatar_html = create_3d_avatar_html(st.session_state.avatar_pose, st.session_state.current_gesture)
+        # Avatar display
+        st.markdown("**🤖 USL Avatar - Animated Gesture Display**")
+        avatar_html = create_avatar_display(st.session_state.avatar_pose, st.session_state.current_gesture)
         html(avatar_html, height=450)
     
     with col2:
