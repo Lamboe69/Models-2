@@ -6,11 +6,7 @@ import pandas as pd
 from datetime import datetime
 import time
 import threading
-import matplotlib.pyplot as plt
-import matplotlib.patches as patches
-from PIL import Image, ImageDraw
-import io
-import base64
+from streamlit.components.v1 import html
 
 # Page config
 st.set_page_config(
@@ -336,90 +332,166 @@ screening_ontology = {
     "nms_signals": ["brow_raise", "head_tilt", "mouth_gestures", "eye_gaze"]
 }
 
-def create_2d_avatar(pose='neutral', gesture_text='Ready'):
-    """Create a 2D avatar showing USL gestures"""
-    fig, ax = plt.subplots(figsize=(6, 8))
-    ax.set_xlim(0, 10)
-    ax.set_ylim(0, 12)
-    ax.set_aspect('equal')
-    ax.axis('off')
+def create_3d_avatar_html(pose='neutral', gesture_text='Ready'):
+    """Create 3D avatar using Three.js"""
     
-    # Head
-    head = patches.Circle((5, 10), 1, facecolor='#fdbcb4', edgecolor='black', linewidth=2)
-    ax.add_patch(head)
+    # Define pose parameters
+    pose_configs = {
+        'fever': {
+            'leftArmRotation': '[-0.5, 0, -1.2]',
+            'rightArmRotation': '[0.3, 0, 0.5]',
+            'leftHandPosition': '[0.8, 1.2, 0.3]',
+            'rightHandPosition': '[-0.5, 0.5, 0]',
+            'headRotation': '[0.2, 0, 0]'
+        },
+        'cough': {
+            'leftArmRotation': '[-0.8, 0, -0.8]',
+            'rightArmRotation': '[0.2, 0, 0.3]',
+            'leftHandPosition': '[0.3, 0.8, 0.4]',
+            'rightHandPosition': '[-0.3, 0.3, 0]',
+            'headRotation': '[0.1, 0, 0]'
+        },
+        'question': {
+            'leftArmRotation': '[-1.5, 0, -0.5]',
+            'rightArmRotation': '[-1.5, 0, 0.5]',
+            'leftHandPosition': '[0.8, 1.5, 0]',
+            'rightHandPosition': '[-0.8, 1.5, 0]',
+            'headRotation': '[0.3, 0, 0]'
+        },
+        'neutral': {
+            'leftArmRotation': '[0, 0, -0.3]',
+            'rightArmRotation': '[0, 0, 0.3]',
+            'leftHandPosition': '[0.5, 0, 0]',
+            'rightHandPosition': '[-0.5, 0, 0]',
+            'headRotation': '[0, 0, 0]'
+        }
+    }
     
-    # Eyes
-    ax.plot([4.3, 4.7], [10.2, 10.2], 'ko', markersize=8)
-    ax.plot([5.3, 5.7], [10.2, 10.2], 'ko', markersize=8)
+    config = pose_configs.get(pose, pose_configs['neutral'])
     
-    # Mouth based on gesture
-    if 'fever' in gesture_text.lower() or 'pain' in gesture_text.lower():
-        # Concerned expression
-        mouth = patches.Arc((5, 9.5), 0.6, 0.3, angle=0, theta1=0, theta2=180, color='black', linewidth=3)
-    else:
-        # Neutral expression
-        ax.plot([4.7, 5.3], [9.6, 9.6], 'k-', linewidth=3)
-    ax.add_patch(mouth) if 'mouth' in locals() else None
+    html_content = f"""
+    <!DOCTYPE html>
+    <html>
+    <head>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+        <style>
+            body {{ margin: 0; background: #f0f0f0; }}
+            #avatar-container {{ width: 100%; height: 400px; }}
+            #gesture-text {{ 
+                position: absolute; 
+                bottom: 10px; 
+                left: 50%; 
+                transform: translateX(-50%); 
+                background: rgba(59, 130, 246, 0.9); 
+                color: white; 
+                padding: 8px 16px; 
+                border-radius: 20px; 
+                font-family: Arial, sans-serif;
+                font-weight: bold;
+            }}
+        </style>
+    </head>
+    <body>
+        <div id="avatar-container"></div>
+        <div id="gesture-text">{gesture_text}</div>
+        
+        <script>
+            // Scene setup
+            const scene = new THREE.Scene();
+            const camera = new THREE.PerspectiveCamera(75, 400/400, 0.1, 1000);
+            const renderer = new THREE.WebGLRenderer({{ antialias: true }});
+            renderer.setSize(400, 400);
+            renderer.setClearColor(0xf0f0f0);
+            document.getElementById('avatar-container').appendChild(renderer.domElement);
+            
+            // Lighting
+            const ambientLight = new THREE.AmbientLight(0x404040, 0.6);
+            scene.add(ambientLight);
+            const directionalLight = new THREE.DirectionalLight(0xffffff, 0.8);
+            directionalLight.position.set(1, 1, 1);
+            scene.add(directionalLight);
+            
+            // Materials
+            const skinMaterial = new THREE.MeshLambertMaterial({{ color: 0xfdbcb4 }});
+            const clothMaterial = new THREE.MeshLambertMaterial({{ color: 0x87ceeb }});
+            const eyeMaterial = new THREE.MeshLambertMaterial({{ color: 0x000000 }});
+            
+            // Create avatar group
+            const avatar = new THREE.Group();
+            
+            // Head
+            const headGeometry = new THREE.SphereGeometry(0.3, 16, 16);
+            const head = new THREE.Mesh(headGeometry, skinMaterial);
+            head.position.set(0, 1.5, 0);
+            head.rotation.set({config['headRotation'][0]}, {config['headRotation'][1]}, {config['headRotation'][2]});
+            avatar.add(head);
+            
+            // Eyes
+            const eyeGeometry = new THREE.SphereGeometry(0.05, 8, 8);
+            const leftEye = new THREE.Mesh(eyeGeometry, eyeMaterial);
+            leftEye.position.set(0.1, 1.6, 0.25);
+            const rightEye = new THREE.Mesh(eyeGeometry, eyeMaterial);
+            rightEye.position.set(-0.1, 1.6, 0.25);
+            avatar.add(leftEye);
+            avatar.add(rightEye);
+            
+            // Body
+            const bodyGeometry = new THREE.CylinderGeometry(0.25, 0.3, 0.8, 8);
+            const body = new THREE.Mesh(bodyGeometry, clothMaterial);
+            body.position.set(0, 0.8, 0);
+            avatar.add(body);
+            
+            // Arms
+            const armGeometry = new THREE.CylinderGeometry(0.08, 0.08, 0.6, 8);
+            const leftArm = new THREE.Mesh(armGeometry, skinMaterial);
+            leftArm.position.set(0.4, 1.0, 0);
+            leftArm.rotation.set({config['leftArmRotation'][0]}, {config['leftArmRotation'][1]}, {config['leftArmRotation'][2]});
+            avatar.add(leftArm);
+            
+            const rightArm = new THREE.Mesh(armGeometry, skinMaterial);
+            rightArm.position.set(-0.4, 1.0, 0);
+            rightArm.rotation.set({config['rightArmRotation'][0]}, {config['rightArmRotation'][1]}, {config['rightArmRotation'][2]});
+            avatar.add(rightArm);
+            
+            // Hands
+            const handGeometry = new THREE.SphereGeometry(0.1, 8, 8);
+            const leftHand = new THREE.Mesh(handGeometry, skinMaterial);
+            leftHand.position.set({config['leftHandPosition'][0]}, {config['leftHandPosition'][1]}, {config['leftHandPosition'][2]});
+            avatar.add(leftHand);
+            
+            const rightHand = new THREE.Mesh(handGeometry, skinMaterial);
+            rightHand.position.set({config['rightHandPosition'][0]}, {config['rightHandPosition'][1]}, {config['rightHandPosition'][2]});
+            avatar.add(rightHand);
+            
+            // Legs
+            const legGeometry = new THREE.CylinderGeometry(0.1, 0.1, 0.8, 8);
+            const leftLeg = new THREE.Mesh(legGeometry, clothMaterial);
+            leftLeg.position.set(0.15, 0, 0);
+            avatar.add(leftLeg);
+            
+            const rightLeg = new THREE.Mesh(legGeometry, clothMaterial);
+            rightLeg.position.set(-0.15, 0, 0);
+            avatar.add(rightLeg);
+            
+            scene.add(avatar);
+            
+            // Camera position
+            camera.position.set(0, 1.5, 3);
+            camera.lookAt(0, 1, 0);
+            
+            // Animation loop
+            function animate() {{
+                requestAnimationFrame(animate);
+                avatar.rotation.y += 0.005; // Slow rotation
+                renderer.render(scene, camera);
+            }}
+            animate();
+        </script>
+    </body>
+    </html>
+    """
     
-    # Body
-    body = patches.Rectangle((4.2, 6), 1.6, 3, facecolor='#87ceeb', edgecolor='black', linewidth=2)
-    ax.add_patch(body)
-    
-    # Arms and hands based on pose
-    if pose == 'fever':
-        # Hand to forehead
-        ax.plot([4.2, 3.5, 4.5], [8.5, 9.5, 10.2], 'k-', linewidth=4)  # Left arm
-        ax.plot([5.8, 6.5, 5.5], [8.5, 8.5, 7.5], 'k-', linewidth=4)   # Right arm
-        # Hand on forehead
-        hand = patches.Circle((4.2, 10), 0.3, facecolor='#fdbcb4', edgecolor='black')
-        ax.add_patch(hand)
-    elif pose == 'cough':
-        # Hand to mouth
-        ax.plot([4.2, 3.5, 4.8], [8.5, 9, 9.8], 'k-', linewidth=4)    # Left arm
-        ax.plot([5.8, 6.5, 5.5], [8.5, 8.5, 7.5], 'k-', linewidth=4)   # Right arm
-        # Hand near mouth
-        hand = patches.Circle((4.5, 9.5), 0.3, facecolor='#fdbcb4', edgecolor='black')
-        ax.add_patch(hand)
-    elif pose == 'question':
-        # Both hands up questioning
-        ax.plot([4.2, 3.2, 3.2], [8.5, 9.5, 10.5], 'k-', linewidth=4)  # Left arm up
-        ax.plot([5.8, 6.8, 6.8], [8.5, 9.5, 10.5], 'k-', linewidth=4)  # Right arm up
-        # Hands
-        hand1 = patches.Circle((3.2, 10.5), 0.3, facecolor='#fdbcb4', edgecolor='black')
-        hand2 = patches.Circle((6.8, 10.5), 0.3, facecolor='#fdbcb4', edgecolor='black')
-        ax.add_patch(hand1)
-        ax.add_patch(hand2)
-    else:
-        # Neutral pose
-        ax.plot([4.2, 3.5, 3.5], [8.5, 8, 7], 'k-', linewidth=4)       # Left arm
-        ax.plot([5.8, 6.5, 6.5], [8.5, 8, 7], 'k-', linewidth=4)       # Right arm
-        # Hands
-        hand1 = patches.Circle((3.5, 7), 0.3, facecolor='#fdbcb4', edgecolor='black')
-        hand2 = patches.Circle((6.5, 7), 0.3, facecolor='#fdbcb4', edgecolor='black')
-        ax.add_patch(hand1)
-        ax.add_patch(hand2)
-    
-    # Legs
-    ax.plot([4.5, 4.5, 4], [6, 3, 2], 'k-', linewidth=4)              # Left leg
-    ax.plot([5.5, 5.5, 6], [6, 3, 2], 'k-', linewidth=4)              # Right leg
-    
-    # Feet
-    foot1 = patches.Ellipse((4, 2), 0.8, 0.3, facecolor='black')
-    foot2 = patches.Ellipse((6, 2), 0.8, 0.3, facecolor='black')
-    ax.add_patch(foot1)
-    ax.add_patch(foot2)
-    
-    # Gesture text
-    ax.text(5, 1, gesture_text, ha='center', va='center', fontsize=14, 
-            bbox=dict(boxstyle='round,pad=0.5', facecolor='lightblue', alpha=0.8))
-    
-    # Convert to image
-    buf = io.BytesIO()
-    plt.savefig(buf, format='png', bbox_inches='tight', dpi=100, facecolor='white')
-    buf.seek(0)
-    plt.close()
-    
-    return Image.open(buf)
+    return html_content
 
 def add_to_log(message):
     timestamp = datetime.now().strftime("%H:%M:%S")
@@ -919,9 +991,10 @@ with tab2:
             else:
                 st.warning("Please enter clinical text first")
         
-        # Avatar display
-        avatar_img = create_2d_avatar(st.session_state.avatar_pose, st.session_state.current_gesture)
-        st.image(avatar_img, caption="USL Avatar - Real-time Synthesis", use_column_width=True)
+        # 3D Avatar display
+        st.markdown("**🤖 3D USL Avatar - MANO + FLAME Rigged**")
+        avatar_html = create_3d_avatar_html(st.session_state.avatar_pose, st.session_state.current_gesture)
+        html(avatar_html, height=450)
     
     with col2:
         st.subheader("🤟 USL → Structured Text")

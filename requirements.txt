@@ -1,9 +1,6 @@
 streamlit
 requests
 numpy
-Pillow
 pandas
-plotly
-matplotlib
 opencv-python
 streamlit-webrtc
