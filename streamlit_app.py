@@ -14,43 +14,9 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
-# Custom CSS matching complete_usl_system.py
+# Minimal CSS for alerts only
 st.markdown("""
 <style>
-    .main {
-        background-color: #0f172a;
-        color: #e2e8f0;
-    }
-    .stApp {
-        background-color: #0f172a;
-    }
-    .main-header {
-        background: #1e40af;
-        padding: 1.5rem;
-        border-radius: 10px;
-        color: white;
-        text-align: center;
-        margin-bottom: 1rem;
-        border: 1px solid #3b82f6;
-    }
-    .sidebar .sidebar-content {
-        background-color: #1e293b;
-        color: #f1f5f9;
-    }
-    .stSelectbox > div > div {
-        background-color: #374151;
-        color: #e2e8f0;
-    }
-    .stTextInput > div > div > input {
-        background-color: #374151;
-        color: #e2e8f0;
-        border: 1px solid #4b5563;
-    }
-    .stTextArea > div > div > textarea {
-        background-color: #374151;
-        color: #e2e8f0;
-        border: 1px solid #4b5563;
-    }
     .critical-alert {
         background: #dc2626;
         padding: 1rem;
@@ -82,39 +48,6 @@ st.markdown("""
         color: white;
         text-align: center;
         font-weight: bold;
-    }
-    .processing-log {
-        background: #374151;
-        padding: 1rem;
-        border-radius: 8px;
-        font-family: monospace;
-        font-size: 0.9rem;
-        max-height: 300px;
-        overflow-y: auto;
-        border: 1px solid #4b5563;
-    }
-    .video-container {
-        background: #1e293b;
-        padding: 1rem;
-        border-radius: 8px;
-        border: 1px solid #374151;
-        text-align: center;
-        min-height: 300px;
-    }
-    .section-header {
-        background: #374151;
-        padding: 0.5rem 1rem;
-        border-radius: 8px 8px 0 0;
-        color: white;
-        font-weight: bold;
-        margin-bottom: 0;
-    }
-    .section-content {
-        background: #1e293b;
-        padding: 1rem;
-        border-radius: 0 0 8px 8px;
-        border: 1px solid #374151;
-        border-top: none;
     }
 </style>
 """, unsafe_allow_html=True)
@@ -158,146 +91,138 @@ def add_to_log(message):
     if len(st.session_state.processing_log) > 50:
         st.session_state.processing_log = st.session_state.processing_log[-50:]
 
-# Header matching complete_usl_system.py
-st.markdown("""
-<div class="main-header">
-    <h1>🏥 MediSign - Ugandan Sign Language Healthcare Assistant</h1>
-    <p>Smart Healthcare Communication • Real-time USL Translation • Clinical Integration</p>
-    <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 1rem;">
-        <div><strong>System Status:</strong> {}</div>
-        <div><strong>Time:</strong> {}</div>
-    </div>
-</div>
-""".format(st.session_state.system_status, datetime.now().strftime("%H:%M:%S")), unsafe_allow_html=True)
+# Header
+st.title("🏥 MediSign - Ugandan Sign Language Healthcare Assistant")
+st.markdown("**Smart Healthcare Communication • Real-time USL Translation • Clinical Integration**")
 
-# Sidebar matching complete_usl_system.py layout
+col_status, col_time = st.columns(2)
+with col_status:
+    st.write(f"**System Status:** {st.session_state.system_status}")
+with col_time:
+    st.write(f"**Time:** {datetime.now().strftime('%H:%M:%S')}")
+
+st.divider()
+
+# Sidebar
 with st.sidebar:
-    st.markdown('<div class="section-header">🤟 USL Translation Mode</div>', unsafe_allow_html=True)
-    with st.container():
-        mode = st.radio(
-            "Select Mode:",
-            ["👤→👩⚕️ Patient to Clinician", "👩⚕️→👤 Clinician to Patient"],
-            key="translation_mode"
-        )
-        st.session_state.current_mode = "patient_to_clinician" if "Patient to Clinician" in mode else "clinician_to_patient"
+    st.header("🤟 USL Translation Mode")
+    mode = st.radio(
+        "Select Mode:",
+        ["👤→👩⚕️ Patient to Clinician", "👩⚕️→👤 Clinician to Patient"],
+        key="translation_mode"
+    )
+    st.session_state.current_mode = "patient_to_clinician" if "Patient to Clinician" in mode else "clinician_to_patient"
     
-    st.markdown('<div class="section-header">👤 Patient Information</div>', unsafe_allow_html=True)
-    with st.container():
-        patient_id = st.text_input("Patient ID", key="patient_id")
-        col1, col2 = st.columns(2)
-        with col1:
-            age = st.number_input("Age", min_value=0, max_value=120, key="age")
-        with col2:
-            gender = st.selectbox("Gender", ["Male", "Female", "Other"], key="gender")
+    st.divider()
+    st.subheader("👤 Patient Information")
+    patient_id = st.text_input("Patient ID", key="patient_id")
+    col1, col2 = st.columns(2)
+    with col1:
+        age = st.number_input("Age", min_value=0, max_value=120, key="age")
+    with col2:
+        gender = st.selectbox("Gender", ["Male", "Female", "Other"], key="gender")
     
-    st.markdown('<div class="section-header">🤟 USL Input & Processing</div>', unsafe_allow_html=True)
-    with st.container():
-        if st.button("📹 Live Camera (Front+Side)", use_container_width=True):
-            st.session_state.live_camera_active = not st.session_state.live_camera_active
-            status = "started" if st.session_state.live_camera_active else "stopped"
-            add_to_log(f"📹 Camera {status}")
-            st.rerun()
-        
-        uploaded_video = st.file_uploader("📁 Upload USL Video", type=['mp4', 'avi', 'mov'])
-        uploaded_image = st.file_uploader("🖼️ Upload USL Image", type=['jpg', 'jpeg', 'png'])
-        
-        # Real-time metrics
-        col_fps, col_conf = st.columns(2)
-        with col_fps:
-            fps = 30.0 if st.session_state.live_camera_active else 0
-            st.metric("FPS", f"{fps:.1f}")
-        with col_conf:
-            st.metric("Confidence", "Ready")
+    st.divider()
+    st.subheader("🤟 USL Input & Processing")
+    if st.button("📹 Live Camera (Front+Side)", use_container_width=True):
+        st.session_state.live_camera_active = not st.session_state.live_camera_active
+        status = "started" if st.session_state.live_camera_active else "stopped"
+        add_to_log(f"📹 Camera {status}")
+        st.rerun()
     
-    st.markdown('<div class="section-header">🗣️ Language & USL Settings</div>', unsafe_allow_html=True)
-    with st.container():
-        clinic_lang = st.selectbox("Clinic Language", screening_ontology["languages"])
-        usl_variant = st.selectbox("USL Variant", screening_ontology["usl_variants"])
-        
-        st.write("**Non-Manual Signals:**")
-        nms_cols = st.columns(2)
-        for i, nms in enumerate(screening_ontology["nms_signals"]):
-            with nms_cols[i % 2]:
-                st.checkbox(nms.replace("_", " ").title(), key=f"nms_{nms}")
+    uploaded_video = st.file_uploader("📁 Upload USL Video", type=['mp4', 'avi', 'mov'])
+    uploaded_image = st.file_uploader("🖼️ Upload USL Image", type=['jpg', 'jpeg', 'png'])
     
-    st.markdown('<div class="section-header">📋 Screening Questions</div>', unsafe_allow_html=True)
-    with st.container():
-        questions = [
-            ("fever", "🌡️ Fever"),
-            ("cough", "😷 Cough"),
-            ("hemoptysis", "🩸 Blood in sputum"),
-            ("diarrhea", "💊 Diarrhea"),
-            ("rash", "🔴 Rash"),
-            ("travel", "✈️ Recent travel"),
-            ("exposure", "👥 Sick contact"),
-            ("pregnancy", "🤱 Pregnancy")
-        ]
-        
-        for key, label in questions:
-            col_q, col_y, col_n = st.columns([2, 1, 1])
-            with col_q:
-                st.write(label)
-            with col_y:
-                st.radio("?", ["Yes", "No", "Unknown"], key=f"q_{key}", label_visibility="collapsed", horizontal=True)
+    col_fps, col_conf = st.columns(2)
+    with col_fps:
+        fps = 30.0 if st.session_state.live_camera_active else 0
+        st.metric("FPS", f"{fps:.1f}")
+    with col_conf:
+        st.metric("Confidence", "Ready")
     
-    st.markdown('<div class="section-header">🦠 Priority Diseases (WHO/MoH)</div>', unsafe_allow_html=True)
-    with st.container():
-        for disease, info in screening_ontology["infectious_diseases"].items():
-            color = "🔴" if info["priority"] == "critical" else "🟡" if info["priority"] == "high" else "🔵"
-            st.checkbox(f"{color} {disease} ({info['priority'].upper()})", key=f"disease_{disease}")
+    st.divider()
+    st.subheader("🗣️ Language & USL Settings")
+    clinic_lang = st.selectbox("Clinic Language", screening_ontology["languages"])
+    usl_variant = st.selectbox("USL Variant", screening_ontology["usl_variants"])
     
-    st.markdown('<div class="section-header">⚙️ System Controls</div>', unsafe_allow_html=True)
-    with st.container():
-        if st.button("🧪 Test API Connection", use_container_width=True):
-            with st.spinner("Testing connection..."):
-                try:
-                    response = requests.get(f"{st.session_state.api_url}/health", timeout=30)
-                    if response.status_code == 200:
-                        st.session_state.system_status = "🟢 All Systems Online"
-                        add_to_log("✅ API Health Check: Connected")
-                        st.success("✅ API Connected")
-                    else:
-                        st.session_state.system_status = "🔴 System Offline"
-                        add_to_log(f"❌ API Error: {response.status_code}")
-                        st.error("❌ API Connection Failed")
-                except Exception as e:
+    st.write("**Non-Manual Signals:**")
+    nms_cols = st.columns(2)
+    for i, nms in enumerate(screening_ontology["nms_signals"]):
+        with nms_cols[i % 2]:
+            st.checkbox(nms.replace("_", " ").title(), key=f"nms_{nms}")
+    
+    st.divider()
+    st.subheader("📋 Screening Questions")
+    questions = [
+        ("fever", "🌡️ Fever"),
+        ("cough", "😷 Cough"),
+        ("hemoptysis", "🩸 Blood in sputum"),
+        ("diarrhea", "💊 Diarrhea"),
+        ("rash", "🔴 Rash"),
+        ("travel", "✈️ Recent travel"),
+        ("exposure", "👥 Sick contact"),
+        ("pregnancy", "🤱 Pregnancy")
+    ]
+    
+    for key, label in questions:
+        st.radio(label, ["Yes", "No", "Unknown"], key=f"q_{key}", horizontal=True)
+    
+    st.divider()
+    st.subheader("🦠 Priority Diseases (WHO/MoH)")
+    for disease, info in screening_ontology["infectious_diseases"].items():
+        color = "🔴" if info["priority"] == "critical" else "🟡" if info["priority"] == "high" else "🔵"
+        st.checkbox(f"{color} {disease} ({info['priority'].upper()})", key=f"disease_{disease}")
+    
+    st.divider()
+    st.subheader("⚙️ System Controls")
+    if st.button("🧪 Test API Connection", use_container_width=True):
+        with st.spinner("Testing connection..."):
+            try:
+                response = requests.get(f"{st.session_state.api_url}/health", timeout=30)
+                if response.status_code == 200:
+                    st.session_state.system_status = "🟢 All Systems Online"
+                    add_to_log("✅ API Health Check: Connected")
+                    st.success("✅ API Connected")
+                else:
                     st.session_state.system_status = "🔴 System Offline"
-                    add_to_log(f"❌ API Error: {str(e)}")
-                    st.error(f"❌ Connection Error: API timeout (trying backup processing)")
-                st.rerun()
-        
-        if st.button("📄 Generate FHIR Report", use_container_width=True):
-            timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-            filename = f"USL_Clinical_Report_{patient_id or 'UNKNOWN'}_{timestamp}.json"
-            add_to_log(f"📄 Report generated: {filename}")
-            st.success(f"📄 FHIR report: {filename}")
-        
-        if st.button("🔄 New Patient Session", use_container_width=True):
-            st.session_state.patient_data = {}
-            st.session_state.screening_results = {}
-            st.session_state.processing_log = []
-            add_to_log("🔄 New patient session initialized")
-            st.success("New session started!")
+                    add_to_log(f"❌ API Error: {response.status_code}")
+                    st.error("❌ API Connection Failed")
+            except Exception as e:
+                st.session_state.system_status = "🔴 System Offline"
+                add_to_log(f"❌ API Error: {str(e)}")
+                st.error(f"❌ Connection Error: API timeout (trying backup processing)")
             st.rerun()
-        
-        st.checkbox("🔒 Offline-first (Privacy)", value=True, key="offline_mode")
+    
+    if st.button("📄 Generate FHIR Report", use_container_width=True):
+        timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+        filename = f"USL_Clinical_Report_{patient_id or 'UNKNOWN'}_{timestamp}.json"
+        add_to_log(f"📄 Report generated: {filename}")
+        st.success(f"📄 FHIR report: {filename}")
+    
+    if st.button("🔄 New Patient Session", use_container_width=True):
+        st.session_state.patient_data = {}
+        st.session_state.screening_results = {}
+        st.session_state.processing_log = []
+        add_to_log("🔄 New patient session initialized")
+        st.success("New session started!")
+        st.rerun()
+    
+    st.checkbox("🔒 Offline-first (Privacy)", value=True, key="offline_mode")
 
 # Main content area with tabs matching complete_usl_system.py
 tab1, tab2, tab3, tab4 = st.tabs(["🎥 Video Processing", "🤖 Avatar Synthesis", "📋 Clinical Results", "📊 System Analytics"])
 
 with tab1:
-    st.markdown('<div class="section-header">🎥 Real-time USL Processing</div>', unsafe_allow_html=True)
+    st.subheader("🎥 Real-time USL Processing")
     
     # Video display area
     col_video, col_processing = st.columns([3, 2])
     
     with col_video:
-        st.markdown('<div class="video-container">', unsafe_allow_html=True)
         if st.session_state.live_camera_active:
-            st.markdown("📷 **Live USL Camera Feed**\n\n3D Pose Detection (MediaPipe + MANO + FLAME)\nMultistream Transformer Processing\nGraph Attention Network Analysis\n\n🟢 **LIVE PROCESSING ACTIVE**")
+            st.info("📷 **Live USL Camera Feed**\n\n3D Pose Detection (MediaPipe + MANO + FLAME)\nMultistream Transformer Processing\nGraph Attention Network Analysis\n\n🟢 **LIVE PROCESSING ACTIVE**")
         else:
-            st.markdown("📷 **USL Video Feed**\n\n3D Pose Detection (MediaPipe + MANO + FLAME)\nMultistream Transformer Processing\nGraph Attention Network Analysis\n\nReady for USL input...")
-        st.markdown('</div>', unsafe_allow_html=True)
+            st.info("📷 **USL Video Feed**\n\n3D Pose Detection (MediaPipe + MANO + FLAME)\nMultistream Transformer Processing\nGraph Attention Network Analysis\n\nReady for USL input...")
         
         # Process button
         if st.button("🧠 Process USL → Clinical", type="primary", use_container_width=True):
@@ -363,23 +288,21 @@ with tab1:
                 st.rerun()
     
     with col_processing:
-        st.markdown('<div class="section-header">🧠 Neural Processing Pipeline</div>', unsafe_allow_html=True)
+        st.subheader("🧠 Neural Processing Pipeline")
         
         # Processing log
-        log_container = st.container()
-        with log_container:
-            if st.session_state.processing_log:
-                log_text = "\n".join(st.session_state.processing_log[-15:])  # Show last 15 entries
-            else:
-                log_text = "🔄 NEURAL PROCESSING PIPELINE\n" + "="*50 + "\n\n📊 3D Skeletal Pose Extraction: Ready\n✋ MANO Hand Tracking: Ready\n😊 FLAME Face Analysis: Ready\n🧠 Multistream Transformer: Ready\n📈 Graph Attention Network: Ready\n🎯 Bayesian Calibration: Ready\n🏥 Clinical Slot Classification: Ready\n\n⚡ Latency Target: <300ms\n💾 Model Size: <200MB (INT8)\n🔒 Privacy: Offline-first processing"
-            
-            st.markdown(f'<div class="processing-log">{log_text}</div>', unsafe_allow_html=True)
+        if st.session_state.processing_log:
+            log_text = "\n".join(st.session_state.processing_log[-15:])  # Show last 15 entries
+        else:
+            log_text = "🔄 NEURAL PROCESSING PIPELINE\n" + "="*50 + "\n\n📊 3D Skeletal Pose Extraction: Ready\n✋ MANO Hand Tracking: Ready\n😊 FLAME Face Analysis: Ready\n🧠 Multistream Transformer: Ready\n📈 Graph Attention Network: Ready\n🎯 Bayesian Calibration: Ready\n🏥 Clinical Slot Classification: Ready\n\n⚡ Latency Target: <300ms\n💾 Model Size: <200MB (INT8)\n🔒 Privacy: Offline-first processing"
+        
+        st.code(log_text, language=None)
 
 with tab2:
     col1, col2 = st.columns(2)
     
     with col1:
-        st.markdown('<div class="section-header">📝 Text → USL Synthesis</div>', unsafe_allow_html=True)
+        st.subheader("📝 Text → USL Synthesis")
         
         clinical_templates = [
             "Do you have fever?",
@@ -411,12 +334,10 @@ with tab2:
             st.success("🤖 Avatar synthesized!")
         
         # Avatar display
-        st.markdown('<div class="video-container">', unsafe_allow_html=True)
-        st.markdown("🤖 **Parametric Avatar**\n(MANO + Face Rig)\n\nReady for synthesis...")
-        st.markdown('</div>', unsafe_allow_html=True)
+        st.info("🤖 **Parametric Avatar**\n(MANO + Face Rig)\n\nReady for synthesis...")
     
     with col2:
-        st.markdown('<div class="section-header">🤟 USL → Structured Text</div>', unsafe_allow_html=True)
+        st.subheader("🤟 USL → Structured Text")
         
         # Recognition results
         if st.session_state.screening_results:
@@ -444,7 +365,7 @@ with tab2:
                 st.success(f"🔊 {lang} TTS activated")
 
 with tab3:
-    st.markdown('<div class="section-header">📋 FHIR-Structured Clinical Results</div>', unsafe_allow_html=True)
+    st.subheader("📋 FHIR-Structured Clinical Results")
     
     if st.session_state.screening_results:
         # Clinical Results Display
@@ -530,7 +451,7 @@ with tab3:
         st.write("🔄 Ready to receive USL input and generate structured clinical data")
 
 with tab4:
-    st.markdown('<div class="section-header">📊 System Performance & Analytics</div>', unsafe_allow_html=True)
+    st.subheader("📊 System Performance & Analytics")
     
     analytics_text = f"""📊 **SYSTEM PERFORMANCE ANALYTICS**
 {'='*60}
