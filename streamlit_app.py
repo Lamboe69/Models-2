@@ -237,6 +237,36 @@ st.markdown("""
     .stSidebar .stFileUploader [data-testid="stFileUploaderDropzoneInstructions"] {
         color: #ffffff !important;
     }
+    
+    /* Processing status and spinner visibility */
+    .stSpinner > div {
+        border-color: #3b82f6 !important;
+    }
+    
+    [data-testid="stSpinner"] {
+        color: #1e293b !important;
+    }
+    
+    .stProgress > div > div {
+        background-color: #3b82f6 !important;
+    }
+    
+    /* Status text and processing elements */
+    .element-container div[data-testid="stText"] {
+        color: #1e293b !important;
+        background-color: #f8fafc;
+        padding: 0.5rem;
+        border-radius: 4px;
+        border: 1px solid #e2e8f0;
+    }
+    
+    /* Empty and status containers */
+    .element-container .stEmpty {
+        background-color: #f8fafc !important;
+        color: #1e293b !important;
+        padding: 0.5rem;
+        border-radius: 4px;
+    }
 </style>
 """, unsafe_allow_html=True)
 
