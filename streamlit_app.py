@@ -367,12 +367,12 @@ with st.sidebar:
             # Try API call with fallback
             try:
                 features = [np.random.uniform(-1, 1) for _ in range(225)]
-                add_to_log("🌐 Sending to Clinical GAT model...")
+                add_to_log("🌐 Sending to Clinical GAT model (may take 60s if service is sleeping)...")
                 
                 response = requests.post(
                     f"{st.session_state.api_url}/predict",
                     json={"pose_features": features},
-                    timeout=10
+                    timeout=60
                 )
                 
                 if response.status_code == 200:
@@ -387,7 +387,7 @@ with st.sidebar:
                     st.error(f"❌ Processing failed: {response.text}")
                     
             except requests.exceptions.Timeout:
-                add_to_log("⏰ API timeout (>10s), switching to offline processing")
+                add_to_log("⏰ API timeout (>60s), switching to offline processing")
             except requests.exceptions.ConnectionError:
                 add_to_log("🌐 API connection failed, using offline processing")
             except Exception as e:
@@ -533,13 +533,15 @@ with st.sidebar:
     # System Controls Section
     st.markdown('<div style="background: #374151; color: white; padding: 0.5rem; border-radius: 8px; margin-bottom: 1rem; font-weight: bold;">⚙️ System Controls</div>', unsafe_allow_html=True)
     if st.button("🧪 Test API Connection", use_container_width=True):
-        with st.spinner("Testing connection..."):
+        with st.spinner("Testing connection (may take 60s to wake up service)..."):
             try:
-                response = requests.get(f"{st.session_state.api_url}/health", timeout=5)
+                # First try to wake up the service
+                add_to_log("🔄 Waking up API service...")
+                response = requests.get(f"{st.session_state.api_url}/health", timeout=60)
                 if response.status_code == 200:
                     st.session_state.system_status = "🟢 All Systems Online"
                     add_to_log("✅ API Health Check: Connected")
-                    st.success("✅ API Connected")
+                    st.success("✅ API Connected and Ready!")
                 else:
                     st.session_state.system_status = "🔴 System Offline"
                     add_to_log(f"❌ API Error: {response.status_code}")
@@ -547,7 +549,7 @@ with st.sidebar:
             except Exception as e:
                 st.session_state.system_status = "🔴 System Offline"
                 add_to_log(f"❌ API Error: {str(e)}")
-                st.error(f"❌ Connection Error: API timeout (trying backup processing)")
+                st.error(f"❌ Connection Error: Service may be sleeping (Render.com free tier)")
             st.rerun()
     
     if st.button("📄 Generate FHIR Report", use_container_width=True):
@@ -555,6 +557,16 @@ with st.sidebar:
         filename = f"USL_Clinical_Report_{patient_id or 'UNKNOWN'}_{timestamp}.json"
         add_to_log(f"📄 Report generated: {filename}")
         st.success(f"📄 FHIR report: {filename}")
+    
+    if st.button("🔄 Wake Up API", use_container_width=True):
+        with st.spinner("Waking up API service..."):
+            try:
+                requests.get(f"{st.session_state.api_url}/health", timeout=60)
+                st.success("✅ API service is now awake!")
+                st.session_state.system_status = "🟢 All Systems Online"
+            except:
+                st.error("❌ Failed to wake up API")
+        st.rerun()
     
     if st.button("🔄 New Patient Session", use_container_width=True):
         st.session_state.patient_data = {}
@@ -621,12 +633,12 @@ with tab1:
                 # Try API call with fallback
                 try:
                     features = [np.random.uniform(-1, 1) for _ in range(225)]
-                    add_to_log("🌐 Sending to Clinical GAT model...")
+                    add_to_log("🌐 Sending to Clinical GAT model (may take 60s if service is sleeping)...")
                     
                     response = requests.post(
                         f"{st.session_state.api_url}/predict",
                         json={"pose_features": features},
-                        timeout=10
+                        timeout=60
                     )
                     
                     if response.status_code == 200:
@@ -638,7 +650,7 @@ with tab1:
                         st.error(f"❌ Processing failed: {response.text}")
                         
                 except requests.exceptions.Timeout:
-                    add_to_log("⏰ API timeout (>10s), switching to offline processing")
+                    add_to_log("⏰ API timeout (>60s), switching to offline processing")
                 except requests.exceptions.ConnectionError:
                     add_to_log("🌐 API connection failed, using offline processing")
                 except Exception as e:
