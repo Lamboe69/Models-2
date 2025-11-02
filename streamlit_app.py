@@ -525,3 +525,24 @@ def create_avatar_display(pose='neutral', gesture_text='Ready'):
     """
     
     return html_content
+
+# Main App
+st.title("🏥 MediSign - USL Healthcare Assistant")
+st.markdown("### Vice City Style Medical Avatar")
+
+# Display the avatar
+avatar_html = create_avatar_display(pose='neutral', gesture_text='Ready for USL')
+html(avatar_html, height=550)
+
+# Add some controls
+col1, col2 = st.columns(2)
+
+with col1:
+    pose = st.selectbox("Select Pose:", ['neutral', 'fever', 'cough', 'question'])
+    
+with col2:
+    gesture_text = st.text_input("Gesture Text:", "Ready for USL")
+
+if st.button("Update Avatar"):
+    avatar_html = create_avatar_display(pose=pose, gesture_text=gesture_text)
+    html(avatar_html, height=550)
