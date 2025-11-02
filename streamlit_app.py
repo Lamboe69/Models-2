@@ -14,311 +14,154 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
-# Modern Custom CSS with glassmorphism and animations
+# Clean white theme with visible sidebar content
 st.markdown("""
 <style>
-    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
-    
-    * {
-        font-family: 'Inter', sans-serif;
-    }
-    
-    /* Main app background with gradient */
+    /* Main app background - clean white */
     .stApp {
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        background-attachment: fixed;
+        background: #ffffff;
     }
     
-    /* Sidebar styling with glassmorphism */
+    /* Sidebar styling - dark with visible text */
     .stSidebar {
-        background: rgba(30, 41, 59, 0.95) !important;
-        backdrop-filter: blur(10px);
-        border-right: 1px solid rgba(255, 255, 255, 0.1);
+        background: #1e293b !important;
     }
     
     .stSidebar .stMarkdown, 
+    .stSidebar .stMarkdown p,
     .stSidebar .stSelectbox label,
     .stSidebar .stRadio label,
     .stSidebar .stCheckbox label,
     .stSidebar .stTextInput label,
     .stSidebar .stNumberInput label,
-    .stSidebar .stFileUploader label {
-        color: #f1f5f9 !important;
+    .stSidebar .stFileUploader label,
+    .stSidebar h1, .stSidebar h2, .stSidebar h3 {
+        color: #ffffff !important;
         font-weight: 500;
+    }
+    
+    .stSidebar .stRadio > div {
+        color: #ffffff !important;
+    }
+    
+    .stSidebar .stCheckbox > div {
+        color: #ffffff !important;
     }
     
     /* Main content area */
     .main .block-container {
-        padding: 2rem 3rem;
-        max-width: 1400px;
+        padding: 1rem 2rem;
+        max-width: 1200px;
     }
     
-    /* Beautiful card styling with glassmorphism */
-    div[data-testid="stVerticalBlock"] > div[data-testid="stVerticalBlock"] {
-        background: rgba(255, 255, 255, 0.95);
-        backdrop-filter: blur(20px);
-        border-radius: 20px;
-        padding: 2rem;
-        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
-        border: 1px solid rgba(255, 255, 255, 0.3);
-    }
-    
-    /* Header styling */
-    h1 {
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-        background-clip: text;
-        font-weight: 800;
-        letter-spacing: -0.5px;
-        margin-bottom: 0.5rem;
-    }
-    
-    h2, h3 {
+    /* Headers */
+    h1, h2, h3 {
         color: #1e293b;
         font-weight: 700;
-        letter-spacing: -0.3px;
     }
     
-    /* Button styling with modern gradient */
+    /* Button styling */
     .stButton > button {
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        background: #3b82f6;
         color: white;
         border: none;
-        border-radius: 12px;
-        padding: 0.75rem 1.5rem;
+        border-radius: 8px;
+        padding: 0.5rem 1rem;
         font-weight: 600;
-        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
-    }
-    
-    .stButton > button:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 8px 25px rgba(102, 126, 234, 0.6);
-    }
-    
-    .stButton > button:active {
-        transform: translateY(0);
-    }
-    
-    /* Primary button special styling */
-    .stButton > button[kind="primary"] {
-        background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
-        box-shadow: 0 4px 15px rgba(245, 87, 108, 0.4);
-    }
-    
-    .stButton > button[kind="primary"]:hover {
-        box-shadow: 0 8px 25px rgba(245, 87, 108, 0.6);
-    }
-    
-    /* Alert boxes with modern design */
-    .critical-alert {
-        background: linear-gradient(135deg, #ff6b6b 0%, #ee5a6f 100%);
-        padding: 1.5rem;
-        border-radius: 16px;
-        color: white;
-        text-align: center;
-        font-weight: 700;
-        font-size: 1.1rem;
-        box-shadow: 0 8px 30px rgba(220, 38, 38, 0.3);
-        animation: pulse 2s ease-in-out infinite;
-    }
-    
-    .high-alert {
-        background: linear-gradient(135deg, #ff9f43 0%, #ff6348 100%);
-        padding: 1.5rem;
-        border-radius: 16px;
-        color: white;
-        text-align: center;
-        font-weight: 700;
-        font-size: 1.1rem;
-        box-shadow: 0 8px 30px rgba(234, 88, 12, 0.3);
-    }
-    
-    .medium-alert {
-        background: linear-gradient(135deg, #feca57 0%, #ff9ff3 100%);
-        padding: 1.5rem;
-        border-radius: 16px;
-        color: white;
-        text-align: center;
-        font-weight: 700;
-        font-size: 1.1rem;
-        box-shadow: 0 8px 30px rgba(217, 119, 6, 0.3);
-    }
-    
-    .low-alert {
-        background: linear-gradient(135deg, #48dbfb 0%, #0abde3 100%);
-        padding: 1.5rem;
-        border-radius: 16px;
-        color: white;
-        text-align: center;
-        font-weight: 700;
-        font-size: 1.1rem;
-        box-shadow: 0 8px 30px rgba(22, 163, 74, 0.3);
-    }
-    
-    @keyframes pulse {
-        0%, 100% { transform: scale(1); }
-        50% { transform: scale(1.02); }
-    }
-    
-    /* Metric cards with modern styling */
-    div[data-testid="stMetric"] {
-        background: linear-gradient(135deg, rgba(255, 255, 255, 0.9) 0%, rgba(255, 255, 255, 0.7) 100%);
-        padding: 1.5rem;
-        border-radius: 16px;
-        box-shadow: 0 8px 30px rgba(0, 0, 0, 0.1);
-        border: 1px solid rgba(255, 255, 255, 0.5);
         transition: all 0.3s ease;
     }
     
-    div[data-testid="stMetric"]:hover {
-        transform: translateY(-4px);
-        box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
+    .stButton > button:hover {
+        background: #2563eb;
+        transform: translateY(-1px);
     }
     
-    div[data-testid="stMetric"] label {
-        font-size: 0.875rem;
-        font-weight: 600;
-        color: #64748b;
-        text-transform: uppercase;
-        letter-spacing: 0.5px;
+    /* Primary button */
+    .stButton > button[kind="primary"] {
+        background: #dc2626;
     }
     
-    div[data-testid="stMetric"] [data-testid="stMetricValue"] {
-        font-size: 2rem;
-        font-weight: 800;
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-        background-clip: text;
+    .stButton > button[kind="primary"]:hover {
+        background: #b91c1c;
     }
     
-    /* Info/success/warning/error boxes */
-    .stAlert {
-        border-radius: 16px;
-        border: none;
-        padding: 1.5rem;
-        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    /* Alert boxes */
+    .critical-alert {
+        background: #dc2626;
+        padding: 1rem;
+        border-radius: 8px;
+        color: white;
+        text-align: center;
+        font-weight: bold;
+        margin: 1rem 0;
+    }
+    
+    .high-alert {
+        background: #ea580c;
+        padding: 1rem;
+        border-radius: 8px;
+        color: white;
+        text-align: center;
+        font-weight: bold;
+        margin: 1rem 0;
+    }
+    
+    .medium-alert {
+        background: #d97706;
+        padding: 1rem;
+        border-radius: 8px;
+        color: white;
+        text-align: center;
+        font-weight: bold;
+        margin: 1rem 0;
+    }
+    
+    .low-alert {
+        background: #16a34a;
+        padding: 1rem;
+        border-radius: 8px;
+        color: white;
+        text-align: center;
+        font-weight: bold;
+        margin: 1rem 0;
+    }
+    
+    /* Metric cards */
+    div[data-testid="stMetric"] {
+        background: #f8fafc;
+        padding: 1rem;
+        border-radius: 8px;
+        border: 1px solid #e2e8f0;
     }
     
     /* Code blocks */
     .stCodeBlock {
-        border-radius: 12px;
-        background: rgba(30, 41, 59, 0.95) !important;
-        box-shadow: 0 8px 30px rgba(0, 0, 0, 0.2);
+        border-radius: 8px;
+        background: #1e293b;
     }
     
-    /* Input fields */
-    .stTextInput input, .stNumberInput input, .stSelectbox select {
-        border-radius: 10px;
-        border: 2px solid rgba(102, 126, 234, 0.2);
-        transition: all 0.3s ease;
+    /* Info boxes */
+    .stInfo {
+        border-radius: 8px;
+        border-left: 4px solid #3b82f6;
     }
     
-    .stTextInput input:focus, .stNumberInput input:focus, .stSelectbox select:focus {
-        border-color: #667eea;
-        box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+    /* Success boxes */
+    .stSuccess {
+        border-radius: 8px;
+        border-left: 4px solid #16a34a;
     }
     
-    /* Radio buttons */
-    .stRadio > label {
-        font-weight: 600;
-        color: #1e293b;
+    /* Warning boxes */
+    .stWarning {
+        border-radius: 8px;
+        border-left: 4px solid #ea580c;
     }
     
-    /* Checkboxes */
-    .stCheckbox label {
-        font-weight: 500;
-    }
-    
-    /* File uploader */
-    .stFileUploader {
-        background: rgba(255, 255, 255, 0.5);
-        border-radius: 12px;
-        padding: 1rem;
-        border: 2px dashed rgba(102, 126, 234, 0.3);
-        transition: all 0.3s ease;
-    }
-    
-    .stFileUploader:hover {
-        border-color: #667eea;
-        background: rgba(255, 255, 255, 0.7);
-    }
-    
-    /* Progress bar */
-    .stProgress > div > div {
-        background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
-        border-radius: 10px;
-    }
-    
-    /* Divider */
-    hr {
-        border: none;
-        height: 2px;
-        background: linear-gradient(90deg, transparent 0%, rgba(102, 126, 234, 0.3) 50%, transparent 100%);
-        margin: 2rem 0;
-    }
-    
-    /* Sidebar divider */
-    .stSidebar hr {
-        background: linear-gradient(90deg, transparent 0%, rgba(255, 255, 255, 0.2) 50%, transparent 100%);
-    }
-    
-    /* Status indicators */
-    .status-indicator {
-        display: inline-block;
-        width: 12px;
-        height: 12px;
-        border-radius: 50%;
-        margin-right: 8px;
-        animation: pulse-dot 2s ease-in-out infinite;
-    }
-    
-    @keyframes pulse-dot {
-        0%, 100% { opacity: 1; }
-        50% { opacity: 0.5; }
-    }
-    
-    /* Scrollbar styling */
-    ::-webkit-scrollbar {
-        width: 10px;
-        height: 10px;
-    }
-    
-    ::-webkit-scrollbar-track {
-        background: rgba(255, 255, 255, 0.1);
-        border-radius: 10px;
-    }
-    
-    ::-webkit-scrollbar-thumb {
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        border-radius: 10px;
-    }
-    
-    ::-webkit-scrollbar-thumb:hover {
-        background: linear-gradient(135deg, #764ba2 0%, #667eea 100%);
-    }
-    
-    /* Animated background pattern */
-    .stApp::before {
-        content: '';
-        position: fixed;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        background-image: 
-            radial-gradient(circle at 20% 50%, rgba(255, 255, 255, 0.1) 0%, transparent 50%),
-            radial-gradient(circle at 80% 80%, rgba(255, 255, 255, 0.1) 0%, transparent 50%);
-        pointer-events: none;
-        z-index: 0;
-    }
-    
-    /* Ensure content is above background */
-    .main {
-        position: relative;
-        z-index: 1;
+    /* Error boxes */
+    .stError {
+        border-radius: 8px;
+        border-left: 4px solid #dc2626;
     }
 </style>
 """, unsafe_allow_html=True)
