@@ -769,23 +769,3 @@ with tab4:
 
 
 
-# Footer with metrics
-st.divider()
-col1, col2, col3, col4 = st.columns(4)
-
-with col1:
-    st.metric("🎯 Model Accuracy", "86.7%")
-with col2:
-    latency = "<300ms" if "Online" in st.session_state.system_status else "Offline"
-    st.metric("⚡ Avg Latency", latency)
-with col3:
-    st.metric("🔒 Privacy Mode", "Offline-first")
-with col4:
-    fps = "30 FPS" if st.session_state.live_camera_active else "0 FPS"
-    st.metric("📹 Camera", fps)
-
-# System status bar
-st.markdown("---")
-status_color = "🟢" if "Online" in st.session_state.system_status else "🔴"
-api_status = "Connected" if "Online" in st.session_state.system_status else "Offline (Demo Mode)"
-st.markdown(f"**System Status:** {st.session_state.system_status} | **API:** {api_status} | **Time:** {datetime.now().strftime('%H:%M:%S')} | **Latency:** <300ms")
