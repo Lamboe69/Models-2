@@ -472,7 +472,7 @@ with tab1:
     st.subheader("🎥 Real-time USL Processing")
     
     # Video display area
-    col_video, col_processing = st.columns([3, 2])
+    col_video = st.container()
     
     with col_video:
         if st.session_state.live_camera_active:
@@ -543,16 +543,16 @@ with tab1:
                 
                 st.rerun()
     
-    with col_processing:
-        st.subheader("🧠 Neural Processing Pipeline")
-        
-        # Processing log
-        if st.session_state.processing_log:
-            log_text = "\n".join(st.session_state.processing_log[-15:])  # Show last 15 entries
-        else:
-            log_text = "🔄 NEURAL PROCESSING PIPELINE\n" + "="*50 + "\n\n📊 3D Skeletal Pose Extraction: Ready\n✋ MANO Hand Tracking: Ready\n😊 FLAME Face Analysis: Ready\n🧠 Multistream Transformer: Ready\n📈 Graph Attention Network: Ready\n🎯 Bayesian Calibration: Ready\n🏥 Clinical Slot Classification: Ready\n\n⚡ Latency Target: <300ms\n💾 Model Size: <200MB (INT8)\n🔒 Privacy: Offline-first processing"
-        
-        st.code(log_text, language=None)
+    # Neural Processing Pipeline below video processing
+    st.subheader("🧠 Neural Processing Pipeline")
+    
+    # Processing log
+    if st.session_state.processing_log:
+        log_text = "\n".join(st.session_state.processing_log[-15:])  # Show last 15 entries
+    else:
+        log_text = "🔄 NEURAL PROCESSING PIPELINE\n" + "="*50 + "\n\n📊 3D Skeletal Pose Extraction: Ready\n✋ MANO Hand Tracking: Ready\n😊 FLAME Face Analysis: Ready\n🧠 Multistream Transformer: Ready\n📈 Graph Attention Network: Ready\n🎯 Bayesian Calibration: Ready\n🏥 Clinical Slot Classification: Ready\n\n⚡ Latency Target: <300ms\n💾 Model Size: <200MB (INT8)\n🔒 Privacy: Offline-first processing"
+    
+    st.code(log_text, language=None)
 
 with tab2:
     col1, col2 = st.columns(2)
