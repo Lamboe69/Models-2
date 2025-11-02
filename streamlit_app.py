@@ -288,7 +288,7 @@ def update_analytics(event_type, **kwargs):
         st.session_state.analytics['current_fps'] = fps
 
 # Header
-st.title("🏥 MediSign - Ugandan Sign Language Healthcare Assistant")
+st.markdown('<h1 style="color: #3b82f6; font-size: 2.5rem; font-weight: bold; margin-bottom: 0.5rem;">🏥 MediSign - Ugandan Sign Language Healthcare Assistant</h1>', unsafe_allow_html=True)
 st.markdown("**Smart Healthcare Communication • Real-time USL Translation • Clinical Integration**")
 
 col_status, col_time = st.columns(2)
@@ -557,16 +557,6 @@ with st.sidebar:
         filename = f"USL_Clinical_Report_{patient_id or 'UNKNOWN'}_{timestamp}.json"
         add_to_log(f"📄 Report generated: {filename}")
         st.success(f"📄 FHIR report: {filename}")
-    
-    if st.button("🔄 Wake Up API", use_container_width=True):
-        with st.spinner("Waking up API service..."):
-            try:
-                requests.get(f"{st.session_state.api_url}/health", timeout=60)
-                st.success("✅ API service is now awake!")
-                st.session_state.system_status = "🟢 All Systems Online"
-            except:
-                st.error("❌ Failed to wake up API")
-        st.rerun()
     
     if st.button("🔄 New Patient Session", use_container_width=True):
         st.session_state.patient_data = {}
