@@ -333,187 +333,176 @@ screening_ontology = {
 }
 
 def create_avatar_display(pose='neutral', gesture_text='Ready'):
-    """Create avatar display with CSS animations"""
+    """Create realistic human avatar with detailed features"""
     
-    # Define pose styles
-    pose_styles = {
+    # Define realistic pose configurations
+    pose_configs = {
         'fever': {
-            'left_arm': 'transform: rotate(-45deg) translateY(-20px);',
-            'right_arm': 'transform: rotate(15deg);',
-            'head': 'transform: rotate(5deg);',
-            'emoji': '🤒'
+            'left_arm_rotation': 'rotate(-45deg)',
+            'left_hand_pos': 'translate(25px, -15px)',
+            'right_arm_rotation': 'rotate(10deg)',
+            'head_tilt': 'rotate(3deg)',
+            'facial_expression': 'concerned'
         },
         'cough': {
-            'left_arm': 'transform: rotate(-30deg) translateX(10px);',
-            'right_arm': 'transform: rotate(10deg);',
-            'head': 'transform: rotate(2deg);',
-            'emoji': '😷'
+            'left_arm_rotation': 'rotate(-35deg)',
+            'left_hand_pos': 'translate(15px, -5px)',
+            'right_arm_rotation': 'rotate(5deg)',
+            'head_tilt': 'rotate(1deg)',
+            'facial_expression': 'covering'
         },
         'question': {
-            'left_arm': 'transform: rotate(-90deg) translateY(-30px);',
-            'right_arm': 'transform: rotate(90deg) translateY(-30px);',
-            'head': 'transform: rotate(0deg);',
-            'emoji': '❓'
+            'left_arm_rotation': 'rotate(-75deg)',
+            'left_hand_pos': 'translate(0px, -25px)',
+            'right_arm_rotation': 'rotate(75deg)',
+            'head_tilt': 'rotate(0deg)',
+            'facial_expression': 'questioning'
         },
         'neutral': {
-            'left_arm': 'transform: rotate(-10deg);',
-            'right_arm': 'transform: rotate(10deg);',
-            'head': 'transform: rotate(0deg);',
-            'emoji': '👤'
+            'left_arm_rotation': 'rotate(-5deg)',
+            'left_hand_pos': 'translate(0px, 0px)',
+            'right_arm_rotation': 'rotate(5deg)',
+            'head_tilt': 'rotate(0deg)',
+            'facial_expression': 'neutral'
         }
     }
     
-    style = pose_styles.get(pose, pose_styles['neutral'])
+    config = pose_configs.get(pose, pose_configs['neutral'])
     
     html_content = f"""
     <div style="
         width: 100%; 
-        height: 400px; 
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        border-radius: 15px;
+        height: 450px; 
+        background: linear-gradient(145deg, #f0f4f8 0%, #e2e8f0 100%);
+        border-radius: 20px;
         display: flex;
-        flex-direction: column;
         align-items: center;
         justify-content: center;
         position: relative;
         overflow: hidden;
-        box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+        border: 1px solid rgba(255,255,255,0.2);
     ">
-        <!-- Avatar Figure -->
-        <div style="
-            position: relative;
-            transform: scale(1.2);
-            animation: float 3s ease-in-out infinite;
-        ">
-            <!-- Head -->
-            <div style="
-                width: 80px;
-                height: 80px;
-                background: #fdbcb4;
-                border-radius: 50%;
-                margin: 0 auto 10px;
-                position: relative;
-                border: 3px solid #fff;
-                {style['head']}
-                transition: all 0.5s ease;
-            ">
-                <!-- Eyes -->
-                <div style="
-                    position: absolute;
-                    top: 25px;
-                    left: 20px;
-                    width: 8px;
-                    height: 8px;
-                    background: #000;
-                    border-radius: 50%;
-                "></div>
-                <div style="
-                    position: absolute;
-                    top: 25px;
-                    right: 20px;
-                    width: 8px;
-                    height: 8px;
-                    background: #000;
-                    border-radius: 50%;
-                "></div>
-                <!-- Mouth -->
-                <div style="
-                    position: absolute;
-                    bottom: 20px;
-                    left: 50%;
-                    transform: translateX(-50%);
-                    width: 20px;
-                    height: 10px;
-                    border: 2px solid #000;
-                    border-top: none;
-                    border-radius: 0 0 20px 20px;
-                "></div>
-            </div>
+        <!-- Realistic Human Avatar -->
+        <svg width="300" height="400" viewBox="0 0 300 400" style="transform: scale(1.1);">
+            <!-- Background Shadow -->
+            <ellipse cx="150" cy="380" rx="60" ry="15" fill="rgba(0,0,0,0.1)" />
             
             <!-- Body -->
-            <div style="
-                width: 60px;
-                height: 100px;
-                background: #87ceeb;
-                margin: 0 auto;
-                border-radius: 30px;
-                border: 3px solid #fff;
-                position: relative;
-            ">
-                <!-- Left Arm -->
-                <div style="
-                    position: absolute;
-                    top: 20px;
-                    left: -25px;
-                    width: 40px;
-                    height: 12px;
-                    background: #fdbcb4;
-                    border-radius: 6px;
-                    border: 2px solid #fff;
-                    {style['left_arm']}
-                    transition: all 0.5s ease;
-                    transform-origin: right center;
-                "></div>
+            <rect x="120" y="180" width="60" height="120" rx="30" fill="#4a90e2" stroke="#2c5aa0" stroke-width="2" />
+            
+            <!-- Arms -->
+            <g id="leftArm" style="transform-origin: 125px 190px; transform: {config['left_arm_rotation']}; transition: all 0.6s ease;">
+                <rect x="85" y="185" width="45" height="15" rx="7" fill="#fdbcb4" stroke="#e8a692" stroke-width="1" />
+                <!-- Left Hand -->
+                <circle cx="85" cy="192" r="8" fill="#fdbcb4" stroke="#e8a692" stroke-width="1" style="transform: {config['left_hand_pos']}; transition: all 0.6s ease;" />
+            </g>
+            
+            <g id="rightArm" style="transform-origin: 175px 190px; transform: {config['right_arm_rotation']}; transition: all 0.6s ease;">
+                <rect x="170" y="185" width="45" height="15" rx="7" fill="#fdbcb4" stroke="#e8a692" stroke-width="1" />
+                <!-- Right Hand -->
+                <circle cx="215" cy="192" r="8" fill="#fdbcb4" stroke="#e8a692" stroke-width="1" />
+            </g>
+            
+            <!-- Neck -->
+            <rect x="140" y="160" width="20" height="25" rx="10" fill="#fdbcb4" stroke="#e8a692" stroke-width="1" />
+            
+            <!-- Head -->
+            <g id="head" style="transform-origin: 150px 130px; transform: {config['head_tilt']}; transition: all 0.6s ease;">
+                <!-- Face -->
+                <ellipse cx="150" cy="130" rx="35" ry="40" fill="#fdbcb4" stroke="#e8a692" stroke-width="2" />
                 
-                <!-- Right Arm -->
-                <div style="
-                    position: absolute;
-                    top: 20px;
-                    right: -25px;
-                    width: 40px;
-                    height: 12px;
-                    background: #fdbcb4;
-                    border-radius: 6px;
-                    border: 2px solid #fff;
-                    {style['right_arm']}
-                    transition: all 0.5s ease;
-                    transform-origin: left center;
-                "></div>
-            </div>
+                <!-- Hair -->
+                <path d="M115 110 Q150 85 185 110 Q185 95 150 90 Q115 95 115 110" fill="#8b4513" />
+                
+                <!-- Eyes -->
+                <ellipse cx="135" cy="125" rx="6" ry="4" fill="white" />
+                <ellipse cx="165" cy="125" rx="6" ry="4" fill="white" />
+                <circle cx="135" cy="125" r="3" fill="#2c3e50" />
+                <circle cx="165" cy="125" r="3" fill="#2c3e50" />
+                <circle cx="136" cy="124" r="1" fill="white" />
+                <circle cx="166" cy="124" r="1" fill="white" />
+                
+                <!-- Eyebrows -->
+                <path d="M128 118 Q135 115 142 118" stroke="#654321" stroke-width="2" fill="none" />
+                <path d="M158 118 Q165 115 172 118" stroke="#654321" stroke-width="2" fill="none" />
+                
+                <!-- Nose -->
+                <path d="M150 130 L148 140 Q150 142 152 140 Z" fill="#f4a688" />
+                
+                <!-- Mouth -->
+                <path d="M142 150 Q150 155 158 150" stroke="#c0392b" stroke-width="2" fill="none" stroke-linecap="round" />
+                
+                <!-- Facial Details -->
+                <circle cx="125" cy="140" r="2" fill="#f4a688" opacity="0.6" />
+                <circle cx="175" cy="140" r="2" fill="#f4a688" opacity="0.6" />
+            </g>
             
             <!-- Legs -->
-            <div style="display: flex; justify-content: center; gap: 10px; margin-top: 5px;">
-                <div style="
-                    width: 15px;
-                    height: 60px;
-                    background: #87ceeb;
-                    border-radius: 8px;
-                    border: 2px solid #fff;
-                "></div>
-                <div style="
-                    width: 15px;
-                    height: 60px;
-                    background: #87ceeb;
-                    border-radius: 8px;
-                    border: 2px solid #fff;
-                "></div>
-            </div>
-        </div>
+            <rect x="130" y="300" width="15" height="70" rx="7" fill="#2c3e50" />
+            <rect x="155" y="300" width="15" height="70" rx="7" fill="#2c3e50" />
+            
+            <!-- Feet -->
+            <ellipse cx="137" cy="375" rx="12" ry="6" fill="#1a252f" />
+            <ellipse cx="162" cy="375" rx="12" ry="6" fill="#1a252f" />
+            
+            <!-- Clothing Details -->
+            <rect x="125" y="190" width="50" height="3" fill="#2c5aa0" opacity="0.7" />
+            <circle cx="150" cy="200" r="3" fill="#ffffff" opacity="0.8" />
+            <circle cx="150" cy="215" r="3" fill="#ffffff" opacity="0.8" />
+            <circle cx="150" cy="230" r="3" fill="#ffffff" opacity="0.8" />
+        </svg>
         
-        <!-- Gesture Display -->
+        <!-- Gesture Information Panel -->
         <div style="
             position: absolute;
-            bottom: 20px;
-            background: rgba(255, 255, 255, 0.95);
-            padding: 12px 20px;
-            border-radius: 25px;
-            font-family: 'Arial', sans-serif;
-            font-weight: bold;
-            color: #333;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            bottom: 25px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 15px 25px;
+            border-radius: 30px;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-weight: 600;
+            font-size: 16px;
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,0.2);
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 12px;
+            animation: pulse 2s ease-in-out infinite;
         ">
-            <span style="font-size: 24px;">{style['emoji']}</span>
-            <span>{gesture_text}</span>
+            <div style="
+                width: 12px;
+                height: 12px;
+                background: #4ade80;
+                border-radius: 50%;
+                animation: blink 1.5s ease-in-out infinite;
+            "></div>
+            <span>USL: {gesture_text}</span>
         </div>
         
-        <!-- Floating Animation -->
+        <!-- Breathing Animation -->
         <style>
-            @keyframes float {{
-                0%, 100% {{ transform: scale(1.2) translateY(0px); }}
-                50% {{ transform: scale(1.2) translateY(-10px); }}
+            @keyframes pulse {{
+                0%, 100% {{ transform: translateX(-50%) scale(1); }}
+                50% {{ transform: translateX(-50%) scale(1.02); }}
+            }}
+            
+            @keyframes blink {{
+                0%, 100% {{ opacity: 1; }}
+                50% {{ opacity: 0.3; }}
+            }}
+            
+            svg {{
+                animation: breathe 4s ease-in-out infinite;
+            }}
+            
+            @keyframes breathe {{
+                0%, 100% {{ transform: scale(1.1) translateY(0px); }}
+                50% {{ transform: scale(1.1) translateY(-3px); }}
             }}
         </style>
     </div>
