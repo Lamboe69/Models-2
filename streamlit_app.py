@@ -209,6 +209,10 @@ if 'system_status' not in st.session_state:
     st.session_state.system_status = "🟢 All Systems Online"
 if 'live_camera_active' not in st.session_state:
     st.session_state.live_camera_active = False
+if 'uploaded_video' not in st.session_state:
+    st.session_state.uploaded_video = None
+if 'uploaded_image' not in st.session_state:
+    st.session_state.uploaded_image = None
 
 # Analytics tracking
 if 'analytics' not in st.session_state:
@@ -319,8 +323,20 @@ with st.sidebar:
             update_analytics('fps_update', fps=0)
         st.rerun()
     
-    st.button("📁 Upload USL Video", use_container_width=True)
-    st.button("🖼️ Upload USL Image", use_container_width=True)
+    
+    # Video upload
+    uploaded_video = st.file_uploader("📁 Upload USL Video", type=['mp4', 'avi', 'mov', 'mkv'], key="video_upload")
+    if uploaded_video:
+        st.session_state.uploaded_video = uploaded_video
+        st.success(f"✅ Video uploaded: {uploaded_video.name}")
+        add_to_log(f"📁 Video uploaded: {uploaded_video.name}")
+    
+    # Image upload
+    uploaded_image = st.file_uploader("🖼️ Upload USL Image", type=['jpg', 'jpeg', 'png'], key="image_upload")
+    if uploaded_image:
+        st.session_state.uploaded_image = uploaded_image
+        st.success(f"✅ Image uploaded: {uploaded_image.name}")
+        add_to_log(f"🖼️ Image uploaded: {uploaded_image.name}")
     
     # Process button
     if st.button("🧠 Process USL → Clinical", type="primary", use_container_width=True):
@@ -356,7 +372,7 @@ with st.sidebar:
                 response = requests.post(
                     f"{st.session_state.api_url}/predict",
                     json={"pose_features": features},
-                    timeout=30
+                    timeout=10
                 )
                 
                 if response.status_code == 200:
@@ -370,8 +386,12 @@ with st.sidebar:
                     add_to_log(f"❌ Clinical analysis failed: {response.text}")
                     st.error(f"❌ Processing failed: {response.text}")
                     
+            except requests.exceptions.Timeout:
+                add_to_log("⏰ API timeout (>10s), switching to offline processing")
+            except requests.exceptions.ConnectionError:
+                add_to_log("🌐 API connection failed, using offline processing")
             except Exception as e:
-                add_to_log(f"❌ API timeout, using offline processing: {str(e)}")
+                add_to_log(f"❌ API error: {str(e)[:50]}..., using offline processing")
                 # Fallback to simulated results
                 st.session_state.screening_results = {
                     'fever': {'prediction': 'Yes', 'confidence': 0.87},
@@ -497,7 +517,7 @@ with st.sidebar:
     if st.button("🧪 Test API Connection", use_container_width=True):
         with st.spinner("Testing connection..."):
             try:
-                response = requests.get(f"{st.session_state.api_url}/health", timeout=30)
+                response = requests.get(f"{st.session_state.api_url}/health", timeout=5)
                 if response.status_code == 200:
                     st.session_state.system_status = "🟢 All Systems Online"
                     add_to_log("✅ API Health Check: Connected")
@@ -542,6 +562,12 @@ with tab1:
     with col_video:
         if st.session_state.live_camera_active:
             st.info("📷 **Live USL Camera Feed**\n\n3D Pose Detection (MediaPipe + MANO + FLAME)\nMultistream Transformer Processing\nGraph Attention Network Analysis\n\n🟢 **LIVE PROCESSING ACTIVE**")
+            st.warning("⚠️ Note: Live camera requires WebRTC component for web deployment")
+        elif st.session_state.uploaded_video:
+            st.video(st.session_state.uploaded_video)
+            st.success(f"📹 Video loaded: {st.session_state.uploaded_video.name}")
+        elif st.session_state.uploaded_image:
+            st.image(st.session_state.uploaded_image, caption=f"USL Image: {st.session_state.uploaded_image.name}")
         else:
             st.info("📷 **USL Video Feed**\n\n3D Pose Detection (MediaPipe + MANO + FLAME)\nMultistream Transformer Processing\nGraph Attention Network Analysis\n\nReady for USL input...")
         
@@ -579,7 +605,7 @@ with tab1:
                     response = requests.post(
                         f"{st.session_state.api_url}/predict",
                         json={"pose_features": features},
-                        timeout=30
+                        timeout=10
                     )
                     
                     if response.status_code == 200:
@@ -590,8 +616,12 @@ with tab1:
                         add_to_log(f"❌ Clinical analysis failed: {response.text}")
                         st.error(f"❌ Processing failed: {response.text}")
                         
+                except requests.exceptions.Timeout:
+                    add_to_log("⏰ API timeout (>10s), switching to offline processing")
+                except requests.exceptions.ConnectionError:
+                    add_to_log("🌐 API connection failed, using offline processing")
                 except Exception as e:
-                    add_to_log(f"❌ API timeout, using offline processing: {str(e)}")
+                    add_to_log(f"❌ API error: {str(e)[:50]}..., using offline processing")
                     # Fallback to simulated results
                     st.session_state.screening_results = {
                         'fever': {'prediction': 'Yes', 'confidence': 0.87},
