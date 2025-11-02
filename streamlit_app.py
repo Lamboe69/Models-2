@@ -14,9 +14,33 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
-# Minimal CSS for alerts only
+# Custom CSS for sidebar and alerts
 st.markdown("""
 <style>
+    .stSidebar {
+        background-color: #1e293b;
+    }
+    .stSidebar .stMarkdown {
+        color: #f1f5f9;
+    }
+    .stSidebar .stSelectbox label {
+        color: #f1f5f9;
+    }
+    .stSidebar .stRadio label {
+        color: #f1f5f9;
+    }
+    .stSidebar .stCheckbox label {
+        color: #f1f5f9;
+    }
+    .stSidebar .stTextInput label {
+        color: #f1f5f9;
+    }
+    .stSidebar .stNumberInput label {
+        color: #f1f5f9;
+    }
+    .stSidebar .stFileUploader label {
+        color: #f1f5f9;
+    }
     .critical-alert {
         background: #dc2626;
         padding: 1rem;
@@ -111,7 +135,12 @@ with st.sidebar:
         ["👤→👩⚕️ Patient to Clinician", "👩⚕️→👤 Clinician to Patient"],
         key="translation_mode"
     )
-    st.session_state.current_mode = "patient_to_clinician" if "Patient to Clinician" in mode else "clinician_to_patient"
+    
+    # Update mode and trigger page change
+    new_mode = "patient_to_clinician" if "Patient to Clinician" in mode else "clinician_to_patient"
+    if st.session_state.current_mode != new_mode:
+        st.session_state.current_mode = new_mode
+        st.rerun()
     
     st.divider()
     st.subheader("👤 Patient Information")
@@ -209,16 +238,16 @@ with st.sidebar:
     
     st.checkbox("🔒 Offline-first (Privacy)", value=True, key="offline_mode")
 
-# Main content area with tabs matching complete_usl_system.py
-tab1, tab2, tab3, tab4 = st.tabs(["🎥 Video Processing", "🤖 Avatar Synthesis", "📋 Clinical Results", "📊 System Analytics"])
-
-with tab1:
-    st.subheader("🎥 Real-time USL Processing")
+# Main content based on selected mode
+if st.session_state.current_mode == "patient_to_clinician":
+    st.header("👤→👩⚕️ Patient to Clinician Translation")
     
-    # Video display area
-    col_video, col_processing = st.columns([3, 2])
+    # Patient to Clinician Interface
+    col1, col2 = st.columns([2, 1])
     
-    with col_video:
+    with col1:
+        st.subheader("🎥 USL Video Processing")
+        
         if st.session_state.live_camera_active:
             st.info("📷 **Live USL Camera Feed**\n\n3D Pose Detection (MediaPipe + MANO + FLAME)\nMultistream Transformer Processing\nGraph Attention Network Analysis\n\n🟢 **LIVE PROCESSING ACTIVE**")
         else:
@@ -287,100 +316,24 @@ with tab1:
                 
                 st.rerun()
     
-    with col_processing:
-        st.subheader("🧠 Neural Processing Pipeline")
+    with col2:
+        st.subheader("🧠 Processing Pipeline")
         
         # Processing log
         if st.session_state.processing_log:
-            log_text = "\n".join(st.session_state.processing_log[-15:])  # Show last 15 entries
+            log_text = "\n".join(st.session_state.processing_log[-10:])  # Show last 10 entries
         else:
-            log_text = "🔄 NEURAL PROCESSING PIPELINE\n" + "="*50 + "\n\n📊 3D Skeletal Pose Extraction: Ready\n✋ MANO Hand Tracking: Ready\n😊 FLAME Face Analysis: Ready\n🧠 Multistream Transformer: Ready\n📈 Graph Attention Network: Ready\n🎯 Bayesian Calibration: Ready\n🏥 Clinical Slot Classification: Ready\n\n⚡ Latency Target: <300ms\n💾 Model Size: <200MB (INT8)\n🔒 Privacy: Offline-first processing"
+            log_text = "🔄 NEURAL PROCESSING PIPELINE\n" + "="*30 + "\n\n📊 3D Pose: Ready\n✋ MANO: Ready\n😊 FLAME: Ready\n🧠 Transformer: Ready\n📈 GAT: Ready\n🎯 Calibration: Ready\n🏥 Classification: Ready"
         
         st.code(log_text, language=None)
-
-with tab2:
-    col1, col2 = st.columns(2)
     
-    with col1:
-        st.subheader("📝 Text → USL Synthesis")
-        
-        clinical_templates = [
-            "Do you have fever?",
-            "When did the cough start?", 
-            "Have you traveled recently?",
-            "Do you have any pain?",
-            "Take this medication twice daily",
-            "Come back in one week",
-            "You need blood tests",
-            "Rest and drink plenty of water"
-        ]
-        
-        selected_template = st.selectbox("Quick Templates:", ["Custom..."] + clinical_templates)
-        
-        if selected_template != "Custom...":
-            clinical_text = st.text_area("Enter clinical text:", value=selected_template, height=100)
-        else:
-            clinical_text = st.text_area("Enter clinical text:", height=100)
-        
-        if st.button("🔄 Generate USL Gloss", use_container_width=True):
-            if clinical_text:
-                add_to_log(f"📝 USL gloss generated from: {clinical_text[:50]}...")
-                st.success("✅ USL gloss generated!")
-            else:
-                st.warning("Please enter clinical text first")
-        
-        if st.button("🤖 Synthesize Avatar", use_container_width=True):
-            add_to_log("🤖 Parametric avatar synthesized with MANO+Face rig")
-            st.success("🤖 Avatar synthesized!")
-        
-        # Avatar display
-        st.info("🤖 **Parametric Avatar**\n(MANO + Face Rig)\n\nReady for synthesis...")
-    
-    with col2:
-        st.subheader("🤟 USL → Structured Text")
-        
-        # Recognition results
-        if st.session_state.screening_results:
-            st.markdown("**🤟 USL RECOGNITION RESULTS**")
-            st.markdown("=" * 40)
-            
-            symptom_icons = {
-                'fever': '🌡️', 'cough': '😷', 'hemoptysis': '🩸', 'diarrhea': '💊',
-                'duration': '⏱️', 'severity': '📊', 'travel': '✈️', 'exposure': '👥'
-            }
-            
-            for symptom, result in st.session_state.screening_results.items():
-                icon = symptom_icons.get(symptom, '🏥')
-                prediction = result.get('prediction', 'Unknown')
-                confidence = result.get('confidence', 0) * 100
-                st.write(f"{icon} {symptom}: {prediction} (confidence: {confidence:.1f}%)")
-        else:
-            st.info("Process USL input to see recognition results")
-        
-        # TTS Controls
-        st.markdown("**🔊 Neural Text-to-Speech**")
-        for lang in ["English", "Runyankole", "Luganda"]:
-            if st.button(f"🔊 Neural TTS ({lang})", use_container_width=True):
-                add_to_log(f"🔊 Neural TTS: {lang} speech generated")
-                st.success(f"🔊 {lang} TTS activated")
-
-with tab3:
-    st.subheader("📋 FHIR-Structured Clinical Results")
-    
+    # Clinical Results Section
     if st.session_state.screening_results:
-        # Clinical Results Display
-        timestamp = datetime.now().isoformat()
-        patient_id_val = st.session_state.get('patient_id', 'UNKNOWN')
+        st.divider()
+        st.subheader("📋 Clinical Results")
         
-        st.markdown("**📋 FHIR-STRUCTURED CLINICAL RESULTS**")
-        st.markdown("=" * 60)
-        st.write(f"🆔 Resource ID: usl-screening-{int(time.time())}")
-        st.write(f"👤 Patient: {patient_id_val}")
-        st.write(f"📅 Timestamp: {timestamp}")
-        st.write(f"🏥 Status: final")
-        st.markdown("")
-        st.markdown("**🩺 CLINICAL OBSERVATIONS:**")
-        st.markdown("-" * 40)
+        # Display results in columns
+        col_a, col_b, col_c = st.columns(3)
         
         symptom_icons = {
             'fever': '🌡️', 'cough': '😷', 'hemoptysis': '🩸', 'diarrhea': '💊',
@@ -393,7 +346,9 @@ with tab3:
         weights = {"fever": 3, "cough": 3, "hemoptysis": 5, "diarrhea": 3, 
                   "duration": 2, "severity": 4, "travel": 2, "exposure": 2}
         
-        for symptom, result in st.session_state.screening_results.items():
+        results_list = list(st.session_state.screening_results.items())
+        
+        for i, (symptom, result) in enumerate(results_list):
             icon = symptom_icons.get(symptom, '🏥')
             prediction = result.get('prediction', 'Unknown')
             confidence = result.get('confidence', 0) * 100
@@ -404,13 +359,14 @@ with tab3:
                     critical_flags += 1
             
             status_icon = "🔴" if prediction in ['Yes', 'Severe', 'Long'] else "🟢"
-            st.write(f"{icon} {symptom.upper():<12}: {status_icon} {prediction:<8} ({confidence:5.1f}%)")
-        
-        st.markdown("")
-        st.markdown("=" * 60)
+            
+            # Distribute across columns
+            with [col_a, col_b, col_c][i % 3]:
+                st.metric(f"{icon} {symptom.title()}", f"{status_icon} {prediction}", f"{confidence:.1f}%")
         
         # Triage Assessment
-        st.markdown("**🚨 TRIAGE ASSESSMENT**")
+        st.divider()
+        st.subheader("🚨 Triage Assessment")
         
         if critical_flags >= 2 or total_score >= 15:
             priority = "🔴 CRITICAL"
@@ -435,79 +391,78 @@ with tab3:
         else:
             priority = "🟢 LOW"
             st.markdown(f'<div class="low-alert">{priority}<br>Triage Score: {total_score}/20</div>', unsafe_allow_html=True)
-        
-        st.markdown("")
-        st.write("✅ Clinical screening completed")
-        st.write("📊 Results ready for clinical review")
-        
-    else:
-        st.markdown("**📋 FHIR OBSERVATION RESOURCE**")
-        st.markdown("=" * 60)
-        st.write("🆔 Resource Type: Observation")
-        st.write("📊 Category: Clinical Screening")
-        st.write("🏥 System: MediSign Healthcare Assistant")
-        st.write("📅 Status: Waiting for patient data...")
-        st.write("")
-        st.write("🔄 Ready to receive USL input and generate structured clinical data")
 
-with tab4:
-    st.subheader("📊 System Performance & Analytics")
+else:  # Clinician to Patient mode
+    st.header("👩⚕️→👤 Clinician to Patient Translation")
     
-    analytics_text = f"""📊 **SYSTEM PERFORMANCE ANALYTICS**
-{'='*60}
-
-🔄 **SESSION STATISTICS:**
-   • Total sessions processed: 0
-   • Average session duration: 0 minutes
-   • Successful translations: 0
-   • Emergency escalations: 0
-
-⚡ **PERFORMANCE METRICS:**
-   • Average latency: <300ms (Target: <300ms)
-   • Model accuracy: 86.7%
-   • Frame processing rate: 30 FPS
-   • Memory usage: <200MB (Target: <200MB)
-
-🧠 **NEURAL PIPELINE STATUS:**
-   • 3D Pose Detection: ✅ Active
-   • MANO Hand Tracking: ✅ Active  
-   • FLAME Face Analysis: ✅ Active
-   • Multistream Transformer: ✅ Ready
-   • Graph Attention Network: ✅ Ready
-   • Bayesian Calibration: ✅ Ready
-
-🏥 **CLINICAL METRICS:**
-   • Triage accuracy: N/A (No sessions)
-   • Time-to-intake reduction: N/A
-   • Clinician agreement rate: N/A
-   • False positive rate: N/A
-
-🔒 **PRIVACY & SECURITY:**
-   • Offline-first processing: ✅ Enabled
-   • Data encryption: ✅ AES-256
-   • Video cloud upload: ❌ Disabled
-   • De-identification: ✅ Active
-
-🌍 **LANGUAGE SUPPORT:**
-   • USL Variants: 4 (Canonical, Regional)
-   • Clinic Languages: 3 (English, Runyankole, Luganda)
-   • NMS Detection: ✅ Active
-   • Regional Adaptation: ✅ LoRA Ready
-
-📈 **QUALITY ASSURANCE:**
-   • Sign recognition WER: N/A
-   • Slot F1 score: N/A
-   • Robustness testing: ✅ Passed
-   • Bias audit status: ✅ Compliant
-
-🚨 **SAFETY MONITORING:**
-   • Red-flag validator: ✅ Active
-   • Danger sign detection: ✅ Ready
-   • IRB compliance: ✅ Approved
-   • Community consent: ✅ Obtained
-"""
+    col1, col2 = st.columns(2)
     
-    st.markdown(analytics_text)
+    with col1:
+        st.subheader("📝 Clinical Text Input")
+        
+        clinical_templates = [
+            "Do you have fever?",
+            "When did the cough start?", 
+            "Have you traveled recently?",
+            "Do you have any pain?",
+            "Take this medication twice daily",
+            "Come back in one week",
+            "You need blood tests",
+            "Rest and drink plenty of water"
+        ]
+        
+        selected_template = st.selectbox("Quick Templates:", ["Custom..."] + clinical_templates)
+        
+        if selected_template != "Custom...":
+            clinical_text = st.text_area("Enter clinical text:", value=selected_template, height=150)
+        else:
+            clinical_text = st.text_area("Enter clinical text:", height=150)
+        
+        if st.button("🔄 Generate USL Gloss", type="primary", use_container_width=True):
+            if clinical_text:
+                add_to_log(f"📝 USL gloss generated from: {clinical_text[:50]}...")
+                
+                # Show generated gloss
+                st.success("✅ USL gloss generated!")
+                st.markdown("**Generated USL Gloss:**")
+                st.code("YOU FEVER HAVE? COUGH BLOOD? TRAVEL WHERE?\n\nRegional Variants:\n- Kampala: YOU HOT-BODY? COUGH RED?\n- Gulu: BODY-HEAT YOU? SPIT-BLOOD?\n\nNMS Tags: [brow_raise], [head_tilt]\nProsody: [question_intonation]")
+            else:
+                st.warning("Please enter clinical text first")
+        
+        if st.button("🤖 Synthesize Avatar", use_container_width=True):
+            add_to_log("🤖 Parametric avatar synthesized with MANO+Face rig")
+            st.success("🤖 Avatar synthesized!")
+    
+    with col2:
+        st.subheader("🤖 Avatar & TTS")
+        
+        # Avatar display
+        st.info("🤖 **Parametric Avatar**\n(MANO + Face Rig)\n\nReady for synthesis...")
+        
+        # TTS Controls
+        st.markdown("**🔊 Neural Text-to-Speech**")
+        for lang in ["English", "Runyankole", "Luganda"]:
+            if st.button(f"🔊 Neural TTS ({lang})", use_container_width=True):
+                add_to_log(f"🔊 Neural TTS: {lang} speech generated")
+                st.success(f"🔊 {lang} TTS activated")
+        
+        # Recognition results if available
+        if st.session_state.screening_results:
+            st.divider()
+            st.subheader("🤟 Previous USL Recognition")
+            
+            symptom_icons = {
+                'fever': '🌡️', 'cough': '😷', 'hemoptysis': '🩸', 'diarrhea': '💊',
+                'duration': '⏱️', 'severity': '📊', 'travel': '✈️', 'exposure': '👥'
+            }
+            
+            for symptom, result in st.session_state.screening_results.items():
+                icon = symptom_icons.get(symptom, '🏥')
+                prediction = result.get('prediction', 'Unknown')
+                confidence = result.get('confidence', 0) * 100
+                st.write(f"{icon} {symptom}: {prediction} ({confidence:.1f}%)")
+
+
 
 # Footer with metrics
 st.divider()
