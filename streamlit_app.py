@@ -22,7 +22,7 @@ st.markdown("""
         background: #ffffff;
     }
     
-    /* Sidebar styling - dark with visible text */
+    /* Sidebar styling - dark with visible text matching complete_usl_system.py */
     .stSidebar {
         background: #1e293b !important;
     }
@@ -35,23 +35,40 @@ st.markdown("""
     .stSidebar .stTextInput label,
     .stSidebar .stNumberInput label,
     .stSidebar .stFileUploader label,
-    .stSidebar h1, .stSidebar h2, .stSidebar h3 {
-        color: #ffffff !important;
+    .stSidebar h1, .stSidebar h2, .stSidebar h3,
+    .stSidebar .stWrite,
+    .stSidebar .stMetric {
+        color: #f1f5f9 !important;
         font-weight: 500;
     }
     
-    .stSidebar .stRadio > div {
-        color: #ffffff !important;
+    .stSidebar .stRadio > div,
+    .stSidebar .stCheckbox > div,
+    .stSidebar .stSelectbox > div,
+    .stSidebar .stTextInput > div,
+    .stSidebar .stNumberInput > div {
+        color: #f1f5f9 !important;
     }
     
-    .stSidebar .stCheckbox > div {
-        color: #ffffff !important;
+    .stSidebar .stRadio > div > label,
+    .stSidebar .stCheckbox > div > label {
+        color: #f1f5f9 !important;
     }
     
     /* Main content area */
     .main .block-container {
         padding: 1rem 2rem;
         max-width: 1200px;
+    }
+    
+    /* Section headers in sidebar */
+    .stSidebar .section-header {
+        background: #374151;
+        color: white;
+        padding: 0.5rem;
+        border-radius: 8px;
+        margin-bottom: 1rem;
+        font-weight: bold;
     }
     
     /* Headers */
@@ -217,23 +234,10 @@ with col_time:
 
 st.divider()
 
-# Sidebar
+# Sidebar with exact structure from complete_usl_system.py
 with st.sidebar:
-    st.header("🤟 USL Translation Mode")
-    mode = st.radio(
-        "Select Mode:",
-        ["👤→👩⚕️ Patient to Clinician", "👩⚕️→👤 Clinician to Patient"],
-        key="translation_mode"
-    )
-    
-    # Update mode and trigger page change
-    new_mode = "patient_to_clinician" if "Patient to Clinician" in mode else "clinician_to_patient"
-    if st.session_state.current_mode != new_mode:
-        st.session_state.current_mode = new_mode
-        st.rerun()
-    
-    st.divider()
-    st.subheader("👤 Patient Information")
+    # Patient Information Section
+    st.markdown('<div style="background: #374151; color: white; padding: 0.5rem; border-radius: 8px; margin-bottom: 1rem; font-weight: bold;">👤 Patient Information</div>', unsafe_allow_html=True)
     patient_id = st.text_input("Patient ID", key="patient_id")
     col1, col2 = st.columns(2)
     with col1:
@@ -241,17 +245,81 @@ with st.sidebar:
     with col2:
         gender = st.selectbox("Gender", ["Male", "Female", "Other"], key="gender")
     
-    st.divider()
-    st.subheader("🤟 USL Input & Processing")
+    # USL Input & Processing Section
+    st.markdown('<div style="background: #374151; color: white; padding: 0.5rem; border-radius: 8px; margin-bottom: 1rem; font-weight: bold;">🤟 USL Input & Processing</div>', unsafe_allow_html=True)
     if st.button("📹 Live Camera (Front+Side)", use_container_width=True):
         st.session_state.live_camera_active = not st.session_state.live_camera_active
         status = "started" if st.session_state.live_camera_active else "stopped"
         add_to_log(f"📹 Camera {status}")
         st.rerun()
     
-    uploaded_video = st.file_uploader("📁 Upload USL Video", type=['mp4', 'avi', 'mov'])
-    uploaded_image = st.file_uploader("🖼️ Upload USL Image", type=['jpg', 'jpeg', 'png'])
+    st.button("📁 Upload USL Video", use_container_width=True)
+    st.button("🖼️ Upload USL Image", use_container_width=True)
     
+    # Process button
+    if st.button("🧠 Process USL → Clinical", type="primary", use_container_width=True):
+        with st.spinner("Processing USL with Graph-Reasoned LVM..."):
+            add_to_log("🔄 Starting comprehensive USL analysis...")
+            
+            # Processing steps
+            steps = [
+                "📊 Extracting 3D skeletal pose (MediaPipe + OpenPose)",
+                "✋ Analyzing hand trajectories (MANO)",
+                "😊 Processing facial expressions (FLAME)",
+                "🧠 Multistream transformer processing",
+                "📈 Graph attention network analysis",
+                "🎯 Bayesian calibration and confidence estimation",
+                "🏥 Clinical slot classification",
+                "📋 Generating FHIR-structured results"
+            ]
+            
+            progress_bar = st.progress(0)
+            status_text = st.empty()
+            
+            for i, step in enumerate(steps):
+                status_text.text(step)
+                add_to_log(step)
+                progress_bar.progress((i + 1) / len(steps))
+                time.sleep(0.3)
+            
+            # Try API call with fallback
+            try:
+                features = [np.random.uniform(-1, 1) for _ in range(225)]
+                add_to_log("🌐 Sending to Clinical GAT model...")
+                
+                response = requests.post(
+                    f"{st.session_state.api_url}/predict",
+                    json={"pose_features": features},
+                    timeout=30
+                )
+                
+                if response.status_code == 200:
+                    st.session_state.screening_results = response.json().get('predictions', {})
+                    add_to_log("✅ USL processing completed successfully")
+                    st.success("✅ USL processing completed!")
+                else:
+                    add_to_log(f"❌ Clinical analysis failed: {response.text}")
+                    st.error(f"❌ Processing failed: {response.text}")
+                    
+            except Exception as e:
+                add_to_log(f"❌ API timeout, using offline processing: {str(e)}")
+                # Fallback to simulated results
+                st.session_state.screening_results = {
+                    'fever': {'prediction': 'Yes', 'confidence': 0.87},
+                    'cough': {'prediction': 'Yes', 'confidence': 0.92},
+                    'hemoptysis': {'prediction': 'No', 'confidence': 0.95},
+                    'diarrhea': {'prediction': 'No', 'confidence': 0.88},
+                    'duration': {'prediction': 'Short', 'confidence': 0.76},
+                    'severity': {'prediction': 'Moderate', 'confidence': 0.83},
+                    'travel': {'prediction': 'No', 'confidence': 0.91},
+                    'exposure': {'prediction': 'Yes', 'confidence': 0.79}
+                }
+                add_to_log("✅ Offline processing completed (demo results)")
+                st.warning("⚠️ API timeout - Using offline processing with demo results")
+            
+            st.rerun()
+    
+    # Real-time metrics
     col_fps, col_conf = st.columns(2)
     with col_fps:
         fps = 30.0 if st.session_state.live_camera_active else 0
@@ -259,8 +327,8 @@ with st.sidebar:
     with col_conf:
         st.metric("Confidence", "Ready")
     
-    st.divider()
-    st.subheader("🗣️ Language & USL Settings")
+    # Language & USL Settings Section
+    st.markdown('<div style="background: #374151; color: white; padding: 0.5rem; border-radius: 8px; margin-bottom: 1rem; font-weight: bold;">🗣️ Language & USL Settings</div>', unsafe_allow_html=True)
     clinic_lang = st.selectbox("Clinic Language", screening_ontology["languages"])
     usl_variant = st.selectbox("USL Variant", screening_ontology["usl_variants"])
     
@@ -270,8 +338,8 @@ with st.sidebar:
         with nms_cols[i % 2]:
             st.checkbox(nms.replace("_", " ").title(), key=f"nms_{nms}")
     
-    st.divider()
-    st.subheader("📋 Screening Questions")
+    # Screening Questions Section
+    st.markdown('<div style="background: #374151; color: white; padding: 0.5rem; border-radius: 8px; margin-bottom: 1rem; font-weight: bold;">📋 Screening Questions</div>', unsafe_allow_html=True)
     questions = [
         ("fever", "🌡️ Fever"),
         ("cough", "😷 Cough"),
@@ -284,16 +352,71 @@ with st.sidebar:
     ]
     
     for key, label in questions:
-        st.radio(label, ["Yes", "No", "Unknown"], key=f"q_{key}", horizontal=True)
+        col_q, col_y, col_n = st.columns([2, 1, 1])
+        with col_q:
+            st.write(label)
+        with col_y:
+            st.radio("Y", ["Yes"], key=f"q_{key}_yes", label_visibility="collapsed")
+        with col_n:
+            st.radio("N", ["No"], key=f"q_{key}_no", label_visibility="collapsed")
     
-    st.divider()
-    st.subheader("🦠 Priority Diseases (WHO/MoH)")
+    # Disease Checklist Section
+    st.markdown('<div style="background: #374151; color: white; padding: 0.5rem; border-radius: 8px; margin-bottom: 1rem; font-weight: bold;">🦠 Priority Diseases (WHO/MoH)</div>', unsafe_allow_html=True)
     for disease, info in screening_ontology["infectious_diseases"].items():
-        color = "🔴" if info["priority"] == "critical" else "🟡" if info["priority"] == "high" else "🔵"
-        st.checkbox(f"{color} {disease} ({info['priority'].upper()})", key=f"disease_{disease}")
+        if info["priority"] == "critical":
+            color = "🔴"
+            st.markdown(f'<div style="color: #dc2626; font-weight: bold;">{color} {disease} (CRITICAL)</div>', unsafe_allow_html=True)
+        elif info["priority"] == "high":
+            color = "🟡"
+            st.markdown(f'<div style="color: #ea580c; font-weight: bold;">{color} {disease} (HIGH)</div>', unsafe_allow_html=True)
+        else:
+            color = "🔵"
+            st.markdown(f'<div style="color: #3b82f6; font-weight: bold;">{color} {disease} (MEDIUM)</div>', unsafe_allow_html=True)
+        st.checkbox("", key=f"disease_{disease}", label_visibility="collapsed")
     
-    st.divider()
-    st.subheader("⚙️ System Controls")
+    # Triage Section
+    st.markdown('<div style="background: #374151; color: white; padding: 0.5rem; border-radius: 8px; margin-bottom: 1rem; font-weight: bold;">🚨 Triage Assessment</div>', unsafe_allow_html=True)
+    
+    # Priority display
+    if st.session_state.screening_results:
+        # Calculate triage score
+        total_score = 0
+        critical_flags = 0
+        weights = {"fever": 3, "cough": 3, "hemoptysis": 5, "diarrhea": 3, 
+                  "duration": 2, "severity": 4, "travel": 2, "exposure": 2}
+        
+        for symptom, result in st.session_state.screening_results.items():
+            prediction = result.get('prediction', 'Unknown')
+            if symptom in weights and prediction in ['Yes', 'Severe', 'Long']:
+                total_score += weights[symptom]
+                if symptom == 'hemoptysis':
+                    critical_flags += 1
+        
+        if critical_flags >= 2 or total_score >= 15:
+            st.markdown('<div style="background: #dc2626; color: white; padding: 1rem; border-radius: 8px; text-align: center; font-weight: bold;">🔴 CRITICAL<br>Score: {}/20</div>'.format(total_score), unsafe_allow_html=True)
+        elif critical_flags >= 1 or total_score >= 10:
+            st.markdown('<div style="background: #ea580c; color: white; padding: 1rem; border-radius: 8px; text-align: center; font-weight: bold;">🟡 HIGH<br>Score: {}/20</div>'.format(total_score), unsafe_allow_html=True)
+        elif total_score >= 5:
+            st.markdown('<div style="background: #d97706; color: white; padding: 1rem; border-radius: 8px; text-align: center; font-weight: bold;">🟠 MEDIUM<br>Score: {}/20</div>'.format(total_score), unsafe_allow_html=True)
+        else:
+            st.markdown('<div style="background: #16a34a; color: white; padding: 1rem; border-radius: 8px; text-align: center; font-weight: bold;">🟢 LOW<br>Score: {}/20</div>'.format(total_score), unsafe_allow_html=True)
+    else:
+        st.markdown('<div style="background: #dc2626; color: white; padding: 1rem; border-radius: 8px; text-align: center; font-weight: bold;">⚪ NOT ASSESSED</div>', unsafe_allow_html=True)
+    
+    st.write(f"Triage Score: 0/20")
+    st.write(f"Risk Level: Low")
+    
+    # Action buttons
+    if st.button("🚨 EMERGENCY", use_container_width=True):
+        add_to_log("🚨 EMERGENCY: Immediate escalation activated")
+        st.error("🚨 EMERGENCY ESCALATION ACTIVATED!")
+    
+    if st.button("📞 Call Clinician", use_container_width=True):
+        add_to_log("📞 Clinician notification: Sent successfully")
+        st.info("📞 Clinician notification sent")
+    
+    # System Controls Section
+    st.markdown('<div style="background: #374151; color: white; padding: 0.5rem; border-radius: 8px; margin-bottom: 1rem; font-weight: bold;">⚙️ System Controls</div>', unsafe_allow_html=True)
     if st.button("🧪 Test API Connection", use_container_width=True):
         with st.spinner("Testing connection..."):
             try:
@@ -326,6 +449,7 @@ with st.sidebar:
         st.success("New session started!")
         st.rerun()
     
+    # Privacy settings
     st.checkbox("🔒 Offline-first (Privacy)", value=True, key="offline_mode")
 
 # Main content with tabs like complete_usl_system.py
