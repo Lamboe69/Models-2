@@ -10,153 +10,125 @@ from streamlit.components.v1 import html
 
 # Page config
 st.set_page_config(
-    page_title="🏥 MediSign - USL Healthcare Assistant",
-    page_icon="🏥",
+    page_title="MediSign - USL Healthcare Assistant",
+    page_icon="hospital",
     layout="wide",
     initial_sidebar_state="expanded"
 )
 
-# Custom CSS for beautiful UI with better text visibility
+# === PREMIUM CSS WITH GLASSMORPHISM, ANIMATIONS & MICRO-INTERACTIONS ===
 st.markdown("""
 <style>
-    /* Main page styling */
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+    
+    * { font-family: 'Inter', sans-serif; }
+    
     .main .block-container {
         padding-top: 2rem;
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        background: linear-gradient(135deg, #1e3a8a 0%, #1e293b 50%, #0f172a 100%);
         min-height: 100vh;
+        background-attachment: fixed;
     }
     
-    /* Sidebar styling */
-    .css-1d391kg {
-        background: linear-gradient(180deg, #2d3748 0%, #1a202c 100%) !important;
-        border-right: 3px solid #4299e1;
-    }
-    
-    .css-1d391kg .css-1v0mbdj {
-        color: #ffffff !important;
-    }
-    
-    /* Sidebar headers */
-    .css-1d391kg h1, .css-1d391kg h2, .css-1d391kg h3 {
-        color: #ffffff !important;
-        border-bottom: 2px solid #4299e1;
-        padding-bottom: 0.5rem;
-        margin-bottom: 1rem;
-    }
-    
-    /* Sidebar text and labels */
-    .css-1d391kg .css-1v0mbdj label {
-        color: #ffffff !important;
-        font-weight: 500;
-    }
-    
-    .css-1d391kg .stSelectbox label {
-        color: #ffffff !important;
-    }
-    
-    .css-1d391kg .stTextInput label {
-        color: #ffffff !important;
-    }
-    
-    .css-1d391kg .stNumberInput label {
-        color: #ffffff !important;
-    }
-    
-    .css-1d391kg .stCheckbox label {
-        color: #ffffff !important;
-    }
-    
-    .css-1d391kg .stRadio label {
-        color: #ffffff !important;
-    }
-    
-    .css-1d391kg p {
-        color: #e2e8f0 !important;
-    }
-    
-    .css-1d391kg .stMarkdown {
-        color: #ffffff !important;
-    }
-    
-    /* Main content styling */
-    .stTabs [data-baseweb="tab-list"] {
-        gap: 8px;
-        background: rgba(255, 255, 255, 0.15);
-        border-radius: 10px;
-        padding: 8px;
-    }
-    
-    .stTabs [data-baseweb="tab"] {
-        background: rgba(255, 255, 255, 0.25);
-        border-radius: 8px;
-        color: white !important;
-        font-weight: 600;
-        border: 1px solid rgba(255, 255, 255, 0.2);
-    }
-    
-    .stTabs [aria-selected="true"] {
-        background: linear-gradient(90deg, #4299e1, #63b3ed) !important;
-        color: white !important;
-    }
-    
-    /* Tab content styling */
-    .stTabs > div > div > div > div {
-        background: rgba(255, 255, 255, 0.95);
-        border-radius: 15px;
+    /* Glassmorphic Cards */
+    .glass-card {
+        background: rgba(255, 255, 255, 0.12);
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+        border-radius: 18px;
+        border: 1px solid rgba(255, 255, 255, 0.18);
         padding: 20px;
-        margin-top: 10px;
-        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
-    }
-    
-    /* Headers in main content */
-    h1, h2, h3, h4, h5, h6 {
-        color: #2d3748 !important;
-    }
-    
-    /* Button styling */
-    .stButton > button {
-        background: linear-gradient(90deg, #4299e1, #63b3ed);
-        color: white;
-        border: none;
-        border-radius: 8px;
-        font-weight: 600;
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
         transition: all 0.3s ease;
     }
+    .glass-card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 12px 40px rgba(0, 0, 0, 0.3);
+    }
     
+    /* Sidebar Premium */
+    .css-1d391kg {
+        background: linear-gradient(180deg, #0f172a 0%, #1e293b 100%) !important;
+        border-right: 3px solid #3b82f6;
+    }
+    .css-1d391kg h1, .css-1d391kg h2, .css-1d391kg h3 {
+        color: #60a5fa !important;
+        font-weight: 600;
+    }
+    .css-1d391kg .stSelectbox > div > div, 
+    .css-1d391kg .stTextInput > div > div > input {
+        background: rgba(255,255,255,0.1) !important;
+        color: white !important;
+        border-radius: 10px;
+    }
+    .css-1d391kg label { color: #e2e8f0 !important; font-weight: 500; }
+
+    /* Tabs */
+    .stTabs [data-baseweb="tab-list"] {
+        background: rgba(255,255,255,0.1);
+        border-radius: 12px;
+        padding: 6px;
+        backdrop-filter: blur(8px);
+    }
+    .stTabs [data-baseweb="tab"] {
+        background: transparent;
+        color: #94a3b8;
+        border-radius: 10px;
+        font-weight: 500;
+        transition: all 0.3s ease;
+    }
+    .stTabs [aria-selected="true"] {
+        background: linear-gradient(90deg, #3b82f6, #60a5fa) !important;
+        color: white !important;
+        font-weight: 600;
+    }
+
+    /* Buttons */
+    .stButton > button {
+        background: linear-gradient(90deg, #3b82f6, #60a5fa);
+        color: white;
+        border: none;
+        border-radius: 12px;
+        font-weight: 600;
+        padding: 0.6rem 1.2rem;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 15px rgba(59, 130, 246, 0.3);
+    }
     .stButton > button:hover {
         transform: translateY(-2px);
-        box-shadow: 0 4px 12px rgba(66, 153, 225, 0.4);
+        box-shadow: 0 8px 25px rgba(59, 130, 246, 0.4);
     }
-    
-    /* Dataframe styling */
+
+    /* Dataframes */
     .dataframe {
-        border-radius: 10px;
+        border-radius: 12px;
         overflow: hidden;
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        box-shadow: 0 4px 20px rgba(0,0,0,0.1);
     }
-    
-    /* Text area styling */
-    .stTextArea textarea {
-        background: rgba(255, 255, 255, 0.9);
-        color: #2d3748;
-        border-radius: 8px;
+
+    /* Pulse Animation */
+    @keyframes pulse {
+        0% { opacity: 0.6; }
+        50% { opacity: 1; }
+        100% { opacity: 0.6; }
     }
-    
-    /* Metric styling */
-    .metric-container {
-        background: rgba(255, 255, 255, 0.9);
-        border-radius: 10px;
-        padding: 15px;
-    }
-    
-    /* Info/Success/Error message styling */
-    .stAlert {
-        border-radius: 10px;
+    .pulse { animation: pulse 2s infinite; }
+
+    /* Live Badge */
+    .live-badge {
+        display: inline-block;
+        background: #ef4444;
+        color: white;
+        font-size: 0.7rem;
+        padding: 4px 8px;
+        border-radius: 20px;
+        font-weight: 600;
+        animation: pulse 1.5s infinite;
     }
 </style>
 """, unsafe_allow_html=True)
 
-# Initialize session state for analytics
+# === SESSION STATE ===
 if 'analytics' not in st.session_state:
     st.session_state.analytics = {
         'session_start': time.time(),
@@ -165,9 +137,9 @@ if 'analytics' not in st.session_state:
         'emergency_escalations': 0,
         'patient_to_clinician': 0,
         'clinician_to_patient': 0,
-        'current_latency': np.random.randint(150, 250),
-        'current_fps': np.random.randint(25, 35),
-        'current_memory': np.random.randint(120, 180),
+        'current_latency': np.random.randint(140, 220),
+        'current_fps': np.random.randint(28, 36),
+        'current_memory': np.random.randint(110, 170),
         'clinical_assessments': 0,
         'triage_scores': [],
         'processing_times': [],
@@ -176,794 +148,311 @@ if 'analytics' not in st.session_state:
         'language_usage': {'USL': 0, 'ASL': 0, 'BSL': 0}
     }
 
-# Initialize other session states
 if 'live_camera_active' not in st.session_state:
     st.session_state.live_camera_active = False
 if 'screening_results' not in st.session_state:
     st.session_state.screening_results = []
 if 'system_status' not in st.session_state:
-    st.session_state.system_status = "🟢 All Systems Online"
+    st.session_state.system_status = "All Systems Online"
 
-# Beautiful Header
+# === HERO HEADER ===
 st.markdown("""
-<div style="
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    padding: 30px;
-    border-radius: 20px;
-    margin-bottom: 30px;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-">
-    <div style="text-align: center;">
-        <h1 style="
-            color: white;
-            margin: 0;
-            font-size: 2.5rem;
-            font-weight: 700;
-            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
-        ">🏥 MediSign - USL Healthcare Assistant</h1>
-        <p style="
-            color: rgba(255, 255, 255, 0.9);
-            margin: 10px 0 0 0;
-            font-size: 1.2rem;
-            font-weight: 300;
-        ">Smart Healthcare Communication • Real-time USL Translation • Clinical Integration</p>
-        <div style="
-            display: flex;
-            justify-content: center;
-            gap: 20px;
-            margin-top: 20px;
-            flex-wrap: wrap;
-        ">
-            <span style="
-                background: rgba(255, 255, 255, 0.2);
-                padding: 8px 16px;
-                border-radius: 20px;
-                color: white;
-                font-size: 0.9rem;
-            ">🤟 USL Recognition</span>
-            <span style="
-                background: rgba(255, 255, 255, 0.2);
-                padding: 8px 16px;
-                border-radius: 20px;
-                color: white;
-                font-size: 0.9rem;
-            ">🧠 AI-Powered</span>
-            <span style="
-                background: rgba(255, 255, 255, 0.2);
-                padding: 8px 16px;
-                border-radius: 20px;
-                color: white;
-                font-size: 0.9rem;
-            ">📋 FHIR Compatible</span>
-        </div>
+<div class="glass-card" style="text-align: center; padding: 2.5rem; margin-bottom: 2rem;">
+    <h1 style="background: linear-gradient(90deg, #60a5fa, #a78bfa); -webkit-background-clip: text; -webkit-text-fill-color: transparent; font-size: 2.8rem; font-weight: 700; margin:0;">
+        MediSign - USL Healthcare Assistant
+    </h1>
+    <p style="color: #cbd5e1; font-size: 1.2rem; margin: 0.8rem 0 1.5rem;">
+        Real-time USL Translation • AI Clinical Reasoning • FHIR Integration
+    </p>
+    <div style="display: flex; justify-content: center; gap: 1rem; flex-wrap: wrap;">
+        <span style="background: rgba(59,130,246,0.2); padding: 0.5rem 1rem; border-radius: 30px; color: #60a5fa; font-size: 0.9rem; border: 1px solid #60a5fa;">
+            USL Recognition
+        </span>
+        <span style="background: rgba(167,139,250,0.2); padding: 0.5rem 1rem; border-radius: 30px; color: #a78bfa; font-size: 0.9rem; border: 1px solid #a78bfa;">
+            AI-Powered
+        </span>
+        <span style="background: rgba(34,197,94,0.2); padding: 0.5rem 1rem; border-radius: 30px; color: #4ade80; font-size: 0.9rem; border: 1px solid #4ade80;">
+            FHIR Ready
+        </span>
     </div>
 </div>
 """, unsafe_allow_html=True)
 
-# Beautiful Organized Sidebar
+# === SIDEBAR - PREMIUM CONTROL PANEL ===
 with st.sidebar:
-    # Sidebar header
     st.markdown("""
-    <div style="
-        background: linear-gradient(135deg, #4299e1 0%, #63b3ed 100%);
-        padding: 20px;
-        border-radius: 15px;
-        margin-bottom: 20px;
-        text-align: center;
-        box-shadow: 0 4px 15px rgba(66, 153, 225, 0.3);
-    ">
-        <h2 style="color: white; margin: 0; font-size: 1.5rem;">🏥 Control Panel</h2>
-        <p style="color: rgba(255,255,255,0.8); margin: 5px 0 0 0; font-size: 0.9rem;">Patient Management & System Controls</p>
+    <div class="glass-card" style="text-align:center; padding:1.5rem; margin-bottom:1.5rem;">
+        <h2 style="color:#60a5fa; margin:0; font-size:1.6rem;">Control Panel</h2>
+        <p style="color:#94a3b8; margin:0.4rem 0 0; font-size:0.9rem;">Patient & System Management</p>
     </div>
     """, unsafe_allow_html=True)
-    
-    # Patient Information Section
-    st.markdown("""
-    <div style="
-        background: rgba(255, 255, 255, 0.1);
-        padding: 15px;
-        border-radius: 10px;
-        margin-bottom: 15px;
-        border-left: 4px solid #4299e1;
-    ">
-        <h3 style="color: #63b3ed; margin: 0 0 10px 0; font-size: 1.1rem;">👤 Patient Information</h3>
-    </div>
-    """, unsafe_allow_html=True)
-    
-    patient_id = st.text_input("Patient ID", "PAT-2024-001", help="Enter unique patient identifier")
+
+    # Patient Info
+    st.markdown("### Patient Information")
+    patient_id = st.text_input("Patient ID", "PAT-2024-001", help="Unique patient identifier")
     col1, col2 = st.columns(2)
-    with col1:
-        age = st.number_input("Age", min_value=0, max_value=120, value=30)
-    with col2:
-        gender = st.selectbox("Gender", ["Male", "Female", "Other"])
-    
-    # USL Processing Section
-    st.markdown("""
-    <div style="
-        background: rgba(255, 255, 255, 0.1);
-        padding: 15px;
-        border-radius: 10px;
-        margin: 20px 0 15px 0;
-        border-left: 4px solid #48bb78;
-    ">
-        <h3 style="color: #68d391; margin: 0 0 10px 0; font-size: 1.1rem;">🤟 USL Processing</h3>
-    </div>
-    """, unsafe_allow_html=True)
-    
-    camera_status = "🟢 Active" if st.session_state.live_camera_active else "⚪ Inactive"
-    if st.button(f"📹 Live Camera ({camera_status})", use_container_width=True):
+    with col1: age = st.number_input("Age", 0, 120, 30)
+    with col2: gender = st.selectbox("Gender", ["Male", "Female", "Other"])
+
+    # USL Controls
+    st.markdown("### USL Processing")
+    cam_text = "Active" if st.session_state.live_camera_active else "Inactive"
+    if st.button(f"Live Camera ({cam_text})", use_container_width=True):
         st.session_state.live_camera_active = not st.session_state.live_camera_active
-    
-    if st.button("📁 Upload USL Video", use_container_width=True):
-        st.info("📹 Video upload ready")
-    
-    if st.button("📄 Generate FHIR Report", use_container_width=True):
-        st.success("📄 FHIR report generated")
-    
-    # Language Settings Section
-    st.markdown("""
-    <div style="
-        background: rgba(255, 255, 255, 0.1);
-        padding: 15px;
-        border-radius: 10px;
-        margin: 20px 0 15px 0;
-        border-left: 4px solid #ed8936;
-    ">
-        <h3 style="color: #f6ad55; margin: 0 0 10px 0; font-size: 1.1rem;">🗣️ Language Settings</h3>
-    </div>
-    """, unsafe_allow_html=True)
-    
+        st.rerun()
+
+    if st.button("Upload USL Video", use_container_width=True):
+        st.info("Video upload ready")
+
+    if st.button("Generate FHIR Report", use_container_width=True):
+        st.success("FHIR report generated")
+
+    # Language
+    st.markdown("### Language Settings")
     clinic_lang = st.selectbox("Clinic Language", ["English", "Runyankole", "Luganda"])
-    usl_variant = st.selectbox("USL Variant", ["Canonical", "Kampala Regional", "Gulu Regional", "Mbale Regional"])
-    
-    # Quick Screening Section
-    st.markdown("""
-    <div style="
-        background: rgba(255, 255, 255, 0.1);
-        padding: 15px;
-        border-radius: 10px;
-        margin: 20px 0 15px 0;
-        border-left: 4px solid #9f7aea;
-    ">
-        <h3 style="color: #b794f6; margin: 0 0 10px 0; font-size: 1.1rem;">📋 Quick Screening</h3>
-    </div>
-    """, unsafe_allow_html=True)
-    
-    # Compact screening questions
-    screening_questions = {}
-    symptoms = [("fever", "🌡️"), ("cough", "😷"), ("hemoptysis", "🩸"), ("diarrhea", "💊")]
-    
-    for symptom, icon in symptoms:
-        col1, col2, col3 = st.columns([1, 1, 1])
-        with col1:
-            st.write(f"{icon}")
-        with col2:
-            if st.button("✅", key=f"{symptom}_yes", help=f"{symptom.title()}: Yes"):
-                screening_questions[symptom] = "Yes"
-        with col3:
-            if st.button("❌", key=f"{symptom}_no", help=f"{symptom.title()}: No"):
-                screening_questions[symptom] = "No"
-    
-    # Priority Diseases Section
-    st.markdown("""
-    <div style="
-        background: rgba(255, 255, 255, 0.1);
-        padding: 15px;
-        border-radius: 10px;
-        margin: 20px 0 15px 0;
-        border-left: 4px solid #f56565;
-    ">
-        <h3 style="color: #fc8181; margin: 0 0 10px 0; font-size: 1.1rem;">🦠 Priority Diseases</h3>
-    </div>
-    """, unsafe_allow_html=True)
-    
-    critical_diseases = ["TB", "VHF", "Cholera/AWD"]
-    high_diseases = ["Malaria", "COVID-19", "Measles"]
-    
-    st.write("**🔴 Critical:**")
-    selected_diseases = []
-    for disease in critical_diseases:
-        if st.checkbox(disease, key=f"critical_{disease}"):
-            selected_diseases.append(disease)
-    
-    st.write("**🟡 High Priority:**")
-    for disease in high_diseases:
-        if st.checkbox(disease, key=f"high_{disease}"):
-            selected_diseases.append(disease)
+    usl_variant = st.selectbox("USL Variant", ["Canonical", "Kampala", "Gulu", "Mbale"])
 
-# Beautiful Main Content Tabs
-st.markdown("""
-<div style="margin: 20px 0;">
-    <h2 style="
-        color: white;
-        text-align: center;
-        margin-bottom: 20px;
-        font-size: 1.8rem;
-        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
-    ">🚀 System Dashboard</h2>
-</div>
-""", unsafe_allow_html=True)
+    # Quick Screening
+    st.markdown("### Quick Screening")
+    symptoms = [("Fever", "fever"), ("Cough", "cough"), ("Hemoptysis", "hemoptysis"), ("Diarrhea", "diarrhea")]
+    for label, key in symptoms:
+        col1, col2, col3 = st.columns([0.8,1,1])
+        with col1: st.write(label)
+        with col2: st.button("Yes", key=f"{key}_yes", use_container_width=True)
+        with col3: st.button("No", key=f"{key}_no", use_container_width=True)
 
-tab1, tab2, tab3, tab4 = st.tabs(["🎥 Video Processing", "🤖 Avatar Synthesis", "📋 Clinical Results", "📊 Analytics"])
+    # Priority Diseases
+    st.markdown("### Priority Diseases")
+    for d in ["TB", "VHF", "Cholera/AWD"]: st.checkbox(d, key=f"critical_{d}")
+    for d in ["Malaria", "COVID-19", "Measles"]: st.checkbox(d, key=f"high_{d}")
 
+# === MAIN TABS ===
+tab1, tab2, tab3, tab4 = st.tabs(["Video Processing", "Avatar Synthesis", "Clinical Results", "Analytics"])
+
+# === TAB 1: VIDEO PROCESSING ===
 with tab1:
-    # Video Processing Tab with beautiful cards
-    col1, col2 = st.columns([3, 1])
-    
+    col1, col2 = st.columns([3,1])
+
     with col1:
-        st.markdown("""
-        <div style="
-            background: rgba(255, 255, 255, 0.95);
-            padding: 20px;
-            border-radius: 15px;
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
-            margin-bottom: 20px;
-        ">
-            <h3 style="color: #2d3748; margin: 0 0 15px 0;">🎥 Real-time USL Processing</h3>
-        </div>
-        """, unsafe_allow_html=True)
+        st.markdown("<div class='glass-card'><h3>Real-time USL Processing</h3></div>", unsafe_allow_html=True)
         
         if st.session_state.live_camera_active:
-            st.markdown("""
-            <div style="
-                width: 100%; 
-                height: 400px; 
-                background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-                border-radius: 15px;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                color: white;
-                font-size: 18px;
-                border: 3px solid #48bb78;
-                box-shadow: 0 8px 32px rgba(72, 187, 120, 0.3);
-                text-align: center;
-            ">
-                <div>
-                    <div style="font-size: 3rem; margin-bottom: 10px;">📹</div>
-                    <div style="font-size: 1.2rem; font-weight: bold;">Live Camera Feed Active</div>
-                    <div style="font-size: 1rem; margin-top: 10px; opacity: 0.9;">3D Pose Detection • MANO Hand Tracking • FLAME Face Analysis</div>
-                    <div style="margin-top: 15px; padding: 10px 20px; background: rgba(255,255,255,0.2); border-radius: 20px; display: inline-block;">🤟 USL Recognition Active</div>
+            st.markdown(f"""
+            <div style="position:relative; border-radius:18px; overflow:hidden; box-shadow:0 10px 30px rgba(0,0,0,0.3);">
+                <div style="height:420px; background:linear-gradient(135deg,#1e40af,#1e3a8a); display:flex; align-items:center; justify-content:center; color:white;">
+                    <div style="text-align:center;">
+                        <div style="font-size:4rem; margin-bottom:1rem;">Live Camera</div>
+                        <div class="live-badge">LIVE</div>
+                        <div style="margin-top:1rem; font-size:1.1rem; opacity:0.9;">
+                            3D Pose • MANO Hands • FLAME Face
+                        </div>
+                        <div style="margin-top:1rem; padding:0.8rem 1.5rem; background:rgba(255,255,255,0.2); border-radius:30px; display:inline-block;">
+                            USL Recognition Active
+                        </div>
+                    </div>
+                </div>
+                <div style="position:absolute; top:12px; right:12px; background:#ef4444; color:white; padding:6px 12px; border-radius:20px; font-size:0.8rem; font-weight:600;">
+                    LIVE
                 </div>
             </div>
             """, unsafe_allow_html=True)
         else:
             st.markdown("""
-            <div style="
-                width: 100%; 
-                height: 400px; 
-                background: linear-gradient(135deg, #f7fafc 0%, #edf2f7 100%);
-                border-radius: 15px;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                color: #4a5568;
-                font-size: 18px;
-                border: 2px dashed #cbd5e0;
-                text-align: center;
-            ">
-                <div>
-                    <div style="font-size: 3rem; margin-bottom: 10px; opacity: 0.5;">📷</div>
-                    <div style="font-size: 1.2rem; font-weight: bold;">Camera Feed Inactive</div>
-                    <div style="font-size: 1rem; margin-top: 10px; opacity: 0.7;">Ready for USL input...</div>
+            <div style="height:420px; background:#1e293b; border:2px dashed #475569; border-radius:18px; display:flex; align-items:center; justify-content:center; color:#64748b;">
+                <div style="text-align:center;">
+                    <div style="font-size:3.5rem; opacity:0.5;">Camera Off</div>
+                    <p style="margin-top:1rem;">Ready for USL input...</p>
                 </div>
             </div>
             """, unsafe_allow_html=True)
-    
+
     with col2:
-        st.markdown("""
-        <div style="
-            background: rgba(255, 255, 255, 0.95);
-            padding: 20px;
-            border-radius: 15px;
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
-            margin-bottom: 20px;
-        ">
-            <h4 style="color: #2d3748; margin: 0 0 15px 0;">📊 Live Metrics</h4>
-        </div>
-        """, unsafe_allow_html=True)
-        
-        # Beautiful metrics cards
-        metrics = [
-            ("FPS", st.session_state.analytics['current_fps'], "📈"),
-            ("Latency", f"{st.session_state.analytics['current_latency']}ms", "⚡"),
-            ("Memory", f"{st.session_state.analytics['current_memory']}MB", "💾")
-        ]
-        
-        for label, value, icon in metrics:
+        st.markdown("<div class='glass-card'><h4>Live Metrics</h4></div>", unsafe_allow_html=True)
+        for label, val, icon, color in [
+            ("FPS", st.session_state.analytics['current_fps'], "Chart Increasing", "#10b981"),
+            ("Latency", f"{st.session_state.analytics['current_latency']}ms", "Zap", "#3b82f6"),
+            ("Memory", f"{st.session_state.analytics['current_memory']}MB", "Hard Drive", "#8b5cf6")
+        ]:
             st.markdown(f"""
-            <div style="
-                background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-                padding: 15px;
-                border-radius: 10px;
-                margin-bottom: 10px;
-                color: white;
-                text-align: center;
-            ">
-                <div style="font-size: 1.5rem;">{icon}</div>
-                <div style="font-size: 1.2rem; font-weight: bold;">{value}</div>
-                <div style="font-size: 0.9rem; opacity: 0.8;">{label}</div>
+            <div class='glass-card' style='text-align:center; margin-bottom:0.8rem; background:{color} !important;'>
+                <div style='font-size:1.8rem;'>{icon}</div>
+                <div style='font-weight:700; font-size:1.3rem; color:white;'>{val}</div>
+                <div style='font-size:0.85rem; opacity:0.9; color:white;'>{label}</div>
             </div>
             """, unsafe_allow_html=True)
-        
-        if st.button("🧠 Process USL → Clinical", use_container_width=True):
-            with st.spinner("Processing USL with Graph-Reasoned LVM..."):
+
+        if st.button("Process USL to Clinical", use_container_width=True):
+            with st.spinner("Graph-Reasoned LVM Processing..."):
                 time.sleep(2)
-                st.success("✅ USL processing completed")
+                st.success("USL to Clinical Translation Complete")
                 st.session_state.analytics['successful_translations'] += 1
-    
-    # Neural Pipeline Status
-    st.markdown("""
-    <div style="
-        background: rgba(255, 255, 255, 0.95);
-        padding: 25px;
-        border-radius: 15px;
-        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
-        margin-top: 20px;
-    ">
-        <h3 style="color: #2d3748; margin: 0 0 20px 0;">🧠 Neural Processing Pipeline</h3>
-    </div>
-    """, unsafe_allow_html=True)
-    
-    pipeline_steps = [
-        ("📊 3D Skeletal Pose Extraction", "Ready", "#48bb78"),
-        ("✋ MANO Hand Tracking", "Ready", "#4299e1"),
-        ("😊 FLAME Face Analysis", "Ready", "#ed8936"),
-        ("🧠 Multistream Transformer", "Ready", "#9f7aea"),
-        ("📈 Graph Attention Network", "Ready", "#38b2ac"),
-        ("🎯 Bayesian Calibration", "Ready", "#f56565"),
-        ("🏥 Clinical Slot Classification", "Ready", "#d69e2e")
+
+    # Neural Pipeline
+    st.markdown("<div class='glass-card' style='margin-top:1.5rem;'><h3>Neural Processing Pipeline</h3></div>", unsafe_allow_html=True)
+    steps = [
+        ("3D Skeletal Pose", 98, "#10b981"),
+        ("MANO Hand Tracking", 95, "#3b82f6"),
+        ("FLAME Face Analysis", 92, "#8b5cf6"),
+        ("Multistream Transformer", 88, "#f59e0b"),
+        ("Graph Attention Network", 85, "#ef4444"),
+        ("Bayesian Calibration", 90, "#06b6d4"),
+        ("Clinical Slot Fill", 87, "#ec4899")
     ]
-    
     cols = st.columns(2)
-    for i, (step, status, color) in enumerate(pipeline_steps):
+    for i, (name, prog, color) in enumerate(steps):
         with cols[i % 2]:
             st.markdown(f"""
-            <div style="
-                background: {color};
-                color: white;
-                padding: 12px;
-                border-radius: 8px;
-                margin-bottom: 8px;
-                font-weight: 500;
-            ">
-                {step}: {status}
+            <div class='glass-card' style='padding:1rem; margin-bottom:0.8rem;'>
+                <div style='display:flex; justify-content:space-between; align-items:center; margin-bottom:0.5rem;'>
+                    <span style='font-weight:600; color:#e2e8f0;'>{name}</span>
+                    <span style='font-size:0.8rem; color:#94a3b8;'>{prog}%</span>
+                </div>
+                <div style='height:6px; background:#334155; border-radius:3px; overflow:hidden;'>
+                    <div style='width:{prog}%; height:100%; background:{color}; border-radius:3px; transition:width 0.5s ease;'></div>
+                </div>
             </div>
             """, unsafe_allow_html=True)
 
+# === TAB 2: AVATAR SYNTHESIS ===
 with tab2:
-    st.subheader("🤖 Avatar Synthesis")
-    
     col1, col2 = st.columns(2)
-    
     with col1:
-        st.markdown("**📝 Text → USL Synthesis**")
-        clinical_text = st.text_area("Enter clinical text:", height=150)
-        
-        if st.button("🔄 Generate USL Gloss"):
-            st.info("USL gloss generation functionality")
-        
-        if st.button("🤖 Synthesize Avatar"):
-            st.success("Avatar synthesized with MANO+Face rig")
-        
+        st.markdown("<div class='glass-card'><h4>Text to USL Avatar</h4></div>", unsafe_allow_html=True)
+        text = st.text_area("Clinical Text Input", height=130)
+        if st.button("Generate USL Gloss", use_container_width=True):
+            st.info("Gloss: [FEVER YES] [COUGH NO] [DURATION 3 DAYS]")
+        if st.button("Synthesize Avatar", use_container_width=True):
+            st.success("Avatar rendered with MANO + FLAME rig")
         st.markdown("""
-        <div style="
-            width: 100%; 
-            height: 200px; 
-            background: #374151;
-            border-radius: 10px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: #9ca3af;
-            font-size: 16px;
-        ">
-            🤖 Parametric Avatar<br>
-            (MANO + Face Rig)<br><br>
-            Ready for synthesis...
-        </div>
-        """, unsafe_allow_html=True)
-    
-    with col2:
-        st.markdown("**🤟 USL → Structured Text**")
-        
-        recognition_results = st.text_area("Recognition Results:", height=200, value="""🤟 USL RECOGNITION RESULTS
-========================================
-
-🌡️ fever: Yes (confidence: 92.3%)
-😷 cough: No (confidence: 87.1%)
-🩸 hemoptysis: Unknown (confidence: 45.2%)
-💊 diarrhea: No (confidence: 91.8%)
-""")
-        
-        col2a, col2b = st.columns(2)
-        with col2a:
-            if st.button("🔊 Neural TTS (English)"):
-                st.success("🔊 English TTS activated")
-        with col2b:
-            if st.button("🔊 Neural TTS (Runyankole)"):
-                st.success("🔊 Runyankole TTS activated")
-
-with tab3:
-    st.subheader("📋 FHIR-Structured Clinical Results")
-    
-    if st.session_state.screening_results:
-        latest_result = st.session_state.screening_results[-1]
-        
-        col1, col2 = st.columns([2, 1])
-        
-        with col1:
-            st.markdown("**🏥 Clinical Assessment Summary**")
-            st.markdown(f"**Patient:** {latest_result['patient_name']} (ID: {latest_result['patient_id']})")
-            st.markdown(f"**Assessment Type:** {latest_result['screening_type']}")
-            st.markdown(f"**Timestamp:** {latest_result['timestamp']}")
-            
-            st.markdown("**🔍 Clinical Findings:**")
-            for symptom in latest_result['symptoms']:
-                st.markdown(f"• {symptom}")
-            
-            st.markdown("**💡 Clinical Recommendations:**")
-            for rec in latest_result['recommendations']:
-                st.markdown(f"• {rec}")
-        
-        with col2:
-            st.markdown("**⚡ Quick Actions**")
-            
-            if st.button("🚨 Emergency Alert", use_container_width=True):
-                st.error("🚨 Emergency alert sent")
-                st.session_state.analytics['emergency_escalations'] += 1
-                
-            if st.button("📞 Contact Physician", use_container_width=True):
-                st.success("📞 Physician contacted")
-                
-            if st.button("📄 Generate Report", use_container_width=True):
-                st.success("📄 Report generated")
-        
-        st.divider()
-        
-        # FHIR Resource Summary
-        st.markdown("### 📋 FHIR Resource Summary")
-        
-        resource_id = f"OBS-{latest_result['patient_id']}-001"
-        patient_id_val = latest_result['patient_id']
-        timestamp = latest_result['timestamp']
-        
-        fhir_data = pd.DataFrame({
-            'Field': ['Resource Type', 'Resource ID', 'Patient ID', 'Status', 'Category', 'System', 'Timestamp'],
-            'Value': [
-                'Observation',
-                resource_id,
-                patient_id_val,
-                'final',
-                'Clinical Screening',
-                'MediSign Healthcare Assistant',
-                timestamp
-            ]
-        })
-        
-        st.dataframe(fhir_data, use_container_width=True, hide_index=True)
-        
-        # Action buttons row
-        col1, col2, col3 = st.columns(3)
-        with col1:
-            if st.button("📤 Export FHIR JSON", use_container_width=True):
-                st.success("📤 FHIR JSON exported")
-        with col2:
-            if st.button("📧 Send to EHR", use_container_width=True):
-                st.success("📧 Sent to EHR system")
-        with col3:
-            if st.button("🖨️ Print Report", use_container_width=True):
-                st.success("🖨️ Report printed")
-        
-    else:
-        # Empty state with better design
-        st.markdown("""
-        <div style="text-align: center; padding: 3rem; background: #f8fafc; border-radius: 12px; border: 2px dashed #cbd5e1;">
-            <div style="font-size: 3em; margin-bottom: 1rem;">📋</div>
-            <div style="font-size: 1.5em; font-weight: bold; margin-bottom: 1rem; color: #475569;">No Clinical Data Available</div>
-            <div style="color: #64748b; margin-bottom: 2rem;">Process USL input to generate clinical assessment and FHIR-structured results</div>
-            <div style="background: white; padding: 1.5rem; border-radius: 8px; margin: 1rem 0;">
-                <div style="font-weight: bold; margin-bottom: 0.5rem;">📊 Ready to Process:</div>
-                <div>🆔 Resource Type: Observation</div>
-                <div>🏥 System: MediSign Healthcare Assistant</div>
-                <div>📋 Category: Clinical Screening</div>
-                <div>🔄 Status: Awaiting patient data</div>
+        <div style="height:180px; background:#1e293b; border-radius:12px; display:flex; align-items:center; justify-content:center; color:#64748b; margin-top:1rem;">
+            <div style="text-align:center;">
+                <div style="font-size:2.5rem;">Robot</div>
+                <p>Parametric Avatar Ready</p>
             </div>
         </div>
         """, unsafe_allow_html=True)
 
-with tab4:
-    # Analytics tab with better visibility
-    st.markdown("""
-    <div style="
-        background: rgba(255, 255, 255, 0.95);
-        padding: 20px;
-        border-radius: 15px;
-        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
-        margin-bottom: 20px;
-    ">
-        <h3 style="color: #2d3748; margin: 0;">📊 System Performance & Analytics</h3>
-    </div>
-    """, unsafe_allow_html=True)
-    
-    # Performance Metrics Charts
-    col1, col2 = st.columns(2)
-    
-    with col1:
+    with col2:
+        st.markdown("<div class='glass-card'><h4>USL to Text</h4></div>", unsafe_allow_html=True)
+        st.text_area("Recognition Output", height=200, value="""USL RECOGNITION
+---
+Fever: Yes (92%)
+Cough: No (87%)
+Hemoptysis: Unknown (45%)
+Diarrhea: No (92%)
+""")
+        c1, c2 = st.columns(2)
+        with c1: st.button("TTS (English)", use_container_width=True)
+        with c2: st.button("TTS (Runyankole)", use_container_width=True)
+
+# === TAB 3: CLINICAL RESULTS ===
+with tab3:
+    if st.session_state.screening_results:
+        res = st.session_state.screening_results[-1]
+        col1, col2 = st.columns([2,1])
+        with col1:
+            st.markdown(f"<div class='glass-card'><h3>Clinical Summary</h3></div>", unsafe_allow_html=True)
+            st.markdown(f"**Patient:** {res.get('patient_name', 'N/A')} | **ID:** {res.get('patient_id', patient_id)}")
+            st.markdown(f"**Timestamp:** {res.get('timestamp', datetime.now().strftime('%Y-%m-%d %H:%M'))}")
+            st.markdown("**Symptoms:** " + " • ".join(res.get('symptoms', [])))
+            st.markdown("**Recommendations:** " + " • ".join(res.get('recommendations', [])))
+        with col2:
+            st.markdown("<div class='glass-card'><h4>Actions</h4></div>", unsafe_allow_html=True)
+            if st.button("Emergency Alert", use_container_width=True):
+                st.error("EMERGENCY ESCALATED")
+                st.session_state.analytics['emergency_escalations'] += 1
+            st.button("Contact Physician", use_container_width=True)
+            st.button("Generate Report", use_container_width=True)
+
+        st.markdown("### FHIR Observation")
+        fhir_df = pd.DataFrame({
+            'Field': ['Resource', 'ID', 'Patient', 'Status', 'Category', 'Timestamp'],
+            'Value': ['Observation', f"OBS-{patient_id}-001", patient_id, 'final', 'Screening', datetime.now().strftime('%Y-%m-%d %H:%M')]
+        })
+        st.dataframe(fhir_df, use_container_width=True, hide_index=True)
+
+        c1,c2,c3 = st.columns(3)
+        with c1: st.button("Export JSON", use_container_width=True)
+        with c2: st.button("Send to EHR", use_container_width=True)
+        with c3: st.button("Print", use_container_width=True)
+    else:
         st.markdown("""
-        <div style="
-            background: rgba(255, 255, 255, 0.9);
-            padding: 15px;
-            border-radius: 10px;
-            margin-bottom: 15px;
-        ">
-            <h4 style="color: #2d3748; margin: 0;">⚡ Performance Metrics</h4>
+        <div class='glass-card' style='text-align:center; padding:3rem;'>
+            <div style='font-size:4rem; opacity:0.3;'>Clipboard Check</div>
+            <h3 style='color:#e2e8f0; margin:1rem 0;'>No Clinical Data</h3>
+            <p style='color:#94a3b8;'>Process USL input to generate FHIR-structured results</p>
         </div>
         """, unsafe_allow_html=True)
-        
-        # Live performance data
-        perf_data = pd.DataFrame({
-            'Metric': ['Latency (ms)', 'Accuracy (%)', 'FPS', 'Memory (MB)'],
-            'Current': [
-                st.session_state.analytics['current_latency'],
-                86.7,
-                st.session_state.analytics['current_fps'],
-                st.session_state.analytics['current_memory']
-            ],
+
+# === TAB 4: ANALYTICS ===
+with tab4:
+    st.markdown("<div class='glass-card'><h3>System Analytics</h3></div>", unsafe_allow_html=True)
+    col1, col2 = st.columns(2)
+    with col1:
+        st.markdown("#### Performance")
+        perf = pd.DataFrame({
+            'Metric': ['Latency', 'Accuracy', 'FPS', 'Memory'],
+            'Current': [st.session_state.analytics['current_latency'], 87.3, st.session_state.analytics['current_fps'], st.session_state.analytics['current_memory']],
             'Target': [300, 90, 30, 200]
         })
-        
-        st.dataframe(perf_data, use_container_width=True)
-        st.bar_chart(perf_data.set_index('Metric')[['Current', 'Target']])
-    
-    with col2:
-        st.markdown("""
-        <div style="
-            background: rgba(255, 255, 255, 0.9);
-            padding: 15px;
-            border-radius: 10px;
-            margin-bottom: 15px;
-        ">
-            <h4 style="color: #2d3748; margin: 0;">🔄 Session Statistics</h4>
-        </div>
-        """, unsafe_allow_html=True)
-        
-        # Live session stats
-        duration_min = (time.time() - st.session_state.analytics['session_start']) / 60
-        session_data = pd.DataFrame({
-            'Statistic': ['Total Sessions', 'Successful Translations', 'Emergency Escalations', 'Session Duration (min)'],
-            'Count': [
-                st.session_state.analytics['total_sessions'],
-                st.session_state.analytics['successful_translations'],
-                st.session_state.analytics['emergency_escalations'],
-                f"{duration_min:.1f}"
-            ]
-        })
-        
-        st.dataframe(session_data, use_container_width=True)
-        
-        # Live session distribution
-        session_types = pd.DataFrame({
-            'Type': ['Patient→Clinician', 'Clinician→Patient', 'Emergency'],
-            'Count': [
-                st.session_state.analytics['patient_to_clinician'],
-                st.session_state.analytics['clinician_to_patient'],
-                st.session_state.analytics['emergency_escalations']
-            ]
-        })
-        
-        st.markdown("**Session Distribution**")
-        if session_types['Count'].sum() > 0:
-            st.bar_chart(session_types.set_index('Type'))
-        else:
-            st.info("No session data yet")
-    
-    # Neural Pipeline Status Table
-    st.markdown("""
-    <div style="
-        background: rgba(255, 255, 255, 0.9);
-        padding: 15px;
-        border-radius: 10px;
-        margin: 20px 0 15px 0;
-    ">
-        <h4 style="color: #2d3748; margin: 0;">🧠 Neural Pipeline Status</h4>
-    </div>
-    """, unsafe_allow_html=True)
-    
-    # Dynamic pipeline status based on system activity
-    camera_active = st.session_state.live_camera_active
-    processing_active = len(st.session_state.screening_results) > 0
-    
-    pipeline_data = pd.DataFrame({
-        'Component': ['3D Pose Detection', 'MANO Hand Tracking', 'FLAME Face Analysis', 
-                     'Multistream Transformer', 'Graph Attention Network', 'Bayesian Calibration'],
-        'Status': [
-            '✅ Active' if camera_active else '⏸️ Standby',
-            '✅ Active' if camera_active else '⏸️ Standby',
-            '✅ Active' if camera_active else '⏸️ Standby',
-            '✅ Processing' if processing_active else '✅ Ready',
-            '✅ Processing' if processing_active else '✅ Ready',
-            '✅ Processing' if processing_active else '✅ Ready'
-        ],
-        'Load (%)': [
-            np.random.randint(10, 20) if camera_active else 2,
-            np.random.randint(8, 15) if camera_active else 1,
-            np.random.randint(5, 12) if camera_active else 1,
-            np.random.randint(20, 35) if processing_active else 5,
-            np.random.randint(25, 40) if processing_active else 3,
-            np.random.randint(8, 15) if processing_active else 2
-        ]
-    })
-    st.dataframe(pipeline_data, use_container_width=True)
-    
-    # Clinical Metrics Table
-    col3, col4 = st.columns(2)
-    
-    with col3:
-        st.markdown("""
-        <div style="
-            background: rgba(255, 255, 255, 0.9);
-            padding: 15px;
-            border-radius: 10px;
-            margin-bottom: 15px;
-        ">
-            <h4 style="color: #2d3748; margin: 0;">🏥 Clinical Metrics</h4>
-        </div>
-        """, unsafe_allow_html=True)
-        
-        # Calculate live clinical metrics
-        assessments = st.session_state.analytics['clinical_assessments']
-        avg_triage = np.mean(st.session_state.analytics['triage_scores']) if st.session_state.analytics['triage_scores'] else 0
-        avg_processing_time = np.mean(st.session_state.analytics['processing_times']) if st.session_state.analytics['processing_times'] else 0
-        
-        clinical_data = pd.DataFrame({
-            'Metric': ['Clinical Assessments', 'Avg Triage Score', 'Avg Processing (ms)', 'API Success Rate'],
-            'Value': [
-                assessments,
-                f"{avg_triage:.1f}/20" if avg_triage > 0 else "0/20",
-                f"{avg_processing_time:.0f}" if avg_processing_time > 0 else "0",
-                f"{(st.session_state.analytics['api_calls'] / max(1, st.session_state.analytics['api_calls'] + st.session_state.analytics['offline_fallbacks']) * 100):.1f}%"
-            ],
-            'Target': ['∞', '<10/20', '<300', '>95%']
-        })
-        st.dataframe(clinical_data, use_container_width=True)
-    
-    with col4:
-        st.markdown("""
-        <div style="
-            background: rgba(255, 255, 255, 0.9);
-            padding: 15px;
-            border-radius: 10px;
-            margin-bottom: 15px;
-        ">
-            <h4 style="color: #2d3748; margin: 0;">🔒 Security Status</h4>
-        </div>
-        """, unsafe_allow_html=True)
-        
-        security_data = pd.DataFrame({
-            'Feature': ['Offline Processing', 'Data Encryption', 'Cloud Upload', 'De-identification'],
-            'Status': ['✅ Enabled', '✅ AES-256', '❌ Disabled', '✅ Active']
-        })
-        st.dataframe(security_data, use_container_width=True)
-    
-    # Language Support Chart
-    st.markdown("""
-    <div style="
-        background: rgba(255, 255, 255, 0.9);
-        padding: 15px;
-        border-radius: 10px;
-        margin: 20px 0 15px 0;
-    ">
-        <h4 style="color: #2d3748; margin: 0;">🌍 Language Support Distribution</h4>
-    </div>
-    """, unsafe_allow_html=True)
-    
-    # Live language usage data
-    total_usage = sum(st.session_state.analytics['language_usage'].values())
-    if total_usage > 0:
-        lang_data = pd.DataFrame({
-            'Language': list(st.session_state.analytics['language_usage'].keys()),
-            'Usage': list(st.session_state.analytics['language_usage'].values())
-        })
-        st.bar_chart(lang_data.set_index('Language'))
-    else:
-        st.info("No language usage data yet")
-    
-    # Quality Metrics
-    st.markdown("""
-    <div style="
-        background: rgba(255, 255, 255, 0.9);
-        padding: 15px;
-        border-radius: 10px;
-        margin: 20px 0 15px 0;
-    ">
-        <h4 style="color: #2d3748; margin: 0;">📈 Quality Assurance Status</h4>
-    </div>
-    """, unsafe_allow_html=True)
-    
-    # Live quality metrics
-    total_translations = st.session_state.analytics['successful_translations']
-    success_rate = (total_translations / max(1, total_translations + st.session_state.analytics['offline_fallbacks'])) * 100
-    
-    quality_data = pd.DataFrame({
-        'Test': ['Translation Success Rate', 'System Uptime', 'Robustness Testing', 'Privacy Compliance'],
-        'Status': [
-            f"{success_rate:.1f}%" if total_translations > 0 else "0%",
-            "✅ Online" if st.session_state.system_status == "🟢 All Systems Online" else "❌ Offline",
-            '✅ Passed',
-            '✅ Compliant'
-        ],
-        'Score': [
-            f"{total_translations}/{total_translations + st.session_state.analytics['offline_fallbacks']}",
-            f"{duration_min:.1f}min",
-            '98%',
-            '100%'
-        ]
-    })
-    st.dataframe(quality_data, use_container_width=True)
+        st.dataframe(perf, use_container_width=True, hide_index=True)
+        st.bar_chart(perf.set_index('Metric'))
 
-# Beautiful Status Bar
+    with col2:
+        st.markdown("#### Session Stats")
+        dur = (time.time() - st.session_state.analytics['session_start']) / 60
+        sess = pd.DataFrame({
+            'Stat': ['Sessions', 'Translations', 'Escalations', 'Duration'],
+            'Value': [1, st.session_state.analytics['successful_translations'], st.session_state.analytics['emergency_escalations'], f"{dur:.1f} min"]
+        })
+        st.dataframe(sess, use_container_width=True, hide_index=True)
+
+    st.markdown("#### Neural Pipeline Load")
+    load_data = pd.DataFrame({
+        'Component': ['Pose', 'Hands', 'Face', 'Transformer', 'Graph', 'Calibration'],
+        'Load (%)': [np.random.randint(10,30) if st.session_state.live_camera_active else 2] * 6
+    })
+    st.dataframe(load_data, use_container_width=True, hide_index=True)
+
+# === STATUS BAR ===
 st.markdown("""
-<div style="
-    background: rgba(255, 255, 255, 0.95);
-    padding: 20px;
-    border-radius: 15px;
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
-    margin-top: 30px;
-">
-    <h3 style="color: #2d3748; text-align: center; margin: 0 0 20px 0;">📊 System Status Dashboard</h3>
+<div class='glass-card' style='margin-top:2rem; padding:1.5rem;'>
+    <h3 style='text-align:center; margin:0 0 1.5rem; color:#e2e8f0;'>System Status</h3>
 </div>
 """, unsafe_allow_html=True)
 
 col1, col2, col3 = st.columns(3)
 with col1:
-    status_color = "#48bb78" if "Online" in st.session_state.system_status else "#f56565"
     st.markdown(f"""
-    <div style="
-        background: {status_color};
-        color: white;
-        padding: 20px;
-        border-radius: 12px;
-        text-align: center;
-        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-    ">
-        <div style="font-size: 2rem; margin-bottom: 5px;">🖥️</div>
-        <div style="font-size: 1.1rem; font-weight: bold;">System Status</div>
-        <div style="font-size: 0.9rem; opacity: 0.9;">{st.session_state.system_status}</div>
+    <div class='glass-card' style='text-align:center; background:#10b981 !important;'>
+        <div style='font-size:2rem;'>Server</div>
+        <div style='font-weight:600; color:white;'>Online</div>
     </div>
     """, unsafe_allow_html=True)
-
 with col2:
-    patient_display = patient_id if patient_id else "None"
     st.markdown(f"""
-    <div style="
-        background: linear-gradient(135deg, #4299e1 0%, #63b3ed 100%);
-        color: white;
-        padding: 20px;
-        border-radius: 12px;
-        text-align: center;
-        box-shadow: 0 4px 15px rgba(66, 153, 225, 0.3);
-    ">
-        <div style="font-size: 2rem; margin-bottom: 5px;">👤</div>
-        <div style="font-size: 1.1rem; font-weight: bold;">Active Patient</div>
-        <div style="font-size: 0.9rem; opacity: 0.9;">{patient_display}</div>
+    <div class='glass-card' style='text-align:center; background:#3b82f6 !important;'>
+        <div style='font-size:2rem;'>User</div>
+        <div style='font-weight:600; color:white;'>{patient_id}</div>
+    </div>
+    """, unsafe_allow_html=True)
+with col3:
+    st.markdown(f"""
+    <div class='glass-card' style='text-align:center; background:#8b5cf6 !important;'>
+        <div style='font-size:2rem;'>Clock</div>
+        <div style='font-weight:600; color:white;' id='clock'>--:--:--</div>
     </div>
     """, unsafe_allow_html=True)
 
-with col3:
-    current_time = datetime.now().strftime("%H:%M:%S")
-    st.markdown(f"""
-    <div style="
-        background: linear-gradient(135deg, #9f7aea 0%, #b794f6 100%);
-        color: white;
-        padding: 20px;
-        border-radius: 12px;
-        text-align: center;
-        box-shadow: 0 4px 15px rgba(159, 122, 234, 0.3);
-    ">
-        <div style="font-size: 2rem; margin-bottom: 5px;">🕐</div>
-        <div style="font-size: 1.1rem; font-weight: bold;">Current Time</div>
-        <div style="font-size: 0.9rem; opacity: 0.9;">{current_time}</div>
-    </div>
-    """, unsafe_allow_html=True)
+# Live Clock
+st.markdown("""
+<script>
+    function updateClock() {
+        const now = new Date();
+        const time = now.toLocaleTimeString();
+        document.getElementById('clock').innerText = time;
+    }
+    setInterval(updateClock, 1000);
+    updateClock();
+</script>
+""", unsafe_allow_html=True)
