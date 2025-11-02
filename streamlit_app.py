@@ -16,7 +16,7 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
-# Custom CSS for beautiful UI
+# Custom CSS for beautiful UI with better text visibility
 st.markdown("""
 <style>
     /* Main page styling */
@@ -28,63 +28,89 @@ st.markdown("""
     
     /* Sidebar styling */
     .css-1d391kg {
-        background: linear-gradient(180deg, #2d3748 0%, #1a202c 100%);
+        background: linear-gradient(180deg, #2d3748 0%, #1a202c 100%) !important;
         border-right: 3px solid #4299e1;
     }
     
     .css-1d391kg .css-1v0mbdj {
-        color: #e2e8f0;
+        color: #ffffff !important;
     }
     
     /* Sidebar headers */
     .css-1d391kg h1, .css-1d391kg h2, .css-1d391kg h3 {
-        color: #63b3ed;
+        color: #ffffff !important;
         border-bottom: 2px solid #4299e1;
         padding-bottom: 0.5rem;
         margin-bottom: 1rem;
     }
     
-    /* Sidebar text */
+    /* Sidebar text and labels */
     .css-1d391kg .css-1v0mbdj label {
-        color: #cbd5e1;
+        color: #ffffff !important;
         font-weight: 500;
     }
     
-    /* Main content cards */
-    .css-1r6slb0 {
-        background: rgba(255, 255, 255, 0.95);
-        backdrop-filter: blur(10px);
-        border-radius: 15px;
-        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
-        border: 1px solid rgba(255, 255, 255, 0.2);
+    .css-1d391kg .stSelectbox label {
+        color: #ffffff !important;
     }
     
-    /* Tab styling */
+    .css-1d391kg .stTextInput label {
+        color: #ffffff !important;
+    }
+    
+    .css-1d391kg .stNumberInput label {
+        color: #ffffff !important;
+    }
+    
+    .css-1d391kg .stCheckbox label {
+        color: #ffffff !important;
+    }
+    
+    .css-1d391kg .stRadio label {
+        color: #ffffff !important;
+    }
+    
+    .css-1d391kg p {
+        color: #e2e8f0 !important;
+    }
+    
+    .css-1d391kg .stMarkdown {
+        color: #ffffff !important;
+    }
+    
+    /* Main content styling */
     .stTabs [data-baseweb="tab-list"] {
         gap: 8px;
-        background: rgba(255, 255, 255, 0.1);
+        background: rgba(255, 255, 255, 0.15);
         border-radius: 10px;
-        padding: 5px;
+        padding: 8px;
     }
     
     .stTabs [data-baseweb="tab"] {
-        background: rgba(255, 255, 255, 0.2);
+        background: rgba(255, 255, 255, 0.25);
         border-radius: 8px;
-        color: white;
+        color: white !important;
         font-weight: 600;
+        border: 1px solid rgba(255, 255, 255, 0.2);
     }
     
     .stTabs [aria-selected="true"] {
-        background: linear-gradient(90deg, #4299e1, #63b3ed);
-        color: white;
+        background: linear-gradient(90deg, #4299e1, #63b3ed) !important;
+        color: white !important;
     }
     
-    /* Metrics styling */
-    .css-1xarl3l {
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        border-radius: 10px;
-        padding: 1rem;
-        color: white;
+    /* Tab content styling */
+    .stTabs > div > div > div > div {
+        background: rgba(255, 255, 255, 0.95);
+        border-radius: 15px;
+        padding: 20px;
+        margin-top: 10px;
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+    }
+    
+    /* Headers in main content */
+    h1, h2, h3, h4, h5, h6 {
+        color: #2d3748 !important;
     }
     
     /* Button styling */
@@ -107,6 +133,25 @@ st.markdown("""
         border-radius: 10px;
         overflow: hidden;
         box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    }
+    
+    /* Text area styling */
+    .stTextArea textarea {
+        background: rgba(255, 255, 255, 0.9);
+        color: #2d3748;
+        border-radius: 8px;
+    }
+    
+    /* Metric styling */
+    .metric-container {
+        background: rgba(255, 255, 255, 0.9);
+        border-radius: 10px;
+        padding: 15px;
+    }
+    
+    /* Info/Success/Error message styling */
+    .stAlert {
+        border-radius: 10px;
     }
 </style>
 """, unsafe_allow_html=True)
@@ -629,13 +674,33 @@ with tab3:
         """, unsafe_allow_html=True)
 
 with tab4:
-    st.subheader("📊 System Performance & Analytics")
+    # Analytics tab with better visibility
+    st.markdown("""
+    <div style="
+        background: rgba(255, 255, 255, 0.95);
+        padding: 20px;
+        border-radius: 15px;
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+        margin-bottom: 20px;
+    ">
+        <h3 style="color: #2d3748; margin: 0;">📊 System Performance & Analytics</h3>
+    </div>
+    """, unsafe_allow_html=True)
     
     # Performance Metrics Charts
     col1, col2 = st.columns(2)
     
     with col1:
-        st.markdown("**⚡ Performance Metrics**")
+        st.markdown("""
+        <div style="
+            background: rgba(255, 255, 255, 0.9);
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 15px;
+        ">
+            <h4 style="color: #2d3748; margin: 0;">⚡ Performance Metrics</h4>
+        </div>
+        """, unsafe_allow_html=True)
         
         # Live performance data
         perf_data = pd.DataFrame({
@@ -653,7 +718,16 @@ with tab4:
         st.bar_chart(perf_data.set_index('Metric')[['Current', 'Target']])
     
     with col2:
-        st.markdown("**🔄 Session Statistics**")
+        st.markdown("""
+        <div style="
+            background: rgba(255, 255, 255, 0.9);
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 15px;
+        ">
+            <h4 style="color: #2d3748; margin: 0;">🔄 Session Statistics</h4>
+        </div>
+        """, unsafe_allow_html=True)
         
         # Live session stats
         duration_min = (time.time() - st.session_state.analytics['session_start']) / 60
@@ -679,14 +753,23 @@ with tab4:
             ]
         })
         
-        st.write("**Session Distribution**")
+        st.markdown("**Session Distribution**")
         if session_types['Count'].sum() > 0:
             st.bar_chart(session_types.set_index('Type'))
         else:
             st.info("No session data yet")
     
     # Neural Pipeline Status Table
-    st.markdown("**🧠 Neural Pipeline Status**")
+    st.markdown("""
+    <div style="
+        background: rgba(255, 255, 255, 0.9);
+        padding: 15px;
+        border-radius: 10px;
+        margin: 20px 0 15px 0;
+    ">
+        <h4 style="color: #2d3748; margin: 0;">🧠 Neural Pipeline Status</h4>
+    </div>
+    """, unsafe_allow_html=True)
     
     # Dynamic pipeline status based on system activity
     camera_active = st.session_state.live_camera_active
@@ -718,7 +801,16 @@ with tab4:
     col3, col4 = st.columns(2)
     
     with col3:
-        st.markdown("**🏥 Clinical Metrics**")
+        st.markdown("""
+        <div style="
+            background: rgba(255, 255, 255, 0.9);
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 15px;
+        ">
+            <h4 style="color: #2d3748; margin: 0;">🏥 Clinical Metrics</h4>
+        </div>
+        """, unsafe_allow_html=True)
         
         # Calculate live clinical metrics
         assessments = st.session_state.analytics['clinical_assessments']
@@ -738,7 +830,17 @@ with tab4:
         st.dataframe(clinical_data, use_container_width=True)
     
     with col4:
-        st.markdown("**🔒 Security Status**")
+        st.markdown("""
+        <div style="
+            background: rgba(255, 255, 255, 0.9);
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 15px;
+        ">
+            <h4 style="color: #2d3748; margin: 0;">🔒 Security Status</h4>
+        </div>
+        """, unsafe_allow_html=True)
+        
         security_data = pd.DataFrame({
             'Feature': ['Offline Processing', 'Data Encryption', 'Cloud Upload', 'De-identification'],
             'Status': ['✅ Enabled', '✅ AES-256', '❌ Disabled', '✅ Active']
@@ -746,7 +848,16 @@ with tab4:
         st.dataframe(security_data, use_container_width=True)
     
     # Language Support Chart
-    st.markdown("**🌍 Language Support Distribution**")
+    st.markdown("""
+    <div style="
+        background: rgba(255, 255, 255, 0.9);
+        padding: 15px;
+        border-radius: 10px;
+        margin: 20px 0 15px 0;
+    ">
+        <h4 style="color: #2d3748; margin: 0;">🌍 Language Support Distribution</h4>
+    </div>
+    """, unsafe_allow_html=True)
     
     # Live language usage data
     total_usage = sum(st.session_state.analytics['language_usage'].values())
@@ -760,7 +871,16 @@ with tab4:
         st.info("No language usage data yet")
     
     # Quality Metrics
-    st.markdown("**📈 Quality Assurance Status**")
+    st.markdown("""
+    <div style="
+        background: rgba(255, 255, 255, 0.9);
+        padding: 15px;
+        border-radius: 10px;
+        margin: 20px 0 15px 0;
+    ">
+        <h4 style="color: #2d3748; margin: 0;">📈 Quality Assurance Status</h4>
+    </div>
+    """, unsafe_allow_html=True)
     
     # Live quality metrics
     total_translations = st.session_state.analytics['successful_translations']
