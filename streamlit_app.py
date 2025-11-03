@@ -81,19 +81,7 @@ st.markdown("""
         transform: translateX(0) !important;
     }
     
-    /* Hide sidebar collapse button and force visibility */
-    button[data-testid="collapsedControl"],
-    .css-1v0mbdj,
-    section[data-testid="stSidebar"] > div > button {
-        display: none !important;
-        visibility: hidden !important;
-    }
-    
-    /* Force sidebar to always be visible */
-    section[data-testid="stSidebar"][aria-expanded="false"] {
-        margin-left: 0 !important;
-        transform: translateX(0) !important;
-    }
+
     
     /* Force all sidebar content to be light colored */
     section[data-testid="stSidebar"] *, .stSidebar *, .css-1d391kg *, .css-1lcbmhc * {
