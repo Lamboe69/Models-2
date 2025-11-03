@@ -167,13 +167,15 @@ st.markdown("""
         color: white !important;
     }
     
-    /* Tab content styling */
+    /* Tab content styling - fixed overlay issue */
     .stTabs > div > div > div > div {
         background: #1e293b;
         border-radius: 5px;
         padding: 20px;
         margin-top: 5px;
         border: 1px solid #374151;
+        position: relative;
+        z-index: 1;
     }
     
     /* Headers in main content */
