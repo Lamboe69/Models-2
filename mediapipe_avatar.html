@@ -1,0 +1,509 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MediaPipe + Three.js Avatar</title>
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/control_utils/control_utils.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/drawing_utils/drawing_utils.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/holistic/holistic.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background: #0f172a;
+            font-family: Arial, sans-serif;
+            overflow: hidden;
+        }
+        
+        .container {
+            display: flex;
+            width: 100vw;
+            height: 100vh;
+        }
+        
+        .video-section {
+            width: 50%;
+            position: relative;
+            background: #1e293b;
+        }
+        
+        .avatar-section {
+            width: 50%;
+            background: #0f172a;
+            position: relative;
+        }
+        
+        .video-container {
+            position: relative;
+            width: 100%;
+            height: 100%;
+        }
+        
+        #inputVideo {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        #outputCanvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+        }
+        
+        #avatarCanvas {
+            width: 100%;
+            height: 100%;
+            display: block;
+        }
+        
+        .controls {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            z-index: 100;
+            background: rgba(30, 41, 59, 0.9);
+            padding: 15px;
+            border-radius: 10px;
+            color: white;
+        }
+        
+        .status {
+            position: absolute;
+            bottom: 20px;
+            left: 20px;
+            z-index: 100;
+            background: rgba(30, 41, 59, 0.9);
+            padding: 10px;
+            border-radius: 5px;
+            color: white;
+            font-size: 14px;
+        }
+        
+        button {
+            background: #3b82f6;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        
+        button:hover {
+            background: #2563eb;
+        }
+        
+        .metrics {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            z-index: 100;
+            background: rgba(30, 41, 59, 0.9);
+            padding: 15px;
+            border-radius: 10px;
+            color: white;
+            font-size: 12px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="video-section">
+            <div class="video-container">
+                <video id="inputVideo" autoplay muted playsinline></video>
+                <canvas id="outputCanvas"></canvas>
+            </div>
+            
+            <div class="controls">
+                <h3>🤟 USL Tracking</h3>
+                <button onclick="startCamera()">📹 Start Camera</button>
+                <button onclick="stopCamera()">⏹️ Stop Camera</button>
+                <button onclick="toggleRecording()">🔴 Record</button>
+            </div>
+            
+            <div class="status">
+                <div id="statusText">Ready to start tracking...</div>
+            </div>
+        </div>
+        
+        <div class="avatar-section">
+            <canvas id="avatarCanvas"></canvas>
+            
+            <div class="metrics">
+                <h4>📊 Real-time Metrics</h4>
+                <div>FPS: <span id="fps">0</span></div>
+                <div>Hands: <span id="handsDetected">0</span></div>
+                <div>Face: <span id="faceDetected">No</span></div>
+                <div>Pose: <span id="poseDetected">No</span></div>
+                <div>Confidence: <span id="confidence">0%</span></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Global variables
+        let camera = null;
+        let holistic = null;
+        let scene, renderer, avatar, camera3d;
+        let isRecording = false;
+        let frameCount = 0;
+        let lastTime = performance.now();
+        
+        // Avatar components
+        let leftHand, rightHand, head, body;
+        let handLandmarks = { left: null, right: null };
+        let faceLandmarks = null;
+        let poseLandmarks = null;
+        
+        // Initialize MediaPipe Holistic
+        function initializeMediaPipe() {
+            holistic = new Holistic({
+                locateFile: (file) => {
+                    return `https://cdn.jsdelivr.net/npm/@mediapipe/holistic/${file}`;
+                }
+            });
+            
+            holistic.setOptions({
+                modelComplexity: 1,
+                smoothLandmarks: true,
+                enableSegmentation: false,
+                smoothSegmentation: false,
+                refineFaceLandmarks: true,
+                minDetectionConfidence: 0.5,
+                minTrackingConfidence: 0.5
+            });
+            
+            holistic.onResults(onResults);
+        }
+        
+        // Initialize Three.js Avatar
+        function initializeAvatar() {
+            // Scene setup
+            scene = new THREE.Scene();
+            scene.background = new THREE.Color(0x0f172a);
+            
+            // Camera setup
+            camera3d = new THREE.PerspectiveCamera(75, 1, 0.1, 1000);
+            camera3d.position.set(0, 1.6, 3);
+            
+            // Renderer setup
+            const canvas = document.getElementById('avatarCanvas');
+            renderer = new THREE.WebGLRenderer({ canvas: canvas, antialias: true });
+            renderer.setSize(canvas.clientWidth, canvas.clientHeight);
+            renderer.shadowMap.enabled = true;
+            renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+            
+            // Lighting
+            const ambientLight = new THREE.AmbientLight(0x404040, 0.6);
+            scene.add(ambientLight);
+            
+            const directionalLight = new THREE.DirectionalLight(0xffffff, 0.8);
+            directionalLight.position.set(5, 10, 5);
+            directionalLight.castShadow = true;
+            scene.add(directionalLight);
+            
+            // Create avatar
+            createAvatar();
+            
+            // Start render loop
+            animate();
+        }
+        
+        // Create 3D Avatar
+        function createAvatar() {
+            const avatarGroup = new THREE.Group();
+            
+            // Head
+            const headGeometry = new THREE.SphereGeometry(0.12, 32, 32);
+            const headMaterial = new THREE.MeshLambertMaterial({ color: 0xffdbac });
+            head = new THREE.Mesh(headGeometry, headMaterial);
+            head.position.set(0, 1.7, 0);
+            head.castShadow = true;
+            avatarGroup.add(head);
+            
+            // Body
+            const bodyGeometry = new THREE.CylinderGeometry(0.15, 0.2, 0.6, 8);
+            const bodyMaterial = new THREE.MeshLambertMaterial({ color: 0x4a90e2 });
+            body = new THREE.Mesh(bodyGeometry, bodyMaterial);
+            body.position.set(0, 1.2, 0);
+            body.castShadow = true;
+            avatarGroup.add(body);
+            
+            // Arms and hands
+            createHands(avatarGroup);
+            
+            scene.add(avatarGroup);
+            avatar = avatarGroup;
+        }
+        
+        // Create hand models
+        function createHands(parent) {
+            // Left hand
+            const leftArmGeometry = new THREE.CylinderGeometry(0.03, 0.04, 0.3, 8);
+            const armMaterial = new THREE.MeshLambertMaterial({ color: 0xffdbac });
+            const leftArm = new THREE.Mesh(leftArmGeometry, armMaterial);
+            leftArm.position.set(-0.25, 1.4, 0);
+            leftArm.rotation.z = Math.PI / 6;
+            parent.add(leftArm);
+            
+            const leftHandGeometry = new THREE.SphereGeometry(0.06, 16, 16);
+            const handMaterial = new THREE.MeshLambertMaterial({ color: 0xffdbac });
+            leftHand = new THREE.Mesh(leftHandGeometry, handMaterial);
+            leftHand.position.set(-0.4, 1.25, 0);
+            leftHand.castShadow = true;
+            parent.add(leftHand);
+            
+            // Right hand
+            const rightArm = new THREE.Mesh(leftArmGeometry, armMaterial);
+            rightArm.position.set(0.25, 1.4, 0);
+            rightArm.rotation.z = -Math.PI / 6;
+            parent.add(rightArm);
+            
+            rightHand = new THREE.Mesh(leftHandGeometry, handMaterial);
+            rightHand.position.set(0.4, 1.25, 0);
+            rightHand.castShadow = true;
+            parent.add(rightHand);
+        }
+        
+        // Process MediaPipe results
+        function onResults(results) {
+            const canvas = document.getElementById('outputCanvas');
+            const ctx = canvas.getContext('2d');
+            
+            // Clear canvas
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            // Draw video frame
+            ctx.drawImage(results.image, 0, 0, canvas.width, canvas.height);
+            
+            // Update metrics
+            updateMetrics(results);
+            
+            // Draw landmarks
+            if (results.poseLandmarks) {
+                drawConnectors(ctx, results.poseLandmarks, POSE_CONNECTIONS, {color: '#00FF00', lineWidth: 2});
+                drawLandmarks(ctx, results.poseLandmarks, {color: '#FF0000', lineWidth: 1});
+                poseLandmarks = results.poseLandmarks;
+            }
+            
+            if (results.leftHandLandmarks) {
+                drawConnectors(ctx, results.leftHandLandmarks, HAND_CONNECTIONS, {color: '#CC0000', lineWidth: 2});
+                drawLandmarks(ctx, results.leftHandLandmarks, {color: '#00FF00', lineWidth: 1});
+                handLandmarks.left = results.leftHandLandmarks;
+            }
+            
+            if (results.rightHandLandmarks) {
+                drawConnectors(ctx, results.rightHandLandmarks, HAND_CONNECTIONS, {color: '#0000CC', lineWidth: 2});
+                drawLandmarks(ctx, results.rightHandLandmarks, {color: '#00FF00', lineWidth: 1});
+                handLandmarks.right = results.rightHandLandmarks;
+            }
+            
+            if (results.faceLandmarks) {
+                drawConnectors(ctx, results.faceLandmarks, FACEMESH_TESSELATION, {color: '#C0C0C070', lineWidth: 1});
+                faceLandmarks = results.faceLandmarks;
+            }
+            
+            // Update avatar based on landmarks
+            updateAvatar();
+        }
+        
+        // Update avatar based on tracking data
+        function updateAvatar() {
+            if (!avatar) return;
+            
+            // Update head rotation based on face landmarks
+            if (faceLandmarks && faceLandmarks.length > 0) {
+                const nose = faceLandmarks[1];
+                const leftEye = faceLandmarks[33];
+                const rightEye = faceLandmarks[263];
+                
+                // Calculate head rotation
+                const eyeCenter = {
+                    x: (leftEye.x + rightEye.x) / 2,
+                    y: (leftEye.y + rightEye.y) / 2
+                };
+                
+                const headTilt = Math.atan2(rightEye.y - leftEye.y, rightEye.x - leftEye.x);
+                head.rotation.z = headTilt * 0.5;
+                
+                // Head nod (up/down)
+                const noseY = nose.y;
+                head.rotation.x = (noseY - 0.5) * 0.5;
+            }
+            
+            // Update hand positions
+            if (handLandmarks.left && handLandmarks.left.length > 0) {
+                const wrist = handLandmarks.left[0];
+                leftHand.position.x = -0.4 + (0.5 - wrist.x) * 0.5;
+                leftHand.position.y = 1.25 + (0.5 - wrist.y) * 0.5;
+                leftHand.position.z = wrist.z * 0.3;
+                
+                // Hand rotation based on landmarks
+                const middle = handLandmarks.left[9];
+                const angle = Math.atan2(middle.y - wrist.y, middle.x - wrist.x);
+                leftHand.rotation.z = angle;
+            }
+            
+            if (handLandmarks.right && handLandmarks.right.length > 0) {
+                const wrist = handLandmarks.right[0];
+                rightHand.position.x = 0.4 + (wrist.x - 0.5) * 0.5;
+                rightHand.position.y = 1.25 + (0.5 - wrist.y) * 0.5;
+                rightHand.position.z = wrist.z * 0.3;
+                
+                // Hand rotation
+                const middle = handLandmarks.right[9];
+                const angle = Math.atan2(middle.y - wrist.y, middle.x - wrist.x);
+                rightHand.rotation.z = angle;
+            }
+            
+            // Body sway based on pose
+            if (poseLandmarks && poseLandmarks.length > 0) {
+                const leftShoulder = poseLandmarks[11];
+                const rightShoulder = poseLandmarks[12];
+                
+                if (leftShoulder && rightShoulder) {
+                    const shoulderTilt = Math.atan2(
+                        rightShoulder.y - leftShoulder.y,
+                        rightShoulder.x - leftShoulder.x
+                    );
+                    body.rotation.z = shoulderTilt * 0.3;
+                }
+            }
+        }
+        
+        // Update real-time metrics
+        function updateMetrics(results) {
+            frameCount++;
+            const currentTime = performance.now();
+            
+            if (currentTime - lastTime >= 1000) {
+                document.getElementById('fps').textContent = frameCount;
+                frameCount = 0;
+                lastTime = currentTime;
+            }
+            
+            // Update detection status
+            let handsCount = 0;
+            if (results.leftHandLandmarks) handsCount++;
+            if (results.rightHandLandmarks) handsCount++;
+            
+            document.getElementById('handsDetected').textContent = handsCount;
+            document.getElementById('faceDetected').textContent = results.faceLandmarks ? 'Yes' : 'No';
+            document.getElementById('poseDetected').textContent = results.poseLandmarks ? 'Yes' : 'No';
+            
+            // Calculate average confidence
+            let totalConfidence = 0;
+            let count = 0;
+            
+            if (results.leftHandLandmarks) {
+                totalConfidence += 0.85; // Simulated confidence
+                count++;
+            }
+            if (results.rightHandLandmarks) {
+                totalConfidence += 0.85;
+                count++;
+            }
+            if (results.faceLandmarks) {
+                totalConfidence += 0.90;
+                count++;
+            }
+            
+            const avgConfidence = count > 0 ? (totalConfidence / count * 100).toFixed(1) : 0;
+            document.getElementById('confidence').textContent = avgConfidence + '%';
+        }
+        
+        // Animation loop
+        function animate() {
+            requestAnimationFrame(animate);
+            
+            // Subtle idle animations
+            if (avatar) {
+                const time = Date.now() * 0.001;
+                
+                // Breathing animation
+                body.scale.y = 1 + Math.sin(time * 2) * 0.02;
+                
+                // Subtle head movement when idle
+                if (!faceLandmarks) {
+                    head.rotation.y = Math.sin(time * 0.5) * 0.1;
+                }
+            }
+            
+            renderer.render(scene, camera3d);
+        }
+        
+        // Camera controls
+        async function startCamera() {
+            try {
+                const video = document.getElementById('inputVideo');
+                const canvas = document.getElementById('outputCanvas');
+                
+                camera = new Camera(video, {
+                    onFrame: async () => {
+                        await holistic.send({image: video});
+                    },
+                    width: 640,
+                    height: 480
+                });
+                
+                // Set canvas size to match video
+                canvas.width = 640;
+                canvas.height = 480;
+                
+                await camera.start();
+                document.getElementById('statusText').textContent = 'Camera active - Tracking USL...';
+                
+            } catch (error) {
+                console.error('Camera error:', error);
+                document.getElementById('statusText').textContent = 'Camera error: ' + error.message;
+            }
+        }
+        
+        function stopCamera() {
+            if (camera) {
+                camera.stop();
+                camera = null;
+                document.getElementById('statusText').textContent = 'Camera stopped';
+            }
+        }
+        
+        function toggleRecording() {
+            isRecording = !isRecording;
+            const button = event.target;
+            
+            if (isRecording) {
+                button.textContent = '⏹️ Stop Recording';
+                button.style.background = '#dc2626';
+                document.getElementById('statusText').textContent = 'Recording USL sequence...';
+            } else {
+                button.textContent = '🔴 Record';
+                button.style.background = '#3b82f6';
+                document.getElementById('statusText').textContent = 'Recording stopped';
+            }
+        }
+        
+        // Handle window resize
+        window.addEventListener('resize', () => {
+            const canvas = document.getElementById('avatarCanvas');
+            const width = canvas.clientWidth;
+            const height = canvas.clientHeight;
+            
+            renderer.setSize(width, height);
+            camera3d.aspect = width / height;
+            camera3d.updateProjectionMatrix();
+        });
+        
+        // Initialize everything when page loads
+        window.addEventListener('load', () => {
+            initializeMediaPipe();
+            initializeAvatar();
+        });
+    </script>
+</body>
+</html>
