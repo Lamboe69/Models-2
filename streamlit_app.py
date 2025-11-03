@@ -16,51 +16,26 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
-# CSS to match complete_usl_system.py exactly
+# CSS for responsive design
 st.markdown("""
 <style>
-    /* Main content positioning */
-    .main {
-        padding-top: 110px !important;
+    /* Main app styling */
+    .stApp, .main, body {
         background: #0f172a !important;
     }
     
     .main .block-container {
-        padding: 2rem !important;
+        padding: 1rem !important;
         background: #0f172a !important;
         width: 100% !important;
         max-width: 100% !important;
     }
     
-    /* Force entire app background to be dark */
-    .stApp, .main, body {
-        background: #0f172a !important;
-    }
-    
-    /* Remove any white backgrounds */
-    .css-1d391kg, .css-18e3th9, .css-1lcbmhc {
-        background: #0f172a !important;
-    }
-    
-    /* Cover any remaining white areas */
-    div[data-testid="stAppViewContainer"] {
-        background: #0f172a !important;
-    }
-    
-    /* Main content area full coverage */
-    .css-1y4p8pa {
-        background: #0f172a !important;
-        width: 100% !important;
-    }
-    
-    /* Sidebar styling - allow native collapse */
+    /* Sidebar styling - fully responsive */
     section[data-testid="stSidebar"] {
         background: #1e293b !important;
         border-right: 2px solid #374151 !important;
-        padding-top: 110px !important;
     }
-    
-
     
     /* Force all sidebar content to be light colored */
     section[data-testid="stSidebar"] *, .stSidebar *, .css-1d391kg *, .css-1lcbmhc * {
@@ -237,38 +212,6 @@ st.markdown("""
 </style>
 """, unsafe_allow_html=True)
 
-# Static Header
-st.markdown("""
-<div style="
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    z-index: 999999;
-    background: linear-gradient(135deg, #1e40af 0%, #3b82f6 100%);
-    padding: 15px 20px;
-    border-bottom: 2px solid #60a5fa;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.3);
-">
-    <div style="display: flex; justify-content: space-between; align-items: center; max-width: 1400px; margin: 0 auto;">
-        <div>
-            <h1 style="margin: 0; color: white; font-size: 1.6rem; font-weight: bold;">🏥 MediSign - USL Healthcare Assistant</h1>
-            <p style="margin: 3px 0 0 0; color: #bfdbfe; font-size: 0.9rem;">Smart Healthcare Communication • Real-time USL Translation • Clinical Integration</p>
-        </div>
-        <div style="text-align: center;">
-            <div style="color: white; font-weight: bold; margin-bottom: 3px; font-size: 0.85rem;">Translation Mode:</div>
-            <div style="color: #e2e8f0; font-size: 0.8rem;">👤→👩⚕️ Patient to Clinician</div>
-            <div style="color: #e2e8f0; font-size: 0.8rem;">👩⚕️→👤 Clinician to Patient</div>
-        </div>
-        <div style="text-align: right;">
-            <div style="color: #22c55e; font-weight: bold; font-size: 0.85rem;">🟢 All Systems Online</div>
-            <div style="color: #e2e8f0; font-size: 0.8rem;">👤 No Active Patient</div>
-            <div style="color: #cbd5e1; font-size: 0.75rem; font-family: monospace;">01:10:59</div>
-        </div>
-    </div>
-</div>
-""", unsafe_allow_html=True)
-
 # Initialize session state
 if 'analytics' not in st.session_state:
     st.session_state.analytics = {
@@ -286,7 +229,33 @@ if 'live_camera_active' not in st.session_state:
 if 'screening_results' not in st.session_state:
     st.session_state.screening_results = []
 
-
+# Header matching Tkinter design exactly
+st.markdown("""
+<div style="
+    background: #1e40af;
+    padding: 20px;
+    border-radius: 5px;
+    margin-bottom: 20px;
+    border: 1px solid #3b82f6;
+">
+    <div style="display: flex; justify-content: space-between; align-items: center;">
+        <div>
+            <h1 style="color: white; margin: 0; font-size: 1.8rem; font-weight: bold;">🏥 MediSign - USL Healthcare Assistant</h1>
+            <p style="color: #bfdbfe; margin: 5px 0 0 0; font-size: 1rem;">Smart Healthcare Communication • Real-time USL Translation • Clinical Integration</p>
+        </div>
+        <div style="text-align: center;">
+            <div style="color: white; font-weight: bold; margin-bottom: 5px;">Translation Mode:</div>
+            <div style="color: #e2e8f0; font-size: 0.9rem;">👤→👩⚕️ Patient to Clinician</div>
+            <div style="color: #e2e8f0; font-size: 0.9rem;">👩⚕️→👤 Clinician to Patient</div>
+        </div>
+        <div style="text-align: right;">
+            <div style="color: #22c55e; font-weight: bold;">🟢 All Systems Online</div>
+            <div style="color: #e2e8f0; font-size: 0.9rem;">👤 No Active Patient</div>
+            <div style="color: #cbd5e1; font-size: 0.8rem;">{}</div>
+        </div>
+    </div>
+</div>
+""".format(datetime.now().strftime("%H:%M:%S")), unsafe_allow_html=True)
 
 # Sidebar matching Tkinter design exactly
 with st.sidebar:
@@ -306,16 +275,10 @@ with st.sidebar:
         st.session_state.live_camera_active = not st.session_state.live_camera_active
     
     if st.button("📁 Upload USL Video", use_container_width=True):
-        uploaded_video = st.file_uploader("Choose a video file", type=['mp4', 'avi', 'mov', 'mkv'], key="video_upload")
-        if uploaded_video is not None:
-            st.success(f"✅ Video uploaded: {uploaded_video.name}")
-            st.video(uploaded_video)
+        st.info("Video upload functionality")
     
     if st.button("🖼️ Upload USL Image", use_container_width=True):
-        uploaded_image = st.file_uploader("Choose an image file", type=['jpg', 'jpeg', 'png', 'bmp'], key="image_upload")
-        if uploaded_image is not None:
-            st.success(f"✅ Image uploaded: {uploaded_image.name}")
-            st.image(uploaded_image, width=200)
+        st.info("Image upload functionality")
     
     process_disabled = not st.session_state.live_camera_active
     if st.button("🧠 Process USL → Clinical", use_container_width=True, disabled=process_disabled):
