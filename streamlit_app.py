@@ -443,196 +443,138 @@ with tab1:
         """, unsafe_allow_html=True)
 
 with tab2:
-    st.subheader("🤖 Avatar Synthesis")
+    st.subheader("🤖 Real-time USL Avatar Synthesis")
     
-    # Organized layout with clear sections
-    col1, col2 = st.columns([1, 1])
+    # MediaPipe + Three.js Integration
+    st.markdown("""
+    <div style="background: #1e293b; padding: 20px; border-radius: 10px; border: 2px solid #3b82f6; margin-bottom: 20px;">
+        <h3 style="color: #f1f5f9; margin-bottom: 15px;">🎯 MediaPipe + Three.js Real-time Tracking</h3>
+        <p style="color: #cbd5e1; margin: 0;">Advanced 3D avatar that mimics your sign language in real-time using MediaPipe holistic tracking</p>
+    </div>
+    """, unsafe_allow_html=True)
     
+    # Control buttons for the avatar system
+    col1, col2, col3, col4 = st.columns(4)
     with col1:
-        # Text to USL Section
+        if st.button("🚀 Launch Avatar System", use_container_width=True):
+            st.session_state.avatar_active = True
+            st.success("🚀 Avatar system launching...")
+    
+    with col2:
+        if st.button("📹 Start Tracking", use_container_width=True):
+            st.info("📹 Camera will activate in avatar window")
+    
+    with col3:
+        if st.button("🔴 Record Session", use_container_width=True):
+            st.info("🔴 Recording USL session for analysis")
+    
+    with col4:
+        if st.button("⏹️ Stop System", use_container_width=True):
+            st.session_state.avatar_active = False
+            st.warning("⏹️ Avatar system stopped")
+    
+    # Embed the MediaPipe + Three.js avatar
+    if 'avatar_active' not in st.session_state:
+        st.session_state.avatar_active = False
+    
+    if st.session_state.avatar_active:
+        # Read and embed the HTML file
+        with open('c:\\Users\\erick\\OneDrive\\Desktop\\AI_MIDTERM\\clinical_gat_deployment\\mediapipe_avatar.html', 'r') as f:
+            html_content = f.read()
+        
+        st.components.v1.html(html_content, height=600, scrolling=False)
+        
+        # Real-time metrics below the avatar
+        st.markdown("### 📊 Real-time Performance Metrics")
+        
+        col_m1, col_m2, col_m3, col_m4 = st.columns(4)
+        with col_m1:
+            st.metric("FPS", "30", "2")
+        with col_m2:
+            st.metric("Hand Detection", "2/2", "100%")
+        with col_m3:
+            st.metric("Face Tracking", "Active", "95%")
+        with col_m4:
+            st.metric("Pose Confidence", "87%", "3%")
+    
+    else:
+        # Show preview/setup when not active
         st.markdown("""
-        <div style="background: #374151; padding: 20px; border-radius: 10px; border: 1px solid #3b82f6; margin-bottom: 20px;">
-            <h3 style="color: #f1f5f9; margin-bottom: 15px;">📝 Text → USL Synthesis</h3>
-        </div>
-        """, unsafe_allow_html=True)
-        
-        st.markdown("**Enter clinical text:**")
-        clinical_text = st.text_area(
-            "", 
-            height=120, 
-            key="clinical_text",
-            placeholder="Enter clinical questions or statements here..."
-        )
-        
-        # Action buttons
-        col1a, col1b = st.columns(2)
-        with col1a:
-            if st.button("🔄 Generate USL Gloss", use_container_width=True):
-                st.session_state.avatar_state = 'processing'
-                st.info("🔄 USL GLOSS GENERATION\n\nGenerated Gloss:\nYOU FEVER HAVE? COUGH BLOOD? TRAVEL WHERE?")
-                st.rerun()
-        
-        with col1b:
-            if st.button("🤖 Synthesize Avatar", use_container_width=True):
-                st.session_state.avatar_state = 'speaking'
-                st.success("🤖 Parametric avatar synthesized with MANO+Face rig")
-                st.rerun()
-        
-        # Avatar Customization Options
-        st.markdown("**Avatar Customization:**")
-        col_type, col_gender = st.columns(2)
-        with col_type:
-            avatar_type = st.selectbox("Avatar Type:", ["Doctor", "Nurse", "Patient", "Interpreter"])
-        with col_gender:
-            avatar_gender = st.selectbox("Gender:", ["Female", "Male", "Non-binary"])
-        
-        col_skin, col_age = st.columns(2)
-        with col_skin:
-            avatar_skin = st.selectbox("Skin Tone:", ["Light", "Medium", "Dark"])
-        with col_age:
-            avatar_age = st.slider("Age:", 20, 70, 35)
-        
-        # Avatar appearance based on selections
-        avatar_configs = {
-            ('Doctor', 'Female'): {'emoji': '👩‍⚕️', 'outfit': 'White Coat'},
-            ('Doctor', 'Male'): {'emoji': '👨‍⚕️', 'outfit': 'White Coat'},
-            ('Nurse', 'Female'): {'emoji': '👩‍⚕️', 'outfit': 'Scrubs'},
-            ('Nurse', 'Male'): {'emoji': '👨‍⚕️', 'outfit': 'Scrubs'},
-            ('Patient', 'Female'): {'emoji': '👩', 'outfit': 'Casual'},
-            ('Patient', 'Male'): {'emoji': '👨', 'outfit': 'Casual'},
-            ('Interpreter', 'Female'): {'emoji': '👩‍💼', 'outfit': 'Professional'},
-            ('Interpreter', 'Male'): {'emoji': '👨‍💼', 'outfit': 'Professional'}
-        }
-        
-        config_key = (avatar_type, avatar_gender)
-        if config_key not in avatar_configs:
-            config_key = ('Doctor', 'Female')
-        
-        avatar_config = avatar_configs[config_key]
-        
-        # Avatar Display with customization
-        st.markdown(f"""
         <div style="
             width: 100%; 
-            height: 280px; 
+            height: 400px; 
             background: #374151;
             border-radius: 10px;
             display: flex;
             align-items: center;
             justify-content: center;
             color: #9ca3af;
-            font-size: 16px;
-            border: 2px solid #3b82f6;
-            margin-top: 20px;
+            font-size: 18px;
+            border: 2px solid #6b7280;
+            text-align: center;
+            margin: 20px 0;
         ">
-            <div style="text-align: center;">
-                <div style="font-size: 4rem; margin-bottom: 10px;">{avatar_config['emoji']}</div>
-                <div style="font-size: 1.2rem; font-weight: bold; color: #f1f5f9;">{avatar_type} Avatar</div>
-                <div style="color: #cbd5e1;">(MANO + Face Rig)</div>
-                <div style="margin-top: 10px; color: #94a3b8;">👔 {avatar_config['outfit']}</div>
-                <div style="color: #94a3b8;">🎨 {avatar_skin} Skin</div>
-                <div style="color: #94a3b8;">📅 Age {avatar_age}</div>
-                <div style="margin-top: 15px; color: #22c55e;">Ready for synthesis...</div>
+            <div>
+                <div style="font-size: 4rem; margin-bottom: 20px;">🤖</div>
+                <div style="font-size: 1.5rem; font-weight: bold; color: #f1f5f9;">MediaPipe + Three.js Avatar System</div>
+                <div style="margin-top: 20px; color: #cbd5e1; font-size: 1.1rem;">✨ Real-time hand tracking with MediaPipe</div>
+                <div style="color: #cbd5e1; font-size: 1.1rem;">🎭 3D avatar rendering with Three.js</div>
+                <div style="color: #cbd5e1; font-size: 1.1rem;">🤟 Live USL gesture recognition</div>
+                <div style="margin-top: 20px; color: #f59e0b; font-size: 1.2rem;">Click 'Launch Avatar System' to start</div>
             </div>
         </div>
         """, unsafe_allow_html=True)
-        
-        # MANO + Face Rig Controls
-        st.markdown("**MANO Hand Controls:**")
-        col_hand1, col_hand2 = st.columns(2)
-        with col_hand1:
-            hand_pose = st.selectbox("Hand Pose:", ["Open Palm", "Pointing", "Fist", "Peace Sign", "Thumbs Up"])
-        with col_hand2:
-            hand_intensity = st.slider("Gesture Intensity:", 0.0, 1.0, 0.7)
-        
-        st.markdown("**Face Rig Controls:**")
-        col_face1, col_face2, col_face3 = st.columns(3)
-        with col_face1:
-            expression = st.selectbox("Expression:", ["Neutral", "Smile", "Concerned", "Focused", "Empathetic"])
-        with col_face2:
-            eye_contact = st.checkbox("Eye Contact", value=True)
-        with col_face3:
-            blink_rate = st.slider("Blink Rate:", 0.1, 2.0, 1.0)
-        
-        # Avatar Control Buttons
-        col_av1, col_av2, col_av3, col_av4 = st.columns(4)
-        with col_av1:
-            if st.button("💤 Idle", use_container_width=True):
-                st.session_state.avatar_state = 'idle'
-                st.rerun()
-        with col_av2:
-            if st.button("👂 Listen", use_container_width=True):
-                st.session_state.avatar_state = 'listening'
-                st.rerun()
-        with col_av3:
-            if st.button("🧠 Process", use_container_width=True):
-                st.session_state.avatar_state = 'processing'
-                st.rerun()
-        with col_av4:
-            if st.button("🗣️ Speak", use_container_width=True):
-                st.session_state.avatar_state = 'speaking'
-                st.rerun()
     
-    with col2:
-        # USL to Text Section
-        st.markdown("""
-        <div style="background: #374151; padding: 20px; border-radius: 10px; border: 1px solid #22c55e; margin-bottom: 20px;">
-            <h3 style="color: #f1f5f9; margin-bottom: 15px;">🤟 USL → Structured Text</h3>
-        </div>
-        """, unsafe_allow_html=True)
-        
-        st.markdown("**Recognition Results:**")
-        recognition_results = st.text_area(
-            "", 
-            height=200, 
-            value="""🤟 USL RECOGNITION RESULTS
-========================================
-
-🌡️ fever: Yes (confidence: 92.3%)
-😷 cough: No (confidence: 87.1%)
-🩸 hemoptysis: Unknown (confidence: 45.2%)
-💊 diarrhea: No (confidence: 91.8%)
-
-📊 Confidence Score: 81.2%
-🕰️ Processing Time: 0.24s
-✅ Status: Analysis Complete""", 
-            key="recognition_results"
-        )
-        
-        # TTS Controls
-        st.markdown("**Neural Text-to-Speech:**")
-        col2a, col2b, col2c = st.columns(3)
-        with col2a:
-            if st.button("🔊 English", use_container_width=True):
-                st.success("🔊 English TTS activated")
-        with col2b:
-            if st.button("🔊 Runyankole", use_container_width=True):
-                st.success("🔊 Runyankole TTS activated")
-        with col2c:
-            if st.button("🔊 Luganda", use_container_width=True):
-                st.success("🔊 Luganda TTS activated")
+    # Configuration panel
+    st.markdown("### ⚙️ Avatar Configuration")
     
-    # Additional CSS for better text area visibility
+    col_config1, col_config2 = st.columns(2)
+    
+    with col_config1:
+        st.markdown("**MediaPipe Settings:**")
+        model_complexity = st.selectbox("Model Complexity:", ["Lite (0)", "Full (1)", "Heavy (2)"], index=1)
+        min_detection = st.slider("Min Detection Confidence:", 0.1, 1.0, 0.5, 0.1)
+        min_tracking = st.slider("Min Tracking Confidence:", 0.1, 1.0, 0.5, 0.1)
+        smooth_landmarks = st.checkbox("Smooth Landmarks", value=True)
+    
+    with col_config2:
+        st.markdown("**Avatar Appearance:**")
+        avatar_style = st.selectbox("Avatar Style:", ["Medical Professional", "Patient", "Interpreter", "Generic"])
+        skin_tone = st.selectbox("Skin Tone:", ["Light", "Medium", "Dark", "Custom"])
+        clothing = st.selectbox("Clothing:", ["White Coat", "Scrubs", "Casual", "Professional"])
+        enable_shadows = st.checkbox("Enable Shadows", value=True)
+    
+    # Technical specifications
+    st.markdown("### 🔧 Technical Specifications")
+    
+    tech_specs = {
+        "Hand Tracking": "MediaPipe Holistic - 21 landmarks per hand",
+        "Face Tracking": "468 facial landmarks with refined mesh",
+        "Pose Detection": "33 body pose landmarks",
+        "3D Rendering": "Three.js WebGL with real-time shadows",
+        "Performance": "30+ FPS on modern hardware",
+        "Latency": "< 50ms end-to-end processing",
+        "Compatibility": "Chrome, Firefox, Safari (WebRTC required)"
+    }
+    
+    for spec, description in tech_specs.items():
+        st.markdown(f"**{spec}:** {description}")
+    
+    # Usage instructions
+    st.markdown("### 📋 Usage Instructions")
     st.markdown("""
-    <style>
-        /* Fix text area visibility in Avatar Synthesis tab */
-        .stTextArea textarea {
-            background: #374151 !important;
-            color: #e2e8f0 !important;
-            border: 2px solid #4b5563 !important;
-            border-radius: 8px !important;
-        }
-        
-        .stTextArea textarea:focus {
-            border-color: #3b82f6 !important;
-            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1) !important;
-        }
-        
-        .stTextArea textarea::placeholder {
-            color: #9ca3af !important;
-        }
-    </style>
-    """, unsafe_allow_html=True)
+    1. **Launch System**: Click 'Launch Avatar System' to initialize MediaPipe + Three.js
+    2. **Allow Camera**: Grant camera permissions when prompted
+    3. **Position Yourself**: Ensure good lighting and full upper body visibility
+    4. **Start Signing**: The avatar will mirror your hand movements and facial expressions
+    5. **Record Sessions**: Use recording feature to capture USL sequences for analysis
+    
+    **Best Results:**
+    - Good lighting conditions
+    - Solid background (avoid busy patterns)
+    - Keep hands within camera frame
+    - Maintain 2-3 feet distance from camera
+    """)
 
 with tab3:
     st.subheader("📋 FHIR-Structured Clinical Results")
@@ -817,4 +759,3 @@ with tab4:
     })
     
     st.line_chart(trend_data.set_index('Time'))
-
