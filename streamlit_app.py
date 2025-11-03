@@ -26,57 +26,57 @@ st.markdown("""
         min-height: 100vh;
     }
     
-    /* Sidebar styling - Dark blue theme matching Tkinter */
-    .css-1d391kg, .css-1lcbmhc, .css-17eq0hr {
+    /* FORCE SIDEBAR DARK THEME - All possible classes */
+    .css-1d391kg, .css-1lcbmhc, .css-17eq0hr, .css-1y4p8pa, .css-6qob1r, .css-1aumxhk, 
+    section[data-testid="stSidebar"], .stSidebar, [data-testid="stSidebar"] {
         background: #1e293b !important;
-        border-right: 1px solid #374151;
+        border-right: 2px solid #374151 !important;
     }
     
-    .css-1d391kg .css-1v0mbdj, .css-1lcbmhc .css-1v0mbdj {
+    /* Force all sidebar content to be light colored */
+    section[data-testid="stSidebar"] *, .stSidebar *, .css-1d391kg *, .css-1lcbmhc * {
         color: #f1f5f9 !important;
     }
     
-    /* Sidebar headers */
-    .css-1d391kg h1, .css-1d391kg h2, .css-1d391kg h3,
-    .css-1lcbmhc h1, .css-1lcbmhc h2, .css-1lcbmhc h3 {
+    /* Sidebar headers - force white */
+    section[data-testid="stSidebar"] h1, section[data-testid="stSidebar"] h2, section[data-testid="stSidebar"] h3,
+    .css-1d391kg h1, .css-1d391kg h2, .css-1d391kg h3 {
         color: #f1f5f9 !important;
-        font-weight: bold;
+        font-weight: bold !important;
     }
     
-    /* Sidebar text and labels */
-    .css-1d391kg .css-1v0mbdj label, .css-1lcbmhc .css-1v0mbdj label {
+    /* Force all sidebar labels to be light */
+    section[data-testid="stSidebar"] label, .css-1d391kg label {
         color: #cbd5e1 !important;
-        font-weight: 500;
+        font-weight: 500 !important;
     }
     
-    .css-1d391kg .stSelectbox label, .css-1lcbmhc .stSelectbox label,
-    .css-1d391kg .stTextInput label, .css-1lcbmhc .stTextInput label,
-    .css-1d391kg .stNumberInput label, .css-1lcbmhc .stNumberInput label,
-    .css-1d391kg .stCheckbox label, .css-1lcbmhc .stCheckbox label,
-    .css-1d391kg .stRadio label, .css-1lcbmhc .stRadio label {
-        color: #cbd5e1 !important;
-    }
-    
-    .css-1d391kg p, .css-1lcbmhc p {
+    /* Force all sidebar paragraphs and text */
+    section[data-testid="stSidebar"] p, .css-1d391kg p {
         color: #e2e8f0 !important;
     }
     
-    /* Additional sidebar elements */
-    .css-1d391kg .stMarkdown, .css-1lcbmhc .stMarkdown {
-        color: #e2e8f0 !important;
-    }
-    
-    /* Sidebar input fields */
-    .css-1d391kg input, .css-1lcbmhc input {
+    /* Force sidebar input fields dark */
+    section[data-testid="stSidebar"] input, .css-1d391kg input {
         background: #374151 !important;
         color: #e2e8f0 !important;
         border: 1px solid #4b5563 !important;
     }
     
-    .css-1d391kg select, .css-1lcbmhc select {
+    section[data-testid="stSidebar"] select, .css-1d391kg select {
         background: #374151 !important;
         color: #e2e8f0 !important;
         border: 1px solid #4b5563 !important;
+    }
+    
+    /* Force sidebar markdown content */
+    section[data-testid="stSidebar"] .stMarkdown {
+        color: #e2e8f0 !important;
+    }
+    
+    /* Force sidebar text elements */
+    section[data-testid="stSidebar"] .css-1629p8f, section[data-testid="stSidebar"] .css-10trblm {
+        color: #e2e8f0 !important;
     }
     
     /* Main content styling - Dark theme */
@@ -126,19 +126,19 @@ st.markdown("""
         background: #2563eb;
     }
     
-    /* Sidebar button styling */
-    .css-1d391kg .stButton > button, .css-1lcbmhc .stButton > button {
-        background: #3b82f6;
-        color: white;
-        border: none;
-        border-radius: 5px;
-        font-weight: 600;
-        padding: 8px 12px;
-        width: 100%;
+    /* Force sidebar buttons */
+    section[data-testid="stSidebar"] .stButton > button, .css-1d391kg .stButton > button {
+        background: #3b82f6 !important;
+        color: white !important;
+        border: none !important;
+        border-radius: 5px !important;
+        font-weight: 600 !important;
+        padding: 8px 12px !important;
+        width: 100% !important;
     }
     
-    .css-1d391kg .stButton > button:hover, .css-1lcbmhc .stButton > button:hover {
-        background: #2563eb;
+    section[data-testid="stSidebar"] .stButton > button:hover, .css-1d391kg .stButton > button:hover {
+        background: #2563eb !important;
     }
     
     /* Text area styling */
