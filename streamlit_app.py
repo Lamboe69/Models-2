@@ -19,30 +19,16 @@ st.set_page_config(
 # CSS to match complete_usl_system.py exactly
 st.markdown("""
 <style>
-    /* Main page styling with static header spacing and gap */
+    /* Main page styling */
     .main .block-container {
-        padding-top: 120px !important;
+        padding-top: 1rem !important;
         background: #0f172a !important;
-        min-height: calc(100vh - 120px) !important;
+        min-height: 100vh !important;
         width: 100% !important;
         max-width: 100% !important;
-        overflow-y: auto !important;
     }
     
-    /* Ensure main content doesn't overlap toggle button */
-    .main {
-        margin-left: 0 !important;
-    }
-    
-    /* Additional toggle button visibility fixes */
-    .css-1lcbmhc {
-        z-index: 999997 !important;
-    }
-    
-    /* Make sure header doesn't cover toggle */
-    #static-header {
-        z-index: 999999 !important;
-    }
+
     
     /* Force entire app background to be dark with header space */
     .stApp, .main, body {
@@ -50,38 +36,10 @@ st.markdown("""
         padding-top: 0 !important;
     }
     
-    /* Sidebar positioning under static header with gap */
+    /* Sidebar normal positioning */
     section[data-testid="stSidebar"] {
-        top: 110px !important;
-        height: calc(100vh - 110px) !important;
-        overflow-y: auto !important;
-    }
-    
-    /* Make sidebar toggle button visible - multiple selectors */
-    button[data-testid="collapsedControl"],
-    .css-1v0mbdj,
-    .css-1lcbmhc .css-1v0mbdj,
-    [data-testid="collapsedControl"],
-    .stSidebar > div > button,
-    .css-1d391kg > div > button {
-        top: 110px !important;
-        z-index: 999998 !important;
-        background: #374151 !important;
-        border: 2px solid #3b82f6 !important;
-        color: #e2e8f0 !important;
-        display: block !important;
-        visibility: visible !important;
-        opacity: 1 !important;
-        position: fixed !important;
-        left: 0 !important;
-        width: 40px !important;
-        height: 40px !important;
-    }
-    
-    /* Force visibility of all possible toggle elements */
-    .css-1v0mbdj {
-        display: block !important;
-        visibility: visible !important;
+        background: #1e293b !important;
+        border-right: 2px solid #374151 !important;
     }
     
     /* Remove any white backgrounds */
@@ -299,18 +257,17 @@ if 'live_camera_active' not in st.session_state:
 if 'screening_results' not in st.session_state:
     st.session_state.screening_results = []
 
-# Static Header
+# Static Header with scrollable content
 st.markdown("""
-<div id="static-header" style="
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    z-index: 999999;
+<div style="
     background: linear-gradient(135deg, #1e40af 0%, #3b82f6 100%);
     padding: 15px 20px;
     border-bottom: 2px solid #60a5fa;
     box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+    margin: -1rem -1rem 1rem -1rem;
+    position: sticky;
+    top: 0;
+    z-index: 999;
 ">
     <div style="display: flex; justify-content: space-between; align-items: center; max-width: 1400px; margin: 0 auto;">
         <div>
