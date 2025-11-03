@@ -19,11 +19,11 @@ st.set_page_config(
 # CSS to match complete_usl_system.py exactly
 st.markdown("""
 <style>
-    /* Main page styling with static header spacing */
+    /* Main page styling with static header spacing and gap */
     .main .block-container {
-        padding-top: 100px !important;
+        padding-top: 120px !important;
         background: #0f172a !important;
-        min-height: calc(100vh - 100px) !important;
+        min-height: calc(100vh - 120px) !important;
         width: 100% !important;
         max-width: 100% !important;
         overflow-y: auto !important;
@@ -35,10 +35,10 @@ st.markdown("""
         padding-top: 0 !important;
     }
     
-    /* Sidebar positioning under static header */
+    /* Sidebar positioning under static header with gap */
     section[data-testid="stSidebar"] {
-        top: 100px !important;
-        height: calc(100vh - 100px) !important;
+        top: 110px !important;
+        height: calc(100vh - 110px) !important;
         overflow-y: auto !important;
     }
     
