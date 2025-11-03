@@ -23,9 +23,9 @@ st.markdown("""
     .main,
     div[data-testid="stAppViewContainer"] .main,
     .css-1d391kg ~ .main {
-        margin-left: 25rem !important;
+        margin-left: 400px !important;
         padding-left: 0 !important;
-        width: calc(100% - 25rem) !important;
+        width: calc(100% - 400px) !important;
         position: relative !important;
         left: 0 !important;
     }
