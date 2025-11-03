@@ -29,6 +29,11 @@ st.markdown("""
         overflow-y: auto !important;
     }
     
+    /* Ensure main content doesn't overlap toggle button */
+    .main {
+        margin-left: 0 !important;
+    }
+    
     /* Force entire app background to be dark with header space */
     .stApp, .main, body {
         background: #0f172a !important;
@@ -40,6 +45,20 @@ st.markdown("""
         top: 110px !important;
         height: calc(100vh - 110px) !important;
         overflow-y: auto !important;
+    }
+    
+    /* Make sidebar toggle button visible */
+    button[data-testid="collapsedControl"] {
+        top: 110px !important;
+        z-index: 999998 !important;
+        background: #374151 !important;
+        border: 2px solid #3b82f6 !important;
+    }
+    
+    /* Sidebar close button positioning */
+    .css-1lcbmhc .css-1v0mbdj {
+        top: 110px !important;
+        z-index: 999998 !important;
     }
     
     /* Remove any white backgrounds */
