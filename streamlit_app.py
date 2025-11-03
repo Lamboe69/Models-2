@@ -19,24 +19,15 @@ st.set_page_config(
 # CSS to match complete_usl_system.py exactly
 st.markdown("""
 <style>
-    /* Aggressively push main content right */
-    .main,
-    div[data-testid="stAppViewContainer"] .main,
-    .css-1d391kg ~ .main {
-        margin-left: 400px !important;
-        padding-left: 0 !important;
-        width: calc(100% - 400px) !important;
-        position: relative !important;
-        left: 0 !important;
+    /* Main content positioning */
+    .main {
+        padding-top: 110px !important;
+        background: #0f172a !important;
     }
     
-    .main .block-container,
-    div[data-testid="stAppViewContainer"] .main .block-container {
-        padding-top: 120px !important;
-        padding-left: 2rem !important;
-        margin-left: 0 !important;
+    .main .block-container {
+        padding: 2rem !important;
         background: #0f172a !important;
-        min-height: calc(100vh - 120px) !important;
         width: 100% !important;
         max-width: 100% !important;
     }
@@ -62,23 +53,11 @@ st.markdown("""
         width: 100% !important;
     }
     
-    /* FORCE SIDEBAR DARK THEME with static positioning - always visible */
-    .css-1d391kg, .css-1lcbmhc, .css-17eq0hr, .css-1y4p8pa, .css-6qob1r, .css-1aumxhk, 
-    section[data-testid="stSidebar"], .stSidebar, [data-testid="stSidebar"] {
+    /* Sidebar styling - allow native collapse */
+    section[data-testid="stSidebar"] {
         background: #1e293b !important;
         border-right: 2px solid #374151 !important;
-        position: fixed !important;
-        top: 110px !important;
-        left: 0 !important;
-        margin-left: 0 !important;
-        height: calc(100vh - 110px) !important;
-        overflow-y: auto !important;
-        min-width: 200px !important;
-        max-width: 500px !important;
-        width: 21rem !important;
-        resize: horizontal !important;
-        z-index: 999998 !important;
-        transform: translateX(0) !important;
+        padding-top: 110px !important;
     }
     
 
