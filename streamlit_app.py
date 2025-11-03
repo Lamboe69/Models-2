@@ -19,11 +19,34 @@ st.set_page_config(
 # CSS to match complete_usl_system.py exactly
 st.markdown("""
 <style>
-    /* Main page styling - Dark theme like Tkinter app */
+    /* Main page styling - Dark theme covering all white space */
     .main .block-container {
         padding-top: 1rem;
-        background: #0f172a;
+        background: #0f172a !important;
         min-height: 100vh;
+        width: 100% !important;
+        max-width: 100% !important;
+    }
+    
+    /* Force entire app background to be dark */
+    .stApp, .main, body {
+        background: #0f172a !important;
+    }
+    
+    /* Remove any white backgrounds */
+    .css-1d391kg, .css-18e3th9, .css-1lcbmhc {
+        background: #0f172a !important;
+    }
+    
+    /* Cover any remaining white areas */
+    div[data-testid="stAppViewContainer"] {
+        background: #0f172a !important;
+    }
+    
+    /* Main content area full coverage */
+    .css-1y4p8pa {
+        background: #0f172a !important;
+        width: 100% !important;
     }
     
     /* FORCE SIDEBAR DARK THEME - All possible classes */
