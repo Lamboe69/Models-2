@@ -487,59 +487,67 @@ with tab2:
             placeholder="Type your medical questions here..."
         )
         
-        col1, col2 = st.columns(2)
+        col1, col2, col3 = st.columns(3)
         with col1:
             if st.button("🔄 Generate USL", use_container_width=True):
                 if clinical_text:
-                    st.session_state.usl_translation = f"USL Translation: {clinical_text.upper().replace(' ', ' → ')}"
-                    st.success("✅ USL translation generated")
+                    st.session_state.usl_translation = f"USL: {clinical_text.upper().replace(' ', ' → ')}"
+                    st.success("✅ USL generated")
         
         with col2:
             if st.button("🤖 Show Avatar", use_container_width=True):
                 st.session_state.show_avatar = True
         
+        with col3:
+            if st.button("⏹️ Stop Avatar", use_container_width=True):
+                st.session_state.show_avatar = False
+        
         # Avatar Display
         if 'show_avatar' in st.session_state and st.session_state.show_avatar:
-            st.markdown("""
-            <div style="
-                width: 100%; 
-                height: 400px; 
-                background: #374151;
-                border-radius: 10px;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                color: #9ca3af;
-                font-size: 18px;
-                border: 2px solid #3b82f6;
-                text-align: center;
-                margin: 20px 0;
-            ">
-                <div>
-                    <div style="font-size: 4rem; margin-bottom: 20px;">🤖</div>
-                    <div style="font-size: 1.5rem; font-weight: bold; color: #22c55e;">Avatar Translating to USL</div>
-                    <div style="margin-top: 20px; color: #cbd5e1; font-size: 1.1rem;">Performing sign language gestures</div>
-                    <div style="color: #cbd5e1; font-size: 1.1rem;">Patient can see USL translation</div>
-                </div>
-            </div>
-            """, unsafe_allow_html=True)
+            st.markdown("### 👩⚕️ USL Avatar")
+            
+            # Create avatar using streamlit components
+            avatar_col1, avatar_col2, avatar_col3 = st.columns([1, 2, 1])
+            
+            with avatar_col2:
+                st.markdown("<div style='text-align: center; font-size: 8rem;'>👩⚕️</div>", unsafe_allow_html=True)
+                
+                # Hand gestures
+                gesture_cols = st.columns(3)
+                with gesture_cols[0]:
+                    st.markdown("<div style='text-align: center; font-size: 3rem;'>🤟</div>", unsafe_allow_html=True)
+                with gesture_cols[1]:
+                    st.markdown("<div style='text-align: center; font-size: 3rem;'>👋</div>", unsafe_allow_html=True)
+                with gesture_cols[2]:
+                    st.markdown("<div style='text-align: center; font-size: 3rem;'>✋</div>", unsafe_allow_html=True)
+                
+                st.success("🔄 Translating to USL")
+                st.info("Patient can see sign language gestures")
         
         # Show translation result
         if 'usl_translation' in st.session_state:
             st.info(st.session_state.usl_translation)
+            
+            # Simple gesture mapping
+            if clinical_text:
+                st.markdown("**USL Gestures:**")
+                words = clinical_text.lower().split()
+                for word in words[:3]:
+                    if 'pain' in word: st.write("😣 Pain gesture")
+                    elif 'fever' in word: st.write("🤒 Fever gesture") 
+                    elif 'cough' in word: st.write("😷 Cough gesture")
+                    else: st.write(f"🤟 {word.title()} gesture")
         
-        # Real-time metrics below the avatar
-        st.markdown("### 📊 Real-time Performance Metrics")
+        # Translation metrics
+        st.markdown("### 📊 Translation Status")
         
-        col_m1, col_m2, col_m3, col_m4 = st.columns(4)
+        col_m1, col_m2, col_m3 = st.columns(3)
         with col_m1:
-            st.metric("FPS", "30", "2")
+            st.metric("Words", "5", "2")
         with col_m2:
-            st.metric("Hand Detection", "2/2", "100%")
+            st.metric("Gestures", "5", "100%")
         with col_m3:
-            st.metric("Face Tracking", "Active", "95%")
-        with col_m4:
-            st.metric("Pose Confidence", "87%", "3%")
+            st.metric("Status", "Active", "Ready")
     
     else:
         # Show preview/setup when not active
