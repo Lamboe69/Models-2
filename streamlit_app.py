@@ -306,10 +306,16 @@ with st.sidebar:
         st.session_state.live_camera_active = not st.session_state.live_camera_active
     
     if st.button("📁 Upload USL Video", use_container_width=True):
-        st.info("Video upload functionality")
+        uploaded_video = st.file_uploader("Choose a video file", type=['mp4', 'avi', 'mov', 'mkv'], key="video_upload")
+        if uploaded_video is not None:
+            st.success(f"✅ Video uploaded: {uploaded_video.name}")
+            st.video(uploaded_video)
     
     if st.button("🖼️ Upload USL Image", use_container_width=True):
-        st.info("Image upload functionality")
+        uploaded_image = st.file_uploader("Choose an image file", type=['jpg', 'jpeg', 'png', 'bmp'], key="image_upload")
+        if uploaded_image is not None:
+            st.success(f"✅ Image uploaded: {uploaded_image.name}")
+            st.image(uploaded_image, width=200)
     
     process_disabled = not st.session_state.live_camera_active
     if st.button("🧠 Process USL → Clinical", use_container_width=True, disabled=process_disabled):
