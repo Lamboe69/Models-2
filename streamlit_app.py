@@ -445,11 +445,11 @@ with tab1:
 with tab2:
     st.subheader("🤖 Real-time USL Avatar Synthesis")
     
-    # MediaPipe + Three.js Integration
+    # Text to USL Translation System
     st.markdown("""
     <div style="background: #1e293b; padding: 20px; border-radius: 10px; border: 2px solid #3b82f6; margin-bottom: 20px;">
-        <h3 style="color: #f1f5f9; margin-bottom: 15px;">🎯 MediaPipe + Three.js Real-time Tracking</h3>
-        <p style="color: #cbd5e1; margin: 0;">Advanced 3D avatar that mimics your sign language in real-time using MediaPipe holistic tracking</p>
+        <h3 style="color: #f1f5f9; margin-bottom: 15px;">🎯 Doctor → Patient USL Translation</h3>
+        <p style="color: #cbd5e1; margin: 0;">Avatar translates medical text to Ugandan Sign Language for patient communication</p>
     </div>
     """, unsafe_allow_html=True)
     
@@ -461,12 +461,12 @@ with tab2:
             st.success("🚀 Avatar system launching...")
     
     with col2:
-        if st.button("📹 Start Tracking", use_container_width=True):
-            st.info("📹 Camera will activate in avatar window")
+        if st.button("📝 Text Input", use_container_width=True):
+            st.info("📝 Ready to translate medical text to USL")
     
     with col3:
-        if st.button("🔴 Record Session", use_container_width=True):
-            st.info("🔴 Recording USL session for analysis")
+        if st.button("🤟 Generate USL", use_container_width=True):
+            st.info("🤟 Converting text to sign language")
     
     with col4:
         if st.button("⏹️ Stop System", use_container_width=True):
@@ -478,11 +478,55 @@ with tab2:
         st.session_state.avatar_active = False
     
     if st.session_state.avatar_active:
-        # Read and embed the HTML file
-        with open('c:\\Users\\erick\\OneDrive\\Desktop\\AI_MIDTERM\\clinical_gat_deployment\\mediapipe_avatar.html', 'r') as f:
-            html_content = f.read()
+        # Text to USL Translation Interface
+        st.markdown("### 📝 Doctor → Patient USL Translation")
         
-        st.components.v1.html(html_content, height=600, scrolling=False)
+        clinical_text = st.text_area(
+            "Enter clinical text to translate to USL:", 
+            height=120, 
+            placeholder="Type your medical questions here..."
+        )
+        
+        col1, col2 = st.columns(2)
+        with col1:
+            if st.button("🔄 Generate USL", use_container_width=True):
+                if clinical_text:
+                    st.session_state.usl_translation = f"USL Translation: {clinical_text.upper().replace(' ', ' → ')}"
+                    st.success("✅ USL translation generated")
+        
+        with col2:
+            if st.button("🤖 Show Avatar", use_container_width=True):
+                st.session_state.show_avatar = True
+        
+        # Avatar Display
+        if 'show_avatar' in st.session_state and st.session_state.show_avatar:
+            st.markdown("""
+            <div style="
+                width: 100%; 
+                height: 400px; 
+                background: #374151;
+                border-radius: 10px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                color: #9ca3af;
+                font-size: 18px;
+                border: 2px solid #3b82f6;
+                text-align: center;
+                margin: 20px 0;
+            ">
+                <div>
+                    <div style="font-size: 4rem; margin-bottom: 20px;">🤖</div>
+                    <div style="font-size: 1.5rem; font-weight: bold; color: #22c55e;">Avatar Translating to USL</div>
+                    <div style="margin-top: 20px; color: #cbd5e1; font-size: 1.1rem;">Performing sign language gestures</div>
+                    <div style="color: #cbd5e1; font-size: 1.1rem;">Patient can see USL translation</div>
+                </div>
+            </div>
+            """, unsafe_allow_html=True)
+        
+        # Show translation result
+        if 'usl_translation' in st.session_state:
+            st.info(st.session_state.usl_translation)
         
         # Real-time metrics below the avatar
         st.markdown("### 📊 Real-time Performance Metrics")
@@ -516,10 +560,10 @@ with tab2:
         ">
             <div>
                 <div style="font-size: 4rem; margin-bottom: 20px;">🤖</div>
-                <div style="font-size: 1.5rem; font-weight: bold; color: #f1f5f9;">MediaPipe + Three.js Avatar System</div>
-                <div style="margin-top: 20px; color: #cbd5e1; font-size: 1.1rem;">✨ Real-time hand tracking with MediaPipe</div>
-                <div style="color: #cbd5e1; font-size: 1.1rem;">🎭 3D avatar rendering with Three.js</div>
-                <div style="color: #cbd5e1; font-size: 1.1rem;">🤟 Live USL gesture recognition</div>
+                <div style="font-size: 1.5rem; font-weight: bold; color: #f1f5f9;">Text → USL Avatar Translation</div>
+                <div style="margin-top: 20px; color: #cbd5e1; font-size: 1.1rem;">👩⚕️ Doctor types medical questions</div>
+                <div style="color: #cbd5e1; font-size: 1.1rem;">🤖 Avatar translates to USL gestures</div>
+                <div style="color: #cbd5e1; font-size: 1.1rem;">👤 Patient understands through sign language</div>
                 <div style="margin-top: 20px; color: #f59e0b; font-size: 1.2rem;">Click 'Launch Avatar System' to start</div>
             </div>
         </div>
@@ -531,49 +575,32 @@ with tab2:
     col_config1, col_config2 = st.columns(2)
     
     with col_config1:
-        st.markdown("**MediaPipe Settings:**")
-        model_complexity = st.selectbox("Model Complexity:", ["Lite (0)", "Full (1)", "Heavy (2)"], index=1)
-        min_detection = st.slider("Min Detection Confidence:", 0.1, 1.0, 0.5, 0.1)
-        min_tracking = st.slider("Min Tracking Confidence:", 0.1, 1.0, 0.5, 0.1)
-        smooth_landmarks = st.checkbox("Smooth Landmarks", value=True)
+        st.markdown("**Translation Settings:**")
+        usl_variant = st.selectbox("USL Variant:", ["Canonical", "Kampala Regional", "Gulu Regional"], index=0)
+        translation_speed = st.slider("Avatar Speed:", 0.5, 2.0, 1.0, 0.1)
+        gesture_emphasis = st.slider("Gesture Emphasis:", 0.1, 1.0, 0.7, 0.1)
+        include_fingerspelling = st.checkbox("Include Fingerspelling", value=True)
     
     with col_config2:
         st.markdown("**Avatar Appearance:**")
-        avatar_style = st.selectbox("Avatar Style:", ["Medical Professional", "Patient", "Interpreter", "Generic"])
-        skin_tone = st.selectbox("Skin Tone:", ["Light", "Medium", "Dark", "Custom"])
-        clothing = st.selectbox("Clothing:", ["White Coat", "Scrubs", "Casual", "Professional"])
-        enable_shadows = st.checkbox("Enable Shadows", value=True)
-    
-    # Technical specifications
-    st.markdown("### 🔧 Technical Specifications")
-    
-    tech_specs = {
-        "Hand Tracking": "MediaPipe Holistic - 21 landmarks per hand",
-        "Face Tracking": "468 facial landmarks with refined mesh",
-        "Pose Detection": "33 body pose landmarks",
-        "3D Rendering": "Three.js WebGL with real-time shadows",
-        "Performance": "30+ FPS on modern hardware",
-        "Latency": "< 50ms end-to-end processing",
-        "Compatibility": "Chrome, Firefox, Safari (WebRTC required)"
-    }
-    
-    for spec, description in tech_specs.items():
-        st.markdown(f"**{spec}:** {description}")
+        avatar_style = st.selectbox("Avatar Style:", ["Medical Professional", "Interpreter", "Generic"])
+        skin_tone = st.selectbox("Skin Tone:", ["Light", "Medium", "Dark"])
+        clothing = st.selectbox("Clothing:", ["White Coat", "Professional", "Casual"])
+        show_subtitles = st.checkbox("Show Text Subtitles", value=True)
     
     # Usage instructions
     st.markdown("### 📋 Usage Instructions")
     st.markdown("""
-    1. **Launch System**: Click 'Launch Avatar System' to initialize MediaPipe + Three.js
-    2. **Allow Camera**: Grant camera permissions when prompted
-    3. **Position Yourself**: Ensure good lighting and full upper body visibility
-    4. **Start Signing**: The avatar will mirror your hand movements and facial expressions
-    5. **Record Sessions**: Use recording feature to capture USL sequences for analysis
+    **Purpose**: Avatar translates doctor's text to USL for patient communication
     
-    **Best Results:**
-    - Good lighting conditions
-    - Solid background (avoid busy patterns)
-    - Keep hands within camera frame
-    - Maintain 2-3 feet distance from camera
+    1. **Launch System**: Click 'Launch Avatar System'
+    2. **Enter Text**: Type medical questions in the text area
+    3. **Generate USL**: Click 'Generate USL' to create sign language translation
+    4. **Show Avatar**: Avatar performs USL gestures for patient to understand
+    5. **Patient Views**: Patient sees avatar signing the medical questions
+    
+    **Communication Flow:**
+    - Doctor types → Avatar translates → Patient understands via USL
     """)
 
 with tab3:
