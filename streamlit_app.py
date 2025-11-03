@@ -19,15 +19,20 @@ st.set_page_config(
 # CSS to match complete_usl_system.py exactly
 st.markdown("""
 <style>
-    /* Main page styling with static header and sidebar spacing */
+    /* Main page styling - positioned after sidebar */
+    .main {
+        margin-left: 21rem !important;
+        width: calc(100% - 21rem) !important;
+    }
+    
     .main .block-container {
         padding-top: 120px !important;
-        padding-left: 22rem !important;
+        padding-left: 1rem !important;
         margin-left: 0 !important;
         background: #0f172a !important;
         min-height: calc(100vh - 120px) !important;
-        width: calc(100% - 22rem) !important;
-        max-width: calc(100% - 22rem) !important;
+        width: 100% !important;
+        max-width: 100% !important;
     }
     
     /* Force entire app background to be dark */
