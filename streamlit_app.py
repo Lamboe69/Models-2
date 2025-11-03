@@ -478,23 +478,43 @@ with tab2:
                 st.success("🤖 Parametric avatar synthesized with MANO+Face rig")
                 st.rerun()
         
-        # Interactive Avatar Display
-        if 'avatar_state' not in st.session_state:
-            st.session_state.avatar_state = 'idle'
+        # Avatar Customization Options
+        st.markdown("**Avatar Customization:**")
+        col_type, col_gender = st.columns(2)
+        with col_type:
+            avatar_type = st.selectbox("Avatar Type:", ["Doctor", "Nurse", "Patient", "Interpreter"])
+        with col_gender:
+            avatar_gender = st.selectbox("Gender:", ["Female", "Male", "Non-binary"])
         
-        avatar_states = {
-            'idle': {'emoji': '🤖', 'status': 'Ready for synthesis...', 'color': '#22c55e'},
-            'listening': {'emoji': '👂', 'status': 'Listening to input...', 'color': '#3b82f6'},
-            'processing': {'emoji': '🧠', 'status': 'Processing USL...', 'color': '#f59e0b'},
-            'speaking': {'emoji': '🗣️', 'status': 'Generating speech...', 'color': '#8b5cf6'}
+        col_skin, col_age = st.columns(2)
+        with col_skin:
+            avatar_skin = st.selectbox("Skin Tone:", ["Light", "Medium", "Dark"])
+        with col_age:
+            avatar_age = st.slider("Age:", 20, 70, 35)
+        
+        # Avatar appearance based on selections
+        avatar_configs = {
+            ('Doctor', 'Female'): {'emoji': '👩‍⚕️', 'outfit': 'White Coat'},
+            ('Doctor', 'Male'): {'emoji': '👨‍⚕️', 'outfit': 'White Coat'},
+            ('Nurse', 'Female'): {'emoji': '👩‍⚕️', 'outfit': 'Scrubs'},
+            ('Nurse', 'Male'): {'emoji': '👨‍⚕️', 'outfit': 'Scrubs'},
+            ('Patient', 'Female'): {'emoji': '👩', 'outfit': 'Casual'},
+            ('Patient', 'Male'): {'emoji': '👨', 'outfit': 'Casual'},
+            ('Interpreter', 'Female'): {'emoji': '👩‍💼', 'outfit': 'Professional'},
+            ('Interpreter', 'Male'): {'emoji': '👨‍💼', 'outfit': 'Professional'}
         }
         
-        current_state = avatar_states[st.session_state.avatar_state]
+        config_key = (avatar_type, avatar_gender)
+        if config_key not in avatar_configs:
+            config_key = ('Doctor', 'Female')
         
+        avatar_config = avatar_configs[config_key]
+        
+        # Avatar Display with customization
         st.markdown(f"""
         <div style="
             width: 100%; 
-            height: 250px; 
+            height: 280px; 
             background: #374151;
             border-radius: 10px;
             display: flex;
@@ -504,24 +524,35 @@ with tab2:
             font-size: 16px;
             border: 2px solid #3b82f6;
             margin-top: 20px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        " onclick="this.style.transform='scale(0.95)'; setTimeout(() => this.style.transform='scale(1)', 150);">
+        ">
             <div style="text-align: center;">
-                <div style="font-size: 3rem; margin-bottom: 10px; animation: pulse 2s infinite;">{current_state['emoji']}</div>
-                <div style="font-size: 1.2rem; font-weight: bold; color: #f1f5f9;">Parametric Avatar</div>
+                <div style="font-size: 4rem; margin-bottom: 10px;">{avatar_config['emoji']}</div>
+                <div style="font-size: 1.2rem; font-weight: bold; color: #f1f5f9;">{avatar_type} Avatar</div>
                 <div style="color: #cbd5e1;">(MANO + Face Rig)</div>
-                <div style="margin-top: 15px; color: {current_state['color']};">{current_state['status']}</div>
+                <div style="margin-top: 10px; color: #94a3b8;">👔 {avatar_config['outfit']}</div>
+                <div style="color: #94a3b8;">🎨 {avatar_skin} Skin</div>
+                <div style="color: #94a3b8;">📅 Age {avatar_age}</div>
+                <div style="margin-top: 15px; color: #22c55e;">Ready for synthesis...</div>
             </div>
         </div>
-        
-        <style>
-        @keyframes pulse {{
-            0%, 100% {{ transform: scale(1); }}
-            50% {{ transform: scale(1.1); }}
-        }}
-        </style>
         """, unsafe_allow_html=True)
+        
+        # MANO + Face Rig Controls
+        st.markdown("**MANO Hand Controls:**")
+        col_hand1, col_hand2 = st.columns(2)
+        with col_hand1:
+            hand_pose = st.selectbox("Hand Pose:", ["Open Palm", "Pointing", "Fist", "Peace Sign", "Thumbs Up"])
+        with col_hand2:
+            hand_intensity = st.slider("Gesture Intensity:", 0.0, 1.0, 0.7)
+        
+        st.markdown("**Face Rig Controls:**")
+        col_face1, col_face2, col_face3 = st.columns(3)
+        with col_face1:
+            expression = st.selectbox("Expression:", ["Neutral", "Smile", "Concerned", "Focused", "Empathetic"])
+        with col_face2:
+            eye_contact = st.checkbox("Eye Contact", value=True)
+        with col_face3:
+            blink_rate = st.slider("Blink Rate:", 0.1, 2.0, 1.0)
         
         # Avatar Control Buttons
         col_av1, col_av2, col_av3, col_av4 = st.columns(4)
