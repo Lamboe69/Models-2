@@ -34,6 +34,16 @@ st.markdown("""
         margin-left: 0 !important;
     }
     
+    /* Additional toggle button visibility fixes */
+    .css-1lcbmhc {
+        z-index: 999997 !important;
+    }
+    
+    /* Make sure header doesn't cover toggle */
+    #static-header {
+        z-index: 999999 !important;
+    }
+    
     /* Force entire app background to be dark with header space */
     .stApp, .main, body {
         background: #0f172a !important;
@@ -47,18 +57,31 @@ st.markdown("""
         overflow-y: auto !important;
     }
     
-    /* Make sidebar toggle button visible */
-    button[data-testid="collapsedControl"] {
+    /* Make sidebar toggle button visible - multiple selectors */
+    button[data-testid="collapsedControl"],
+    .css-1v0mbdj,
+    .css-1lcbmhc .css-1v0mbdj,
+    [data-testid="collapsedControl"],
+    .stSidebar > div > button,
+    .css-1d391kg > div > button {
         top: 110px !important;
         z-index: 999998 !important;
         background: #374151 !important;
         border: 2px solid #3b82f6 !important;
+        color: #e2e8f0 !important;
+        display: block !important;
+        visibility: visible !important;
+        opacity: 1 !important;
+        position: fixed !important;
+        left: 0 !important;
+        width: 40px !important;
+        height: 40px !important;
     }
     
-    /* Sidebar close button positioning */
-    .css-1lcbmhc .css-1v0mbdj {
-        top: 110px !important;
-        z-index: 999998 !important;
+    /* Force visibility of all possible toggle elements */
+    .css-1v0mbdj {
+        display: block !important;
+        visibility: visible !important;
     }
     
     /* Remove any white backgrounds */
