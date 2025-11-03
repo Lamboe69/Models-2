@@ -19,18 +19,27 @@ st.set_page_config(
 # CSS to match complete_usl_system.py exactly
 st.markdown("""
 <style>
-    /* Main page styling - Dark theme covering all white space */
+    /* Main page styling with static header spacing */
     .main .block-container {
-        padding-top: 1rem;
+        padding-top: 100px !important;
         background: #0f172a !important;
-        min-height: 100vh;
+        min-height: calc(100vh - 100px) !important;
         width: 100% !important;
         max-width: 100% !important;
+        overflow-y: auto !important;
     }
     
-    /* Force entire app background to be dark */
+    /* Force entire app background to be dark with header space */
     .stApp, .main, body {
         background: #0f172a !important;
+        padding-top: 0 !important;
+    }
+    
+    /* Sidebar positioning under static header */
+    section[data-testid="stSidebar"] {
+        top: 100px !important;
+        height: calc(100vh - 100px) !important;
+        overflow-y: auto !important;
     }
     
     /* Remove any white backgrounds */
@@ -248,33 +257,37 @@ if 'live_camera_active' not in st.session_state:
 if 'screening_results' not in st.session_state:
     st.session_state.screening_results = []
 
-# Header matching Tkinter design exactly
+# Static Header
 st.markdown("""
-<div style="
-    background: #1e40af;
-    padding: 20px;
-    border-radius: 5px;
-    margin-bottom: 20px;
-    border: 1px solid #3b82f6;
+<div id="static-header" style="
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 999999;
+    background: linear-gradient(135deg, #1e40af 0%, #3b82f6 100%);
+    padding: 15px 20px;
+    border-bottom: 2px solid #60a5fa;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.3);
 ">
-    <div style="display: flex; justify-content: space-between; align-items: center;">
+    <div style="display: flex; justify-content: space-between; align-items: center; max-width: 1400px; margin: 0 auto;">
         <div>
-            <h1 style="color: white; margin: 0; font-size: 1.8rem; font-weight: bold;">🏥 MediSign - USL Healthcare Assistant</h1>
-            <p style="color: #bfdbfe; margin: 5px 0 0 0; font-size: 1rem;">Smart Healthcare Communication • Real-time USL Translation • Clinical Integration</p>
+            <h1 style="margin: 0; color: white; font-size: 1.6rem; font-weight: bold;">🏥 MediSign - USL Healthcare Assistant</h1>
+            <p style="margin: 3px 0 0 0; color: #bfdbfe; font-size: 0.9rem;">Smart Healthcare Communication • Real-time USL Translation • Clinical Integration</p>
         </div>
         <div style="text-align: center;">
-            <div style="color: white; font-weight: bold; margin-bottom: 5px;">Translation Mode:</div>
-            <div style="color: #e2e8f0; font-size: 0.9rem;">👤→👩⚕️ Patient to Clinician</div>
-            <div style="color: #e2e8f0; font-size: 0.9rem;">👩⚕️→👤 Clinician to Patient</div>
+            <div style="color: white; font-weight: bold; margin-bottom: 3px; font-size: 0.85rem;">Translation Mode:</div>
+            <div style="color: #e2e8f0; font-size: 0.8rem;">👤→👩⚕️ Patient to Clinician</div>
+            <div style="color: #e2e8f0; font-size: 0.8rem;">👩⚕️→👤 Clinician to Patient</div>
         </div>
         <div style="text-align: right;">
-            <div style="color: #22c55e; font-weight: bold;">🟢 All Systems Online</div>
-            <div style="color: #e2e8f0; font-size: 0.9rem;">👤 No Active Patient</div>
-            <div style="color: #cbd5e1; font-size: 0.8rem;">{}</div>
+            <div style="color: #22c55e; font-weight: bold; font-size: 0.85rem;">🟢 All Systems Online</div>
+            <div style="color: #e2e8f0; font-size: 0.8rem;">👤 No Active Patient</div>
+            <div style="color: #cbd5e1; font-size: 0.75rem; font-family: monospace;">00:50:31</div>
         </div>
     </div>
 </div>
-""".format(datetime.now().strftime("%H:%M:%S")), unsafe_allow_html=True)
+""", unsafe_allow_html=True)
 
 # Sidebar matching Tkinter design exactly
 with st.sidebar:
