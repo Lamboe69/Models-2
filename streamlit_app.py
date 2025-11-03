@@ -468,14 +468,30 @@ with tab2:
         col1a, col1b = st.columns(2)
         with col1a:
             if st.button("🔄 Generate USL Gloss", use_container_width=True):
+                st.session_state.avatar_state = 'processing'
                 st.info("🔄 USL GLOSS GENERATION\n\nGenerated Gloss:\nYOU FEVER HAVE? COUGH BLOOD? TRAVEL WHERE?")
+                st.rerun()
         
         with col1b:
             if st.button("🤖 Synthesize Avatar", use_container_width=True):
+                st.session_state.avatar_state = 'speaking'
                 st.success("🤖 Parametric avatar synthesized with MANO+Face rig")
+                st.rerun()
         
-        # Avatar Display
-        st.markdown("""
+        # Interactive Avatar Display
+        if 'avatar_state' not in st.session_state:
+            st.session_state.avatar_state = 'idle'
+        
+        avatar_states = {
+            'idle': {'emoji': '🤖', 'status': 'Ready for synthesis...', 'color': '#22c55e'},
+            'listening': {'emoji': '👂', 'status': 'Listening to input...', 'color': '#3b82f6'},
+            'processing': {'emoji': '🧠', 'status': 'Processing USL...', 'color': '#f59e0b'},
+            'speaking': {'emoji': '🗣️', 'status': 'Generating speech...', 'color': '#8b5cf6'}
+        }
+        
+        current_state = avatar_states[st.session_state.avatar_state]
+        
+        st.markdown(f"""
         <div style="
             width: 100%; 
             height: 250px; 
@@ -488,15 +504,43 @@ with tab2:
             font-size: 16px;
             border: 2px solid #3b82f6;
             margin-top: 20px;
-        ">
+            cursor: pointer;
+            transition: all 0.3s ease;
+        " onclick="this.style.transform='scale(0.95)'; setTimeout(() => this.style.transform='scale(1)', 150);">
             <div style="text-align: center;">
-                <div style="font-size: 3rem; margin-bottom: 10px;">🤖</div>
+                <div style="font-size: 3rem; margin-bottom: 10px; animation: pulse 2s infinite;">{current_state['emoji']}</div>
                 <div style="font-size: 1.2rem; font-weight: bold; color: #f1f5f9;">Parametric Avatar</div>
                 <div style="color: #cbd5e1;">(MANO + Face Rig)</div>
-                <div style="margin-top: 15px; color: #22c55e;">Ready for synthesis...</div>
+                <div style="margin-top: 15px; color: {current_state['color']};">{current_state['status']}</div>
             </div>
         </div>
+        
+        <style>
+        @keyframes pulse {{
+            0%, 100% {{ transform: scale(1); }}
+            50% {{ transform: scale(1.1); }}
+        }}
+        </style>
         """, unsafe_allow_html=True)
+        
+        # Avatar Control Buttons
+        col_av1, col_av2, col_av3, col_av4 = st.columns(4)
+        with col_av1:
+            if st.button("💤 Idle", use_container_width=True):
+                st.session_state.avatar_state = 'idle'
+                st.rerun()
+        with col_av2:
+            if st.button("👂 Listen", use_container_width=True):
+                st.session_state.avatar_state = 'listening'
+                st.rerun()
+        with col_av3:
+            if st.button("🧠 Process", use_container_width=True):
+                st.session_state.avatar_state = 'processing'
+                st.rerun()
+        with col_av4:
+            if st.button("🗣️ Speak", use_container_width=True):
+                st.session_state.avatar_state = 'speaking'
+                st.rerun()
     
     with col2:
         # USL to Text Section
