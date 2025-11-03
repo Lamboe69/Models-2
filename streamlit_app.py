@@ -412,31 +412,32 @@ tab1, tab2, tab3, tab4 = st.tabs(["🎥 Video Processing", "🤖 Avatar Synthesi
 with tab1:
     st.subheader("🎥 Real-time USL Processing")
     
-    col1, col2 = st.columns([3, 1])
+    # Top section with video and metrics
+    col1, col2 = st.columns([2, 1])
     
     with col1:
         if st.session_state.live_camera_active:
             st.markdown("""
             <div style="
                 width: 100%; 
-                height: 400px; 
+                height: 350px; 
                 background: #374151;
-                border-radius: 5px;
+                border-radius: 10px;
                 display: flex;
                 align-items: center;
                 justify-content: center;
                 color: #9ca3af;
                 font-size: 16px;
-                border: 1px solid #4b5563;
+                border: 2px solid #3b82f6;
                 text-align: center;
+                margin-bottom: 20px;
             ">
                 <div>
-                    <div style="font-size: 3rem; margin-bottom: 10px;">📷</div>
-                    <div>USL Video Feed</div>
-                    <div style="margin-top: 10px;">3D Pose Detection (MediaPipe + MANO + FLAME)</div>
-                    <div>Multistream Transformer Processing</div>
-                    <div>Graph Attention Network Analysis</div>
-                    <div style="margin-top: 10px;">Ready for USL input...</div>
+                    <div style="font-size: 3rem; margin-bottom: 15px;">📹</div>
+                    <div style="font-size: 1.2rem; font-weight: bold; color: #22c55e;">USL Video Feed - ACTIVE</div>
+                    <div style="margin-top: 15px; color: #cbd5e1;">3D Pose Detection (MediaPipe + MANO + FLAME)</div>
+                    <div style="color: #cbd5e1;">Multistream Transformer Processing</div>
+                    <div style="color: #cbd5e1;">Graph Attention Network Analysis</div>
                 </div>
             </div>
             """, unsafe_allow_html=True)
@@ -444,46 +445,91 @@ with tab1:
             st.markdown("""
             <div style="
                 width: 100%; 
-                height: 400px; 
+                height: 350px; 
                 background: #374151;
-                border-radius: 5px;
+                border-radius: 10px;
                 display: flex;
                 align-items: center;
                 justify-content: center;
                 color: #9ca3af;
                 font-size: 16px;
-                border: 1px solid #4b5563;
+                border: 2px solid #6b7280;
                 text-align: center;
+                margin-bottom: 20px;
             ">
                 <div>
-                    <div style="font-size: 3rem; margin-bottom: 10px;">📷</div>
-                    <div>USL Video Feed</div>
-                    <div style="margin-top: 10px;">Camera Inactive</div>
+                    <div style="font-size: 3rem; margin-bottom: 15px;">📷</div>
+                    <div style="font-size: 1.2rem; font-weight: bold;">USL Video Feed</div>
+                    <div style="margin-top: 15px; color: #f59e0b;">Camera Inactive - Click 'Live Camera' to start</div>
                 </div>
             </div>
             """, unsafe_allow_html=True)
     
     with col2:
-        st.markdown("**Real-time Metrics**")
-        st.metric("FPS", st.session_state.analytics['current_fps'])
-        st.metric("Latency", f"{st.session_state.analytics['current_latency']}ms")
-        st.metric("Memory", f"{st.session_state.analytics['current_memory']}MB")
+        st.markdown("### 📊 Real-time Metrics")
+        
+        # Organized metrics in cards
+        st.markdown("""
+        <div style="background: #374151; padding: 15px; border-radius: 8px; margin-bottom: 10px; border: 1px solid #4b5563;">
+            <div style="text-align: center;">
+                <div style="font-size: 1.5rem; color: #3b82f6;">📹</div>
+                <div style="font-size: 1.8rem; font-weight: bold; color: #f1f5f9;">{}</div>
+                <div style="color: #cbd5e1;">FPS</div>
+            </div>
+        </div>
+        """.format(st.session_state.analytics['current_fps']), unsafe_allow_html=True)
+        
+        st.markdown("""
+        <div style="background: #374151; padding: 15px; border-radius: 8px; margin-bottom: 10px; border: 1px solid #4b5563;">
+            <div style="text-align: center;">
+                <div style="font-size: 1.5rem; color: #f59e0b;">⚡</div>
+                <div style="font-size: 1.8rem; font-weight: bold; color: #f1f5f9;">{}ms</div>
+                <div style="color: #cbd5e1;">Latency</div>
+            </div>
+        </div>
+        """.format(st.session_state.analytics['current_latency']), unsafe_allow_html=True)
+        
+        st.markdown("""
+        <div style="background: #374151; padding: 15px; border-radius: 8px; margin-bottom: 10px; border: 1px solid #4b5563;">
+            <div style="text-align: center;">
+                <div style="font-size: 1.5rem; color: #8b5cf6;">💾</div>
+                <div style="font-size: 1.8rem; font-weight: bold; color: #f1f5f9;">{}MB</div>
+                <div style="color: #cbd5e1;">Memory</div>
+            </div>
+        </div>
+        """.format(st.session_state.analytics['current_memory']), unsafe_allow_html=True)
     
-    # Neural Processing Pipeline
+    # Neural Processing Pipeline - organized in columns
     st.markdown("### 🧠 Neural Processing Pipeline")
-    st.text("🔄 NEURAL PROCESSING PIPELINE")
-    st.text("=" * 50)
-    st.text("📊 3D Skeletal Pose Extraction: Ready")
-    st.text("✋ MANO Hand Tracking: Ready")
-    st.text("😊 FLAME Face Analysis: Ready")
-    st.text("🧠 Multistream Transformer: Ready")
-    st.text("📈 Graph Attention Network: Ready")
-    st.text("🎯 Bayesian Calibration: Ready")
-    st.text("🏥 Clinical Slot Classification: Ready")
-    st.text("")
-    st.text("⚡ Latency Target: <300ms")
-    st.text("💾 Model Size: <200MB (INT8)")
-    st.text("🔒 Privacy: Offline-first processing")
+    
+    col1, col2 = st.columns(2)
+    
+    with col1:
+        st.markdown("""
+        <div style="background: #374151; padding: 20px; border-radius: 10px; border: 1px solid #4b5563;">
+            <h4 style="color: #f1f5f9; margin-bottom: 15px;">🔄 Processing Components</h4>
+            <div style="margin: 8px 0; color: #22c55e;">✅ 3D Skeletal Pose Extraction</div>
+            <div style="margin: 8px 0; color: #22c55e;">✅ MANO Hand Tracking</div>
+            <div style="margin: 8px 0; color: #22c55e;">✅ FLAME Face Analysis</div>
+            <div style="margin: 8px 0; color: #22c55e;">✅ Multistream Transformer</div>
+            <div style="margin: 8px 0; color: #22c55e;">✅ Graph Attention Network</div>
+            <div style="margin: 8px 0; color: #22c55e;">✅ Bayesian Calibration</div>
+            <div style="margin: 8px 0; color: #22c55e;">✅ Clinical Slot Classification</div>
+        </div>
+        """, unsafe_allow_html=True)
+    
+    with col2:
+        st.markdown("""
+        <div style="background: #374151; padding: 20px; border-radius: 10px; border: 1px solid #4b5563;">
+            <h4 style="color: #f1f5f9; margin-bottom: 15px;">🎯 Performance Targets</h4>
+            <div style="margin: 8px 0; color: #3b82f6;">⚡ Latency Target: <300ms</div>
+            <div style="margin: 8px 0; color: #3b82f6;">💾 Model Size: <200MB (INT8)</div>
+            <div style="margin: 8px 0; color: #22c55e;">🔒 Privacy: Offline-first processing</div>
+            <div style="margin: 8px 0; color: #22c55e;">🔐 Encryption: AES-256</div>
+            <div style="margin: 8px 0; color: #f59e0b;">🌍 Multi-language: USL variants</div>
+            <div style="margin: 8px 0; color: #8b5cf6;">🏥 FHIR Compatible</div>
+        </div>
+        """, unsafe_allow_html=True)
 
 with tab2:
     st.subheader("🤖 Avatar Synthesis")
