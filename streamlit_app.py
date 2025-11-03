@@ -475,7 +475,12 @@ with tab2:
         </div>
         """, unsafe_allow_html=True)
         
-        st.markdown("**Enter clinical text:**")
+        st.markdown("""
+        <div style="color: #f1f5f9; font-size: 1.1rem; font-weight: bold; margin-bottom: 10px; background: #4b5563; padding: 8px 12px; border-radius: 5px;">
+            📝 Enter clinical text:
+        </div>
+        """, unsafe_allow_html=True)
+        
         clinical_text = st.text_area(
             "", 
             height=120, 
@@ -525,7 +530,12 @@ with tab2:
         </div>
         """, unsafe_allow_html=True)
         
-        st.markdown("**Recognition Results:**")
+        st.markdown("""
+        <div style="color: #f1f5f9; font-size: 1.1rem; font-weight: bold; margin-bottom: 10px; background: #4b5563; padding: 8px 12px; border-radius: 5px;">
+            📊 Recognition Results:
+        </div>
+        """, unsafe_allow_html=True)
+        
         recognition_results = st.text_area(
             "", 
             height=200, 
@@ -544,7 +554,11 @@ with tab2:
         )
         
         # TTS Controls
-        st.markdown("**Neural Text-to-Speech:**")
+        st.markdown("""
+        <div style="color: #f1f5f9; font-size: 1.1rem; font-weight: bold; margin: 15px 0 10px 0; background: #4b5563; padding: 8px 12px; border-radius: 5px;">
+            🔊 Neural Text-to-Speech:
+        </div>
+        """, unsafe_allow_html=True)
         col2a, col2b, col2c = st.columns(3)
         with col2a:
             if st.button("🔊 English", use_container_width=True):
