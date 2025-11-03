@@ -738,19 +738,3 @@ with tab4:
     
     st.line_chart(trend_data.set_index('Time'))
 
-# Status Bar matching Tkinter design exactly
-st.markdown("---")
-st.markdown("""
-<div style="
-    background: #374151;
-    padding: 10px 20px;
-    border-radius: 5px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    border: 1px solid #4b5563;
-">
-    <span style="color: #e2e8f0;">🟢 System Ready - Waiting for USL input...</span>
-    <span style="color: #22c55e;">⚡ Latency: <300ms</span>
-</div>
-""", unsafe_allow_html=True)
