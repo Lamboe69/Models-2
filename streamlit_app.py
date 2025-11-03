@@ -19,32 +19,18 @@ st.set_page_config(
 # CSS to match complete_usl_system.py exactly
 st.markdown("""
 <style>
-    /* Main page styling */
+    /* Main page styling - Dark theme covering all white space */
     .main .block-container {
-        padding-top: 1rem !important;
+        padding-top: 1rem;
         background: #0f172a !important;
-        min-height: 100vh !important;
+        min-height: 100vh;
         width: 100% !important;
         max-width: 100% !important;
     }
     
-
-    
-    /* Force entire app background to be dark with header space */
+    /* Force entire app background to be dark */
     .stApp, .main, body {
         background: #0f172a !important;
-        padding-top: 0 !important;
-    }
-    
-    /* Sidebar normal positioning */
-    section[data-testid="stSidebar"] {
-        background: #1e293b !important;
-        border-right: 2px solid #374151 !important;
-    }
-    
-    /* Sidebar toggle animation */
-    section[data-testid="stSidebar"] {
-        transition: margin-left 0.3s ease !important;
     }
     
     /* Remove any white backgrounds */
@@ -262,36 +248,33 @@ if 'live_camera_active' not in st.session_state:
 if 'screening_results' not in st.session_state:
     st.session_state.screening_results = []
 
-# Static Header with scrollable content
+# Header matching Tkinter design exactly
 st.markdown("""
 <div style="
-    background: linear-gradient(135deg, #1e40af 0%, #3b82f6 100%);
-    padding: 15px 20px;
-    border-bottom: 2px solid #60a5fa;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.3);
-    margin: -1rem -1rem 1rem -1rem;
-    position: sticky;
-    top: 0;
-    z-index: 999;
+    background: #1e40af;
+    padding: 20px;
+    border-radius: 5px;
+    margin-bottom: 20px;
+    border: 1px solid #3b82f6;
 ">
-    <div style="display: flex; justify-content: space-between; align-items: center; max-width: 1400px; margin: 0 auto;">
+    <div style="display: flex; justify-content: space-between; align-items: center;">
         <div>
-            <h1 style="margin: 0; color: white; font-size: 1.6rem; font-weight: bold;">🏥 MediSign - USL Healthcare Assistant</h1>
-            <p style="margin: 3px 0 0 0; color: #bfdbfe; font-size: 0.9rem;">Smart Healthcare Communication • Real-time USL Translation • Clinical Integration</p>
+            <h1 style="color: white; margin: 0; font-size: 1.8rem; font-weight: bold;">🏥 MediSign - USL Healthcare Assistant</h1>
+            <p style="color: #bfdbfe; margin: 5px 0 0 0; font-size: 1rem;">Smart Healthcare Communication • Real-time USL Translation • Clinical Integration</p>
         </div>
         <div style="text-align: center;">
-            <div style="color: white; font-weight: bold; margin-bottom: 3px; font-size: 0.85rem;">Translation Mode:</div>
-            <div style="color: #e2e8f0; font-size: 0.8rem;">👤→👩⚕️ Patient to Clinician</div>
-            <div style="color: #e2e8f0; font-size: 0.8rem;">👩⚕️→👤 Clinician to Patient</div>
+            <div style="color: white; font-weight: bold; margin-bottom: 5px;">Translation Mode:</div>
+            <div style="color: #e2e8f0; font-size: 0.9rem;">👤→👩⚕️ Patient to Clinician</div>
+            <div style="color: #e2e8f0; font-size: 0.9rem;">👩⚕️→👤 Clinician to Patient</div>
         </div>
         <div style="text-align: right;">
-            <div style="color: #22c55e; font-weight: bold; font-size: 0.85rem;">🟢 All Systems Online</div>
-            <div style="color: #e2e8f0; font-size: 0.8rem;">👤 No Active Patient</div>
-            <div style="color: #cbd5e1; font-size: 0.75rem; font-family: monospace;">00:50:31</div>
+            <div style="color: #22c55e; font-weight: bold;">🟢 All Systems Online</div>
+            <div style="color: #e2e8f0; font-size: 0.9rem;">👤 No Active Patient</div>
+            <div style="color: #cbd5e1; font-size: 0.8rem;">{}</div>
         </div>
     </div>
 </div>
-""", unsafe_allow_html=True)
+""".format(datetime.now().strftime("%H:%M:%S")), unsafe_allow_html=True)
 
 # Sidebar matching Tkinter design exactly
 with st.sidebar:
@@ -423,32 +406,8 @@ with st.sidebar:
     
     st.checkbox("Offline-first (Privacy)", value=True)
 
-# Main content tabs with sidebar toggle
-col_toggle, col_tabs = st.columns([1, 10])
-
-with col_toggle:
-    st.markdown("""
-    <button onclick="
-        const sidebar = parent.document.querySelector('section[data-testid=\"stSidebar\"]');
-        if (sidebar.style.marginLeft === '-21rem') {
-            sidebar.style.marginLeft = '0rem';
-        } else {
-            sidebar.style.marginLeft = '-21rem';
-        }
-    " style="
-        background: #374151;
-        color: #e2e8f0;
-        border: 2px solid #3b82f6;
-        border-radius: 5px;
-        font-size: 1.2rem;
-        padding: 8px 12px;
-        margin-top: 8px;
-        cursor: pointer;
-    ">☰</button>
-    """, unsafe_allow_html=True)
-
-with col_tabs:
-    tab1, tab2, tab3, tab4 = st.tabs(["🎥 Video Processing", "🤖 Avatar Synthesis", "📋 Clinical Results", "📊 System Analytics"])
+# Main content tabs matching Tkinter design
+tab1, tab2, tab3, tab4 = st.tabs(["🎥 Video Processing", "🤖 Avatar Synthesis", "📋 Clinical Results", "📊 System Analytics"])
 
 with tab1:
     st.subheader("🎥 Real-time USL Processing")
@@ -516,12 +475,7 @@ with tab2:
         </div>
         """, unsafe_allow_html=True)
         
-        st.markdown("""
-        <div style="color: #f1f5f9; font-size: 1.1rem; font-weight: bold; margin-bottom: 10px; background: #4b5563; padding: 8px 12px; border-radius: 5px;">
-            📝 Enter clinical text:
-        </div>
-        """, unsafe_allow_html=True)
-        
+        st.markdown("**Enter clinical text:**")
         clinical_text = st.text_area(
             "", 
             height=120, 
@@ -571,12 +525,7 @@ with tab2:
         </div>
         """, unsafe_allow_html=True)
         
-        st.markdown("""
-        <div style="color: #f1f5f9; font-size: 1.1rem; font-weight: bold; margin-bottom: 10px; background: #4b5563; padding: 8px 12px; border-radius: 5px;">
-            📊 Recognition Results:
-        </div>
-        """, unsafe_allow_html=True)
-        
+        st.markdown("**Recognition Results:**")
         recognition_results = st.text_area(
             "", 
             height=200, 
@@ -595,11 +544,7 @@ with tab2:
         )
         
         # TTS Controls
-        st.markdown("""
-        <div style="color: #f1f5f9; font-size: 1.1rem; font-weight: bold; margin: 15px 0 10px 0; background: #4b5563; padding: 8px 12px; border-radius: 5px;">
-            🔊 Neural Text-to-Speech:
-        </div>
-        """, unsafe_allow_html=True)
+        st.markdown("**Neural Text-to-Speech:**")
         col2a, col2b, col2c = st.columns(3)
         with col2a:
             if st.button("🔊 English", use_container_width=True):
