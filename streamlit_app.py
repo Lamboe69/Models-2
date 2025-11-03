@@ -24,38 +24,57 @@ st.markdown("""
         min-height: 100vh;
     }
     
-    /* Sidebar styling - Dark blue theme */
-    .css-1d391kg {
+    /* Sidebar styling - Dark blue theme matching Tkinter */
+    .css-1d391kg, .css-1lcbmhc, .css-17eq0hr {
         background: #1e293b !important;
         border-right: 1px solid #374151;
     }
     
-    .css-1d391kg .css-1v0mbdj {
+    .css-1d391kg .css-1v0mbdj, .css-1lcbmhc .css-1v0mbdj {
         color: #f1f5f9 !important;
     }
     
     /* Sidebar headers */
-    .css-1d391kg h1, .css-1d391kg h2, .css-1d391kg h3 {
+    .css-1d391kg h1, .css-1d391kg h2, .css-1d391kg h3,
+    .css-1lcbmhc h1, .css-1lcbmhc h2, .css-1lcbmhc h3 {
         color: #f1f5f9 !important;
         font-weight: bold;
     }
     
     /* Sidebar text and labels */
-    .css-1d391kg .css-1v0mbdj label {
+    .css-1d391kg .css-1v0mbdj label, .css-1lcbmhc .css-1v0mbdj label {
         color: #cbd5e1 !important;
         font-weight: 500;
     }
     
-    .css-1d391kg .stSelectbox label,
-    .css-1d391kg .stTextInput label,
-    .css-1d391kg .stNumberInput label,
-    .css-1d391kg .stCheckbox label,
-    .css-1d391kg .stRadio label {
+    .css-1d391kg .stSelectbox label, .css-1lcbmhc .stSelectbox label,
+    .css-1d391kg .stTextInput label, .css-1lcbmhc .stTextInput label,
+    .css-1d391kg .stNumberInput label, .css-1lcbmhc .stNumberInput label,
+    .css-1d391kg .stCheckbox label, .css-1lcbmhc .stCheckbox label,
+    .css-1d391kg .stRadio label, .css-1lcbmhc .stRadio label {
         color: #cbd5e1 !important;
     }
     
-    .css-1d391kg p {
+    .css-1d391kg p, .css-1lcbmhc p {
         color: #e2e8f0 !important;
+    }
+    
+    /* Additional sidebar elements */
+    .css-1d391kg .stMarkdown, .css-1lcbmhc .stMarkdown {
+        color: #e2e8f0 !important;
+    }
+    
+    /* Sidebar input fields */
+    .css-1d391kg input, .css-1lcbmhc input {
+        background: #374151 !important;
+        color: #e2e8f0 !important;
+        border: 1px solid #4b5563 !important;
+    }
+    
+    .css-1d391kg select, .css-1lcbmhc select {
+        background: #374151 !important;
+        color: #e2e8f0 !important;
+        border: 1px solid #4b5563 !important;
     }
     
     /* Main content styling - Dark theme */
@@ -102,6 +121,21 @@ st.markdown("""
     }
     
     .stButton > button:hover {
+        background: #2563eb;
+    }
+    
+    /* Sidebar button styling */
+    .css-1d391kg .stButton > button, .css-1lcbmhc .stButton > button {
+        background: #3b82f6;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        font-weight: 600;
+        padding: 8px 12px;
+        width: 100%;
+    }
+    
+    .css-1d391kg .stButton > button:hover, .css-1lcbmhc .stButton > button:hover {
         background: #2563eb;
     }
     
