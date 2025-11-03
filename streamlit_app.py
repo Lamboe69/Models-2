@@ -50,7 +50,7 @@ st.markdown("""
         width: 100% !important;
     }
     
-    /* FORCE SIDEBAR DARK THEME with static positioning */
+    /* FORCE SIDEBAR DARK THEME with static positioning - always visible */
     .css-1d391kg, .css-1lcbmhc, .css-17eq0hr, .css-1y4p8pa, .css-6qob1r, .css-1aumxhk, 
     section[data-testid="stSidebar"], .stSidebar, [data-testid="stSidebar"] {
         background: #1e293b !important;
@@ -58,6 +58,7 @@ st.markdown("""
         position: fixed !important;
         top: 110px !important;
         left: 0 !important;
+        margin-left: 0 !important;
         height: calc(100vh - 110px) !important;
         overflow-y: auto !important;
         min-width: 200px !important;
@@ -65,14 +66,21 @@ st.markdown("""
         width: 21rem !important;
         resize: horizontal !important;
         z-index: 999998 !important;
+        transform: translateX(0) !important;
     }
     
-    /* Hide sidebar collapse button */
+    /* Hide sidebar collapse button and force visibility */
     button[data-testid="collapsedControl"],
     .css-1v0mbdj,
     section[data-testid="stSidebar"] > div > button {
         display: none !important;
         visibility: hidden !important;
+    }
+    
+    /* Force sidebar to always be visible */
+    section[data-testid="stSidebar"][aria-expanded="false"] {
+        margin-left: 0 !important;
+        transform: translateX(0) !important;
     }
     
     /* Force all sidebar content to be light colored */
