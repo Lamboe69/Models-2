@@ -19,18 +19,19 @@ st.set_page_config(
 # CSS to match complete_usl_system.py exactly
 st.markdown("""
 <style>
-    /* Force main content to start after sidebar */
+    /* Aggressively push main content right */
+    .main,
     div[data-testid="stAppViewContainer"] .main,
-    .css-1d391kg ~ .main,
-    .main {
-        margin-left: 21rem !important;
-        width: calc(100% - 21rem) !important;
+    .css-1d391kg ~ .main {
+        margin-left: 25rem !important;
+        padding-left: 0 !important;
+        width: calc(100% - 25rem) !important;
         position: relative !important;
         left: 0 !important;
     }
     
-    div[data-testid="stAppViewContainer"] .main .block-container,
-    .main .block-container {
+    .main .block-container,
+    div[data-testid="stAppViewContainer"] .main .block-container {
         padding-top: 120px !important;
         padding-left: 2rem !important;
         margin-left: 0 !important;
