@@ -42,20 +42,9 @@ st.markdown("""
         border-right: 2px solid #374151 !important;
     }
     
-    /* Style the custom sidebar toggle button */
-    button[key="sidebar_toggle"] {
-        background: #374151 !important;
-        color: #e2e8f0 !important;
-        border: 2px solid #3b82f6 !important;
-        border-radius: 5px !important;
-        font-size: 1.2rem !important;
-        padding: 8px 12px !important;
-        margin-top: 8px !important;
-    }
-    
-    button[key="sidebar_toggle"]:hover {
-        background: #4b5563 !important;
-        border-color: #60a5fa !important;
+    /* Sidebar toggle animation */
+    section[data-testid="stSidebar"] {
+        transition: margin-left 0.3s ease !important;
     }
     
     /* Remove any white backgrounds */
@@ -438,8 +427,25 @@ with st.sidebar:
 col_toggle, col_tabs = st.columns([1, 10])
 
 with col_toggle:
-    if st.button("☰", help="Toggle Sidebar", key="sidebar_toggle"):
-        st.rerun()
+    st.markdown("""
+    <button onclick="
+        const sidebar = parent.document.querySelector('section[data-testid=\"stSidebar\"]');
+        if (sidebar.style.marginLeft === '-21rem') {
+            sidebar.style.marginLeft = '0rem';
+        } else {
+            sidebar.style.marginLeft = '-21rem';
+        }
+    " style="
+        background: #374151;
+        color: #e2e8f0;
+        border: 2px solid #3b82f6;
+        border-radius: 5px;
+        font-size: 1.2rem;
+        padding: 8px 12px;
+        margin-top: 8px;
+        cursor: pointer;
+    ">☰</button>
+    """, unsafe_allow_html=True)
 
 with col_tabs:
     tab1, tab2, tab3, tab4 = st.tabs(["🎥 Video Processing", "🤖 Avatar Synthesis", "📋 Clinical Results", "📊 System Analytics"])
