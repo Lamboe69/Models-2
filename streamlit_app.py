@@ -63,7 +63,44 @@ st.markdown("""
         border: 1px solid #4b5563 !important;
     }
     
-    section[data-testid="stSidebar"] select, .css-1d391kg select {
+    /* Fix dropdown/selectbox visibility */
+    section[data-testid="stSidebar"] select, .css-1d391kg select,
+    section[data-testid="stSidebar"] .stSelectbox > div > div,
+    section[data-testid="stSidebar"] .css-1wa3eu0-placeholder,
+    section[data-testid="stSidebar"] .css-1uccc91-singleValue {
+        background: #374151 !important;
+        color: #e2e8f0 !important;
+        border: 1px solid #4b5563 !important;
+    }
+    
+    /* Fix selectbox dropdown options */
+    section[data-testid="stSidebar"] .css-26l3qy-menu,
+    section[data-testid="stSidebar"] .css-1n7v3ny-option {
+        background: #374151 !important;
+        color: #e2e8f0 !important;
+    }
+    
+    /* Fix selectbox control */
+    section[data-testid="stSidebar"] .css-1s2u09g-control {
+        background: #374151 !important;
+        border: 1px solid #4b5563 !important;
+    }
+    
+    /* Fix selectbox text and placeholder */
+    section[data-testid="stSidebar"] .css-1wa3eu0-placeholder,
+    section[data-testid="stSidebar"] .css-1uccc91-singleValue {
+        color: #e2e8f0 !important;
+    }
+    
+    /* Fix number input */
+    section[data-testid="stSidebar"] .stNumberInput input {
+        background: #374151 !important;
+        color: #e2e8f0 !important;
+        border: 1px solid #4b5563 !important;
+    }
+    
+    /* Fix text input */
+    section[data-testid="stSidebar"] .stTextInput input {
         background: #374151 !important;
         color: #e2e8f0 !important;
         border: 1px solid #4b5563 !important;
