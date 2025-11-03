@@ -19,15 +19,20 @@ st.set_page_config(
 # CSS to match complete_usl_system.py exactly
 st.markdown("""
 <style>
-    /* Main page styling - positioned after sidebar */
+    /* Force main content to start after sidebar */
+    div[data-testid="stAppViewContainer"] .main,
+    .css-1d391kg ~ .main,
     .main {
         margin-left: 21rem !important;
         width: calc(100% - 21rem) !important;
+        position: relative !important;
+        left: 0 !important;
     }
     
+    div[data-testid="stAppViewContainer"] .main .block-container,
     .main .block-container {
         padding-top: 120px !important;
-        padding-left: 1rem !important;
+        padding-left: 2rem !important;
         margin-left: 0 !important;
         background: #0f172a !important;
         min-height: calc(100vh - 120px) !important;
