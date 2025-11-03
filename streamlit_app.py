@@ -67,6 +67,14 @@ st.markdown("""
         z-index: 999998 !important;
     }
     
+    /* Hide sidebar collapse button */
+    button[data-testid="collapsedControl"],
+    .css-1v0mbdj,
+    section[data-testid="stSidebar"] > div > button {
+        display: none !important;
+        visibility: hidden !important;
+    }
+    
     /* Force all sidebar content to be light colored */
     section[data-testid="stSidebar"] *, .stSidebar *, .css-1d391kg *, .css-1lcbmhc * {
         color: #f1f5f9 !important;
