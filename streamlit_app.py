@@ -464,64 +464,119 @@ with tab1:
 with tab2:
     st.subheader("🤖 Avatar Synthesis")
     
-    col1, col2 = st.columns(2)
+    # Organized layout with clear sections
+    col1, col2 = st.columns([1, 1])
     
     with col1:
-        st.markdown("### 📝 Text → USL Synthesis")
-        st.text("Enter clinical text:")
-        clinical_text = st.text_area("", height=150, key="clinical_text")
+        # Text to USL Section
+        st.markdown("""
+        <div style="background: #374151; padding: 20px; border-radius: 10px; border: 1px solid #3b82f6; margin-bottom: 20px;">
+            <h3 style="color: #f1f5f9; margin-bottom: 15px;">📝 Text → USL Synthesis</h3>
+        </div>
+        """, unsafe_allow_html=True)
         
-        if st.button("🔄 Generate USL Gloss"):
-            st.info("USL GLOSS GENERATION\nGenerated Gloss:\nYOU FEVER HAVE? COUGH BLOOD? TRAVEL WHERE?")
+        st.markdown("**Enter clinical text:**")
+        clinical_text = st.text_area(
+            "", 
+            height=120, 
+            key="clinical_text",
+            placeholder="Enter clinical questions or statements here..."
+        )
         
-        if st.button("🤖 Synthesize Avatar"):
-            st.success("🤖 Parametric avatar synthesized with MANO+Face rig")
+        # Action buttons
+        col1a, col1b = st.columns(2)
+        with col1a:
+            if st.button("🔄 Generate USL Gloss", use_container_width=True):
+                st.info("🔄 USL GLOSS GENERATION\n\nGenerated Gloss:\nYOU FEVER HAVE? COUGH BLOOD? TRAVEL WHERE?")
         
+        with col1b:
+            if st.button("🤖 Synthesize Avatar", use_container_width=True):
+                st.success("🤖 Parametric avatar synthesized with MANO+Face rig")
+        
+        # Avatar Display
         st.markdown("""
         <div style="
             width: 100%; 
-            height: 200px; 
+            height: 250px; 
             background: #374151;
-            border-radius: 5px;
+            border-radius: 10px;
             display: flex;
             align-items: center;
             justify-content: center;
             color: #9ca3af;
             font-size: 16px;
-            border: 1px solid #4b5563;
-            margin-top: 15px;
+            border: 2px solid #3b82f6;
+            margin-top: 20px;
         ">
             <div style="text-align: center;">
-                <div style="font-size: 2rem;">🤖</div>
-                <div>Parametric Avatar</div>
-                <div>(MANO + Face Rig)</div>
-                <div style="margin-top: 10px;">Ready for synthesis...</div>
+                <div style="font-size: 3rem; margin-bottom: 10px;">🤖</div>
+                <div style="font-size: 1.2rem; font-weight: bold; color: #f1f5f9;">Parametric Avatar</div>
+                <div style="color: #cbd5e1;">(MANO + Face Rig)</div>
+                <div style="margin-top: 15px; color: #22c55e;">Ready for synthesis...</div>
             </div>
         </div>
         """, unsafe_allow_html=True)
     
     with col2:
-        st.markdown("### 🤟 USL → Structured Text")
-        st.text("Recognition Results:")
-        recognition_results = st.text_area("", height=250, value="""🤟 USL RECOGNITION RESULTS
+        # USL to Text Section
+        st.markdown("""
+        <div style="background: #374151; padding: 20px; border-radius: 10px; border: 1px solid #22c55e; margin-bottom: 20px;">
+            <h3 style="color: #f1f5f9; margin-bottom: 15px;">🤟 USL → Structured Text</h3>
+        </div>
+        """, unsafe_allow_html=True)
+        
+        st.markdown("**Recognition Results:**")
+        recognition_results = st.text_area(
+            "", 
+            height=200, 
+            value="""🤟 USL RECOGNITION RESULTS
 ========================================
 
 🌡️ fever: Yes (confidence: 92.3%)
 😷 cough: No (confidence: 87.1%)
 🩸 hemoptysis: Unknown (confidence: 45.2%)
 💊 diarrhea: No (confidence: 91.8%)
-""", key="recognition_results")
+
+📊 Confidence Score: 81.2%
+🕰️ Processing Time: 0.24s
+✅ Status: Analysis Complete""", 
+            key="recognition_results"
+        )
         
+        # TTS Controls
+        st.markdown("**Neural Text-to-Speech:**")
         col2a, col2b, col2c = st.columns(3)
         with col2a:
-            if st.button("🔊 Neural TTS (English)"):
+            if st.button("🔊 English", use_container_width=True):
                 st.success("🔊 English TTS activated")
         with col2b:
-            if st.button("🔊 Neural TTS (Runyankole)"):
+            if st.button("🔊 Runyankole", use_container_width=True):
                 st.success("🔊 Runyankole TTS activated")
         with col2c:
-            if st.button("🔊 Neural TTS (Luganda)"):
+            if st.button("🔊 Luganda", use_container_width=True):
                 st.success("🔊 Luganda TTS activated")
+    
+    # Additional CSS for better text area visibility
+    st.markdown("""
+    <style>
+        /* Fix text area visibility in Avatar Synthesis tab */
+        .stTextArea textarea {
+            background: #374151 !important;
+            color: #e2e8f0 !important;
+            border: 2px solid #4b5563 !important;
+            border-radius: 8px !important;
+        }
+        
+        .stTextArea textarea:focus {
+            border-color: #3b82f6 !important;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1) !important;
+        }
+        
+        .stTextArea textarea::placeholder {
+            color: #9ca3af !important;
+        }
+    </style>
+    """, unsafe_allow_html=True)
 
 with tab3:
     st.subheader("📋 FHIR-Structured Clinical Results")
