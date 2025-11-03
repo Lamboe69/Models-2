@@ -92,11 +92,20 @@ st.markdown("""
         color: #e2e8f0 !important;
     }
     
-    /* Fix number input */
-    section[data-testid="stSidebar"] .stNumberInput input {
+    /* Fix number input - Age field */
+    section[data-testid="stSidebar"] .stNumberInput input,
+    section[data-testid="stSidebar"] input[type="number"],
+    section[data-testid="stSidebar"] .css-1x8cf1d {
         background: #374151 !important;
         color: #e2e8f0 !important;
         border: 1px solid #4b5563 !important;
+    }
+    
+    /* Fix number input controls/buttons */
+    section[data-testid="stSidebar"] .stNumberInput button {
+        background: #4b5563 !important;
+        color: #e2e8f0 !important;
+        border: 1px solid #6b7280 !important;
     }
     
     /* Fix text input */
